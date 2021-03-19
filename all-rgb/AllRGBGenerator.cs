@@ -58,7 +58,7 @@ namespace all_rgb
 			return buffer.GetImage();
 		}
 
-		public void CreateBuffer(int width = 128, int height = 128)
+		public void CreateBuffer(int width = 4096, int height = 4096)
 		{
 			buffer = new ImageBuffer(width, height);
 		}
@@ -151,6 +151,9 @@ namespace all_rgb
 			var counter = 0;
 			var available = new HashSet<Point>();
 
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+
 			using (var pb = new ProgressBar())
 			{
 				foreach (var col in cols)
@@ -187,10 +190,22 @@ namespace all_rgb
 						}
 					}
 
-					pb.Report((float)counter++ / cols.Count);
-					progress.Report(counter / cols.Count);
+					counter++;
+
+					var percentDone = (float)counter / cols.Count;
+					if (counter % 100 == 0)
+					{
+						var timeElapsed = stopwatch.ElapsedMilliseconds;
+						var eta = 1f / percentDone * timeElapsed;
+						var timeStr = $"Elapsed={timeElapsed / 1000}s ETA={(int)(eta / 1000)}s Fine%={percentDone:P}";
+						//Console.Title = timeStr;
+						pb.Report(percentDone, timeStr);
+					}
+					progress.Report((int)percentDone);
 				}
 			}
+
+			stopwatch.Reset();
 		}
 
 		static int GetNearestColour(ImageBuffer buf, Point xy, Color c, bool UseMin)

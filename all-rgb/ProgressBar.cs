@@ -19,6 +19,7 @@ namespace all_rgb
 		private string currentText = string.Empty;
 		private bool disposed = false;
 		private int animationIndex = 0;
+		private string additionalText;
 
 		public ProgressBar()
 		{
@@ -31,6 +32,11 @@ namespace all_rgb
 			{
 				ResetTimer();
 			}
+		}
+		public void Report(double value, string text)
+		{
+			additionalText = text;
+			Report(value);
 		}
 
 		public void Report(double value)
@@ -48,10 +54,11 @@ namespace all_rgb
 
 				int progressBlockCount = (int)(currentProgress * blockCount);
 				int percent = (int)(currentProgress * 100);
-				string text = string.Format("[{0}{1}] {2,3}% {3}",
-					new string('#', progressBlockCount), new string('-', blockCount - progressBlockCount),
+				string text = string.Format("[{0}{1}] {2,3}% {3} {4}",
+					new string('#', progressBlockCount),
+					new string('-', blockCount - progressBlockCount),
 					percent,
-					animation[animationIndex++ % animation.Length]);
+					animation[animationIndex++ % animation.Length], additionalText);
 				UpdateText(text);
 
 				ResetTimer();
