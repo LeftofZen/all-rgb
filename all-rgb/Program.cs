@@ -12,6 +12,7 @@ namespace all_rgb
 			a.Run();
 
 			Console.WriteLine("Goodbye World!");
+			Console.ReadLine();
 		}
 	}
 }

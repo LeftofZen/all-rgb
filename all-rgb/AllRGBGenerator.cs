@@ -58,7 +58,7 @@ namespace all_rgb
 			return buffer.GetImage();
 		}
 
-		public void CreateBuffer(int width = 4096, int height = 4096)
+		public void CreateBuffer(int width = 64, int height = 64)
 		{
 			buffer = new ImageBuffer(width, height);
 		}
