@@ -138,7 +138,7 @@ namespace all_rgb
 
 		public void Paint()
 		{
-			var progress = new Progress<int>(value =>  ProgressCallback(value));
+			var progress = new Progress<int>(value => ProgressCallback(value));
 			Task.Run(() => Paint(buffer, ShuffledColours, progress)).Wait();
 		}
 

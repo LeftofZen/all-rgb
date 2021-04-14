@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Forms;
 using all_rgb;
 
@@ -11,7 +10,7 @@ namespace all_rgb_gui
 		{
 			InitializeComponent();
 			gen = new AllRGBGenerator();
-			gen.ProgressCallback = (value) => pgPaint.Value = value;
+			gen.ProgressCallback = (value) => pgPaint.Value = value * 100;
 		}
 
 		AllRGBGenerator gen;

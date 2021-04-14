@@ -60,6 +60,7 @@
 			// 
 			// pbPalette
 			// 
+			this.pbPalette.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbPalette.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 			this.pbPalette.Location = new System.Drawing.Point(318, 11);
 			this.pbPalette.Name = "pbPalette";
@@ -126,6 +127,7 @@
 			// 
 			// pbPaletteShuffled
 			// 
+			this.pbPaletteShuffled.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbPaletteShuffled.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 			this.pbPaletteShuffled.Location = new System.Drawing.Point(424, 11);
 			this.pbPaletteShuffled.Name = "pbPaletteShuffled";
