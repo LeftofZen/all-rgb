@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using KdTree;
 
 namespace all_rgb
 {
@@ -150,9 +151,16 @@ namespace all_rgb
 
 			var counter = 0;
 			var available = new HashSet<Point>();
+			var availableTree = new KdTree<int, (Color col, Point xy)>(3, new KdTree.Math.IntMath());
 
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
+
+			var allCols = new KdTree<int, Color>(3, new KdTree.Math.IntMath());
+			foreach (var col in cols)
+			{
+				_ = allCols.Add(new int[] { col.R, col.G, col.B }, col);
+			}
 
 			using (var pb = new ProgressBar())
 			{
@@ -165,10 +173,19 @@ namespace all_rgb
 					}
 					else
 					{
-						bestXY = available
-							.AsParallel()
-							.OrderBy(xy => GetNearestColour(buf, xy, col, UseMin))
-							.First();
+						// this is the time consumer
+						// it has to search everything in the available queue for every pixel we place
+						// optimising this would be a big win
+						// maybe use an octree to store where in 3d space each colour in the queue is located,
+						// and this wil mean instead of searching every colour O(n) we can get O(log(n)), at
+						// the cost of sorting, but if octree insertion is quick, this could be minimal
+
+						//bestXY = available
+						//	.AsParallel()
+						//	.OrderBy(xy => GetNearestColour(buf, xy, col, UseMin))
+						//	.First();
+
+						bestXY = availableTree.GetNearestNeighbours(new int[] {col.R, col.G, col.B }, 1).FirstOrDefault().Value.xy;
 					}
 
 					//if (counter++ % 256 == 0)
@@ -187,6 +204,13 @@ namespace all_rgb
 						if (buf.IsEmpty(nxy))
 						{
 							_ = available.Add(nxy);
+
+							var avg = GetAverageColour(buf, nxy);
+							var closestAvailable = allCols.GetNearestNeighbours(new int[] { avg.R, avg.G, avg.B }, 1).FirstOrDefault();
+							if (closestAvailable == null)
+								continue;
+							allCols.RemoveAt(closestAvailable.Point);
+							_ = availableTree.Add(new int[] { closestAvailable.Value.R, closestAvailable.Value.G, closestAvailable.Value.B }, (col, nxy));
 						}
 					}
 
@@ -225,6 +249,37 @@ namespace all_rgb
 			return UseMin
 				? (int)diffs.Average()
 				: diffs.Min();
+		}
+
+		static Color GetAverageColour(ImageBuffer buf, Point xy)
+		{
+			// get the diffs for each neighbor separately
+			(int R, int G, int B) diff = (0, 0, 0);
+			var count = 0;
+
+			foreach (var nxy in GetNeighbours(buf, xy))
+			{
+				var pixel = buf.GetPixel(nxy);
+				if (!pixel.IsEmpty)
+				{
+					diff.R += pixel.R;
+					diff.G += pixel.G;
+					diff.B += pixel.B;
+					count++;
+				}
+			}
+
+			if (count == 0)
+			{
+				return Color.White;
+			}
+
+			return Color.FromArgb(diff.R / count, diff.G / count, diff.B / count);
+
+			// average or minimum selection
+			//return UseMin
+			//	? (int)diffs.Average()
+			//	: diffs.Min();
 		}
 
 		static IEnumerable<Point> GetNeighbours(ImageBuffer buf, Point p)
