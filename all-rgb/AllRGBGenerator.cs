@@ -156,7 +156,7 @@ namespace all_rgb
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
-			var allCols = new KdTree<int, Color>(3, new KdTree.Math.IntMath());
+			var allCols = new KdTree<int, Color>(3, new KdTree.Math.IntMath(), AddDuplicateBehavior.Error);
 			foreach (var col in cols)
 			{
 				_ = allCols.Add(new int[] { col.R, col.G, col.B }, col);
@@ -166,13 +166,11 @@ namespace all_rgb
 			{
 				foreach (var col in cols)
 				{
-					Point bestXY;
-					//int[] kdtreepoint = null;
-					KdTreeNode<int, (Color col, Point xy)> node = new KdTreeNode<int, (Color col, Point xy)>();
+					var bestNode = new KdTreeNode<int, (Color col, Point xy)>();
 
 					if (available.Count == 0)
 					{
-						bestXY = buf.Middle;
+						bestNode.Value.xy = buf.Middle;
 					}
 					else
 					{
@@ -188,9 +186,7 @@ namespace all_rgb
 						//	.OrderBy(xy => GetNearestColour(buf, xy, col, UseMin))
 						//	.First();
 
-						node = availableTree.GetNearestNeighbours(new int[] { col.R, col.G, col.B }, 1).FirstOrDefault();
-						bestXY = node.Value.xy;
-						//kdtreepoint = node.Point;
+						bestNode = availableTree.GetNearestNeighbours(new int[] { col.R, col.G, col.B }, 1).FirstOrDefault();
 					}
 
 					//if (counter++ % 256 == 0)
@@ -200,16 +196,16 @@ namespace all_rgb
 					//	buf.Save(counter / 256);
 					//}
 
-					buf.SetPixel(bestXY, col);
-					available.Remove(bestXY);
-					if (node.Point != null)
+					buf.SetPixel(bestNode.Value.xy, col);
+					available.Remove(bestNode.Value.xy);
+					if (bestNode.Point != null)
 					{
-						availableTree.RemoveAt(node.Point);
-						allCols.RemoveAt(node.Point);
+						availableTree.RemoveAt(bestNode.Point);
+						allCols.RemoveAt(bestNode.Point);
 					}
 
 					// add neighbours
-					foreach (var nxy in GetNeighbours(buf, bestXY))
+					foreach (var nxy in GetNeighbours(buf, bestNode.Value.xy))
 					{
 						if (buf.IsEmpty(nxy))
 						{
