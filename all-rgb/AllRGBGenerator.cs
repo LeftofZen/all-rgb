@@ -167,6 +167,9 @@ namespace all_rgb
 				foreach (var col in cols)
 				{
 					Point bestXY;
+					//int[] kdtreepoint = null;
+					KdTreeNode<int, (Color col, Point xy)> node = new KdTreeNode<int, (Color col, Point xy)>();
+
 					if (available.Count == 0)
 					{
 						bestXY = buf.Middle;
@@ -185,7 +188,9 @@ namespace all_rgb
 						//	.OrderBy(xy => GetNearestColour(buf, xy, col, UseMin))
 						//	.First();
 
-						bestXY = availableTree.GetNearestNeighbours(new int[] {col.R, col.G, col.B }, 1).FirstOrDefault().Value.xy;
+						node = availableTree.GetNearestNeighbours(new int[] { col.R, col.G, col.B }, 1).FirstOrDefault();
+						bestXY = node.Value.xy;
+						//kdtreepoint = node.Point;
 					}
 
 					//if (counter++ % 256 == 0)
@@ -197,6 +202,11 @@ namespace all_rgb
 
 					buf.SetPixel(bestXY, col);
 					available.Remove(bestXY);
+					if (node.Point != null)
+					{
+						availableTree.RemoveAt(node.Point);
+						allCols.RemoveAt(node.Point);
+					}
 
 					// add neighbours
 					foreach (var nxy in GetNeighbours(buf, bestXY))
@@ -207,9 +217,9 @@ namespace all_rgb
 
 							var avg = GetAverageColour(buf, nxy);
 							var closestAvailable = allCols.GetNearestNeighbours(new int[] { avg.R, avg.G, avg.B }, 1).FirstOrDefault();
-							if (closestAvailable == null)
-								continue;
-							allCols.RemoveAt(closestAvailable.Point);
+							//if (closestAvailable == null)
+							//	continue;
+							//allCols.RemoveAt(closestAvailable.Point);
 							_ = availableTree.Add(new int[] { closestAvailable.Value.R, closestAvailable.Value.G, closestAvailable.Value.B }, (col, nxy));
 						}
 					}
