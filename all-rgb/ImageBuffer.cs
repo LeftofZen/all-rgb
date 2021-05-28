@@ -13,7 +13,6 @@ namespace all_rgb
 
 		public ImageBuffer(Bitmap img) : this(img.Width, img.Height)
 		{
-			//var img = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
 			var rect = new Rectangle(0, 0, Width, Height);
 			var imgData = img.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 			for (var y = 0; y < Height; ++y)
@@ -86,9 +85,10 @@ namespace all_rgb
 		{
 			Console.WriteLine("Saving");
 			//i.Save(@"C:\Users\Benjamin.Sutas\source\repos\all-rgb\all-rgb\content\img.png", ImageFormat.Png);
-			i.Save(@$"{baseFileName}\img{appendix}_.png", ImageFormat.Png);
+			i.Save(@$"{workFilteName}\img{appendix}_.png", ImageFormat.Png);
 		}
 
-		private static string baseFileName = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
+		private const string baseFileName = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
+		private const string workFilteName = @"C:\Users\Benjamin.Sutas\source\repos\all-rgb\all-rgb\content";
 	}
 }

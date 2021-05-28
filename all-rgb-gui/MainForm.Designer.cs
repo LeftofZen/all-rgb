@@ -65,7 +65,6 @@
 			this.pbPalette.Location = new System.Drawing.Point(318, 11);
 			this.pbPalette.Name = "pbPalette";
 			this.pbPalette.Size = new System.Drawing.Size(100, 417);
-			this.pbPalette.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.pbPalette.TabIndex = 7;
 			this.pbPalette.TabStop = false;
 			// 

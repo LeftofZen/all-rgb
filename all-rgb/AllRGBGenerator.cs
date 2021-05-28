@@ -30,6 +30,22 @@ namespace all_rgb
 			return img;
 		}
 
+		public Image GetPalette(int x, int y)
+		{
+			var img = new Bitmap(x, y);
+			var i = 0;
+			foreach (var c in SetOfAllColours)
+			{
+				for (var xx = 0; xx < x; ++xx)
+				{
+					img.SetPixel(xx, (int)((float)i / SetOfAllColours.Count * y), c);
+				}
+				i++;
+			}
+			return img;
+		}
+
+
 		public Image GetShuffledPalette()
 		{
 			var img = new Bitmap(1, ShuffledColours.Count);
@@ -37,6 +53,21 @@ namespace all_rgb
 			foreach (var c in ShuffledColours)
 			{
 				img.SetPixel(0, i++, c);
+			}
+			return img;
+		}
+
+		public Image GetShuffledPalette(int x, int y)
+		{
+			var img = new Bitmap(x, y);
+			var i = 0;
+			foreach (var c in ShuffledColours)
+			{
+				for (var xx = 0; xx < x; ++xx)
+				{
+					img.SetPixel(xx, (int)((float)i / ShuffledColours.Count * y), c);
+				}
+				i++;
 			}
 			return img;
 		}

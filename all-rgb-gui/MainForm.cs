@@ -19,13 +19,13 @@ namespace all_rgb_gui
 		{
 			gen.CreateBuffer(Int32.Parse(tbWidth.Text), Int32.Parse(tbHeight.Text));
 			gen.GenerateColours();
-			pbPalette.Image = gen.GetPalette();
+			pbPalette.Image = gen.GetPalette(pbPalette.Width, pbPalette.Height);
 		}
 
 		private void btnShuffleColours_Click(object sender, EventArgs e)
 		{
 			gen.ShuffleColours();
-			pbPaletteShuffled.Image = gen.GetShuffledPalette();
+			pbPaletteShuffled.Image = gen.GetShuffledPalette(pbPalette.Width, pbPalette.Height);
 
 			//lbColours.Items.Clear();
 			//lbColours.Items.AddRange(gen.ShuffledColours
