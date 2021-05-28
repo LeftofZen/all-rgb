@@ -38,7 +38,7 @@ namespace all_rgb
 			{
 				for (var xx = 0; xx < x; ++xx)
 				{
-					img.SetPixel(xx, (int)((float)i / SetOfAllColours.Count * y), c);
+					img.SetPixel(xx, i * y / SetOfAllColours.Count, c);
 				}
 				i++;
 			}
@@ -65,7 +65,7 @@ namespace all_rgb
 			{
 				for (var xx = 0; xx < x; ++xx)
 				{
-					img.SetPixel(xx, (int)((float)i / ShuffledColours.Count * y), c);
+					img.SetPixel(xx, i * y / ShuffledColours.Count, c);
 				}
 				i++;
 			}
