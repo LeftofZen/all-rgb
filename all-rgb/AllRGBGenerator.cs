@@ -7,44 +7,102 @@ using System.Threading.Tasks;
 
 namespace all_rgb
 {
+	public record ProgressReport(float percent, string etaText, Image prgi);
+
 	public class AllRGBGenerator
 	{
 		public AllRGBGenerator()
 		{ }
 
-		public List<Color> ShuffledColours;
-		HashSet<Color> SetOfAllColours;
+		public List<Colour> ShuffledColours;
+		public HashSet<Colour> SetOfAllColours;
 		ImageBuffer buffer;
 
 		public bool UseMin;
 
-		public Image GetPalette()
+		public Image GetImageFromColours(List<Colour> colours, int width, int height)
 		{
-			var img = new Bitmap(1, SetOfAllColours.Count);
+			var img = new ImageBuffer(width, height);
+			var coloursPerPixel = (float)colours.Count / (width * height);
 			var i = 0;
-			foreach (var c in SetOfAllColours)
+			var colourCounter = 0f;
+
+			while (i < width * height && colourCounter < colours.Count)
 			{
-				img.SetPixel(0, i++, c);
+				img.SetPixel(
+					i % width,
+					i / width,
+					colours[(int)colourCounter]);
+
+				colourCounter += coloursPerPixel;
+				++i;
 			}
-			return img;
+
+			return img.GetImage();
 		}
 
-		public Image GetShuffledPalette()
+		private static List<Colour> SortColoursHSB(List<Colour> colours)
 		{
-			var img = new Bitmap(1, ShuffledColours.Count);
-			var i = 0;
-			foreach (var c in ShuffledColours)
-			{
-				img.SetPixel(0, i++, c);
-			}
-			return img;
+			colours.Sort((Colour a, Colour b)
+				=>
+					a.Hue.CompareTo(b.Hue)
+					+ a.Saturation.CompareTo(b.Saturation)
+					+ a.Brightness.CompareTo(b.Brightness)
+				);
+
+			return colours;
 		}
 
-		public void Run()
+		private static List<Colour> SortColoursRGB(List<Colour> colours)
+		{
+			colours.Sort((Colour a, Colour b)
+				=>
+					a.R.CompareTo(b.R)
+					+ a.G.CompareTo(b.G)
+					+ a.B.CompareTo(b.B)
+				);
+
+			return colours;
+		}
+
+		private static List<Colour> SortColoursNN(List<Colour> colours)
+		{
+			List<Colour> output = new();
+
+			var curr = colours[0];
+
+			while (colours.Count > 1)
+			{
+				output.Add(curr);
+				_ = colours.Remove(curr);
+
+				Colour nearest = default;
+				var minDistance = float.MaxValue;
+				for (var i = 1; i < colours.Count; ++i)
+				{
+					var distance = MathHelpers.DistanceSquaredEuclidean(curr.rgb, colours[i].rgb);
+					if (distance < minDistance)
+					{
+						minDistance = distance;
+						nearest = colours[i];
+					}
+				}
+
+				curr = nearest;
+			}
+
+			// should only be 1 colour left
+			Trace.Assert(colours.Count == 1);
+			output.Add(colours[0]);
+
+			return output;
+		}
+
+		public void ConsoleRun()
 		{
 			CreateBuffer();
 
-			GenerateColours();
+			SetOfAllColours = ColourGenerator.GenerateColours(buffer.Width * buffer.Height);
 
 			ShuffleColours();
 
@@ -54,177 +112,182 @@ namespace all_rgb
 		}
 
 		public Image GetCurrentImage()
+			=> buffer.GetImage();
+
+		public void CreateTemplate(Bitmap templateImage)
 		{
-			return buffer.GetImage();
-		}
+			AvailableSet.Clear();
+			CreateBuffer(templateImage.Width, templateImage.Height);
 
-		public void CreateBuffer(int width = 64, int height = 64)
-		{
-			buffer = new ImageBuffer(width, height);
-		}
-
-		public void Save()
-		{
-			buffer.Save();
-		}
-
-
-		public void ShuffleColours()
-		{
-			Console.WriteLine("Shuffling");
-			ShuffledColours = SetOfAllColours.ToList();
-			ShuffledColours.Shuffle();
-		}
-
-		public void GenerateColours()
-		{
-			Console.WriteLine("Generating colours");
-
-			var pixelCount = buffer.Width * buffer.Height;
-
-			if (pixelCount == 0)
+			for (var y = 0; y < templateImage.Height; ++y)
 			{
-				Console.WriteLine("no pixels");
-				return;
-			}
-
-			SetOfAllColours = new HashSet<Color>(pixelCount);
-
-			var stepsPerChannel = (int)Math.Round(Math.Pow(pixelCount, 1f / 3f));
-			var rSteps = stepsPerChannel;
-			var gSteps = stepsPerChannel;
-			var bSteps = stepsPerChannel;
-
-			{
-				for (var r = 0; r < rSteps; ++r)
+				for (var x = 0; x < templateImage.Width; ++x)
 				{
-					for (var g = 0; g < gSteps; ++g)
+					if (Colour.FromSystemColor(templateImage.GetPixel(x, y)) == Colour.FromSystemColor(Color.Black))
 					{
-						for (var b = 0; b < bSteps; ++b)
-						{
-							var c = Color.FromArgb(
-								255,
-								255 / (rSteps - 1) * r,
-								255 / (gSteps - 1) * g,
-								255 / (bSteps - 1) * b);
-
-							if (!SetOfAllColours.Add(c))
-							{
-								Trace.Assert(false, "duplicate colour detected", c.ToString());
-							}
-						}
+						AvailableSet.Add(new Point(x, y));
 					}
 				}
 			}
-
-			var rnd = new Random(1);
-			// leftover
-			while (SetOfAllColours.Count < pixelCount)
-			{
-				SetOfAllColours.Add(Color.FromArgb(
-					255,
-					rnd.Next(0, 255),
-					rnd.Next(0, 255),
-					rnd.Next(0, 255)));
-			}
-
-			Trace.Assert(SetOfAllColours.Count == pixelCount);
 		}
 
-		public void ClearSeenPoints()
+		public void CreateBuffer(int width = 128, int height = 128)
+			=> buffer = new ImageBuffer(width, height);
+
+		public void Save()
+			=> buffer.Save();
+
+		HashSet<Point> AvailableSet = new HashSet<Point>();
+
+		public List<Colour> ShuffleColours()
+		{
+			Console.WriteLine("Shuffling");
+			ShuffledColours = SetOfAllColours.ToList();
+
+			ShuffledColours = SortColoursRGB(ShuffledColours);
+			//ShuffledColours = SortColoursHSB(ShuffledColours);
+			//ShuffledColours = SortColoursNN(ShuffledColours);
+			//ShuffledColours.Reverse();
+
+			//ShuffledColours.Shuffle();
+
+			//ShuffledColours.Sort((Colour a, Colour b)
+			//		=>
+			//		 a.GetHue().CompareTo(b.GetHue()) * 2
+			//		 + a.GetSaturation().CompareTo(b.GetSaturation())
+			//		 + b.GetBrightness().CompareTo(a.GetBrightness())
+			//		);
+
+			return ShuffledColours;
+		}
+
+		static float RescaleFloat(float val, float min, float max)
+			=> (val * (min - max)) + min;
+
+		public Task<Image> Paint()
+		{
+			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
+			PaintTask = Task.Run(() => Paint(buffer, ShuffledColours ?? SetOfAllColours.ToList(), progress));
+			return PaintTask;
+		}
+
+		public Task<Image> PaintTask;
+
+		public Action<ProgressReport> ProgressCallback = new((_) => { });
+
+		float PointOrderFunc(ImageBuffer buf, Point xy, Colour col, bool UseMin)
+		{
+			var c = GetNearestColour(buf, xy, col, UseMin);
+			var d = MathHelpers.DistanceEuclidean(xy, buf.Middle) / 4000000000f;
+			//var d = 0;
+
+			return c + d;
+		}
+
+		public bool Pause { get; set; }
+
+		Image Paint(ImageBuffer buf, List<Colour> cols, IProgress<ProgressReport> progress)
 		{
 			buffer?.Clear();
-		}
 
-		public void Paint()
-		{
-			var progress = new Progress<int>(value =>  ProgressCallback(value));
-			Task.Run(() => Paint(buffer, ShuffledColours, progress)).Wait();
-		}
-
-		public Action<int> ProgressCallback = new((_) => { });
-
-		void Paint(ImageBuffer buf, List<Color> cols, IProgress<int> progress)
-		{
 			Console.WriteLine("Painting");
 
 			var counter = 0;
-			var available = new HashSet<Point>();
 
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 
-			using (var pb = new ProgressBar())
+			var baseRecord = new ProgressReport(0f, "Forever", null);
+
+			using (var consoleProgressBar = new ConsoleProgressBar())
 			{
+				Point bestXY;
+
 				foreach (var col in cols)
 				{
-					Point bestXY;
-					if (available.Count == 0)
+					while (Pause) ;
+
+					if (AvailableSet.Count == 0)
 					{
 						bestXY = buf.Middle;
 					}
 					else
 					{
-						bestXY = available
+						bestXY = AvailableSet
 							.AsParallel()
-							.OrderBy(xy => GetNearestColour(buf, xy, col, UseMin))
+							.OrderBy(xy => PointOrderFunc(buf, xy, col, UseMin))
 							.First();
 					}
 
-					//if (counter++ % 256 == 0)
-					//{
-					//	Console.WriteLine("{0:P}, queue size {1}", (double)counter / buf.NumberOfPixels, available.Count);
-					//	// save checkpoint
-					//	buf.Save(counter / 256);
-					//}
-
 					buf.SetPixel(bestXY, col);
-					available.Remove(bestXY);
+					AvailableSet.Remove(bestXY);
 
 					// add neighbours
 					foreach (var nxy in GetNeighbours(buf, bestXY))
 					{
 						if (buf.IsEmpty(nxy))
 						{
-							_ = available.Add(nxy);
+							_ = AvailableSet.Add(nxy);
 						}
 					}
 
 					counter++;
 
+					const int refreshRate = 256;
+
 					var percentDone = (float)counter / cols.Count;
-					if (counter % 100 == 0)
+					if (counter % refreshRate == 0)
 					{
 						var timeElapsed = stopwatch.ElapsedMilliseconds;
-						var eta = 1f / percentDone * timeElapsed;
-						var timeStr = $"Elapsed={timeElapsed / 1000}s ETA={(int)(eta / 1000)}s Fine%={percentDone:P}";
-						//Console.Title = timeStr;
-						pb.Report(percentDone, timeStr);
+						var eta = (1f / percentDone * timeElapsed) - timeElapsed;
+						var ts = new TimeSpan(0, 0, 0, 0, (int)eta);
+						var timeStr = $"Elapsed={stopwatch.Elapsed:g}s ETA={ts:g}s Progress={percentDone:P}";
+
+						consoleProgressBar.Report(percentDone, timeStr);
+						progress.Report(baseRecord with { percent = percentDone, etaText = timeStr, prgi = counter % refreshRate == 0 ? GetCurrentImage() : null });
 					}
-					progress.Report((int)percentDone);
 				}
+
+				stopwatch.Stop();
+				var doneStr = $"Done in {stopwatch.Elapsed:g}";
+				consoleProgressBar.Report(1, doneStr);
+				progress.Report(baseRecord with { percent = 1f, etaText = doneStr, prgi = GetCurrentImage() });
 			}
 
 			stopwatch.Reset();
+			AvailableSet.Clear();
+
+			// debug rect
+			//buf.FillRect(0, 0, 40, 40, Colour.FromSystemColor(Color.White));
+
+			return GetCurrentImage();
 		}
 
-		static int GetNearestColour(ImageBuffer buf, Point xy, Color c, bool UseMin)
+		static float GetNearestColour(ImageBuffer buf, Point xy, Colour c, bool UseMin)
 		{
+			const float rgbWeight = 1f;
+			const float hsbWeight = 0f;
+
 			// get the diffs for each neighbor separately
-			var diffs = new List<int>(8);
+			var diffs = new List<float>(8);
 			foreach (var nxy in GetNeighbours(buf, xy))
 			{
-				var pixel = buf.GetPixel(nxy);
-				if (!pixel.IsEmpty)
+				if (!buf.IsEmpty(nxy))
 				{
-					diffs.Add(Distance(pixel, c));
+					var pixel = buf.GetPixel(nxy);
+					var rgb = MathHelpers.DistanceSquaredEuclidean(pixel.rgb, c.rgb) * rgbWeight;
+					var hsb = MathHelpers.DistanceSquaredEuclidean(pixel.hsb, c.hsb) * hsbWeight;
+					diffs.Add(rgb); // + hsb);
 				}
 			}
 
+			if (!diffs.Any())
+				diffs.Add(0);
+
 			// average or minimum selection
 			return UseMin
-				? (int)diffs.Average()
-				: diffs.Min();
+				? (float)diffs.Average()
+				: (float)(diffs.Min());// / diffs.Count);
 		}
 
 		static IEnumerable<Point> GetNeighbours(ImageBuffer buf, Point p)
@@ -240,11 +303,5 @@ namespace all_rgb
 				}
 			}
 		}
-
-		static int Distance(Color a, Color b)
-			=> ((a.R - b.R) * (a.R - b.R))
-			 + ((a.G - b.G) * (a.G - b.G))
-			 + ((a.B - b.B) * (a.B - b.B));
 	}
-
 }

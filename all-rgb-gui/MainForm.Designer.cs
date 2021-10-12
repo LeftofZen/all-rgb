@@ -41,6 +41,10 @@
 			this.lblHeight = new System.Windows.Forms.Label();
 			this.chkAverageMode = new System.Windows.Forms.CheckBox();
 			this.pgPaint = new System.Windows.Forms.ProgressBar();
+			this.lblETA = new System.Windows.Forms.Label();
+			this.btnPause = new System.Windows.Forms.Button();
+			this.btnOpenDir = new System.Windows.Forms.Button();
+			this.btnLoadTemplate = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbPaletteShuffled)).BeginInit();
@@ -48,6 +52,9 @@
 			// 
 			// pbFinalImage
 			// 
+			this.pbFinalImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.pbFinalImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.pbFinalImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbFinalImage.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -60,19 +67,21 @@
 			// 
 			// pbPalette
 			// 
+			this.pbPalette.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.pbPalette.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbPalette.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 			this.pbPalette.Location = new System.Drawing.Point(318, 11);
 			this.pbPalette.Name = "pbPalette";
-			this.pbPalette.Size = new System.Drawing.Size(100, 417);
-			this.pbPalette.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pbPalette.Size = new System.Drawing.Size(100, 418);
 			this.pbPalette.TabIndex = 7;
 			this.pbPalette.TabStop = false;
 			// 
 			// btnGenerateColours
 			// 
-			this.btnGenerateColours.Location = new System.Drawing.Point(13, 13);
+			this.btnGenerateColours.Location = new System.Drawing.Point(12, 14);
 			this.btnGenerateColours.Name = "btnGenerateColours";
-			this.btnGenerateColours.Size = new System.Drawing.Size(125, 23);
+			this.btnGenerateColours.Size = new System.Drawing.Size(156, 23);
 			this.btnGenerateColours.TabIndex = 1;
 			this.btnGenerateColours.Text = "Generate Colours";
 			this.btnGenerateColours.UseVisualStyleBackColor = true;
@@ -80,9 +89,9 @@
 			// 
 			// btnShuffleColours
 			// 
-			this.btnShuffleColours.Location = new System.Drawing.Point(13, 42);
+			this.btnShuffleColours.Location = new System.Drawing.Point(12, 42);
 			this.btnShuffleColours.Name = "btnShuffleColours";
-			this.btnShuffleColours.Size = new System.Drawing.Size(125, 23);
+			this.btnShuffleColours.Size = new System.Drawing.Size(156, 23);
 			this.btnShuffleColours.TabIndex = 2;
 			this.btnShuffleColours.Text = "Shuffle Colours";
 			this.btnShuffleColours.UseVisualStyleBackColor = true;
@@ -90,9 +99,9 @@
 			// 
 			// btnPaint
 			// 
-			this.btnPaint.Location = new System.Drawing.Point(13, 71);
+			this.btnPaint.Location = new System.Drawing.Point(12, 71);
 			this.btnPaint.Name = "btnPaint";
-			this.btnPaint.Size = new System.Drawing.Size(125, 23);
+			this.btnPaint.Size = new System.Drawing.Size(75, 23);
 			this.btnPaint.TabIndex = 3;
 			this.btnPaint.Text = "Paint";
 			this.btnPaint.UseVisualStyleBackColor = true;
@@ -100,9 +109,9 @@
 			// 
 			// btnSave
 			// 
-			this.btnSave.Location = new System.Drawing.Point(13, 100);
+			this.btnSave.Location = new System.Drawing.Point(138, 99);
 			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(125, 23);
+			this.btnSave.Size = new System.Drawing.Size(75, 23);
 			this.btnSave.TabIndex = 4;
 			this.btnSave.Text = "Save";
 			this.btnSave.UseVisualStyleBackColor = true;
@@ -126,11 +135,13 @@
 			// 
 			// pbPaletteShuffled
 			// 
+			this.pbPaletteShuffled.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.pbPaletteShuffled.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbPaletteShuffled.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 			this.pbPaletteShuffled.Location = new System.Drawing.Point(424, 11);
 			this.pbPaletteShuffled.Name = "pbPaletteShuffled";
 			this.pbPaletteShuffled.Size = new System.Drawing.Size(100, 418);
-			this.pbPaletteShuffled.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.pbPaletteShuffled.TabIndex = 9;
 			this.pbPaletteShuffled.TabStop = false;
 			// 
@@ -165,16 +176,62 @@
 			// 
 			// pgPaint
 			// 
-			this.pgPaint.Location = new System.Drawing.Point(12, 435);
+			this.pgPaint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.pgPaint.Location = new System.Drawing.Point(12, 446);
 			this.pgPaint.Name = "pgPaint";
 			this.pgPaint.Size = new System.Drawing.Size(512, 23);
 			this.pgPaint.TabIndex = 13;
+			// 
+			// lblETA
+			// 
+			this.lblETA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.lblETA.AutoSize = true;
+			this.lblETA.Location = new System.Drawing.Point(12, 472);
+			this.lblETA.Name = "lblETA";
+			this.lblETA.Size = new System.Drawing.Size(26, 15);
+			this.lblETA.TabIndex = 14;
+			this.lblETA.Text = "ETA";
+			// 
+			// btnPause
+			// 
+			this.btnPause.Location = new System.Drawing.Point(94, 70);
+			this.btnPause.Name = "btnPause";
+			this.btnPause.Size = new System.Drawing.Size(75, 23);
+			this.btnPause.TabIndex = 15;
+			this.btnPause.Text = "Pause";
+			this.btnPause.UseVisualStyleBackColor = true;
+			this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
+			// 
+			// btnOpenDir
+			// 
+			this.btnOpenDir.Location = new System.Drawing.Point(12, 99);
+			this.btnOpenDir.Name = "btnOpenDir";
+			this.btnOpenDir.Size = new System.Drawing.Size(120, 23);
+			this.btnOpenDir.TabIndex = 16;
+			this.btnOpenDir.Text = "Open Saved Images";
+			this.btnOpenDir.UseVisualStyleBackColor = true;
+			this.btnOpenDir.Click += new System.EventHandler(this.btnOpenDir_Click);
+			// 
+			// btnLoadTemplate
+			// 
+			this.btnLoadTemplate.Location = new System.Drawing.Point(219, 100);
+			this.btnLoadTemplate.Name = "btnLoadTemplate";
+			this.btnLoadTemplate.Size = new System.Drawing.Size(93, 23);
+			this.btnLoadTemplate.TabIndex = 17;
+			this.btnLoadTemplate.Text = "Load Template";
+			this.btnLoadTemplate.UseVisualStyleBackColor = true;
+			this.btnLoadTemplate.Click += new System.EventHandler(this.btnLoadTemplate_Click);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(537, 470);
+			this.ClientSize = new System.Drawing.Size(537, 496);
+			this.Controls.Add(this.btnLoadTemplate);
+			this.Controls.Add(this.btnOpenDir);
+			this.Controls.Add(this.btnPause);
+			this.Controls.Add(this.lblETA);
 			this.Controls.Add(this.pgPaint);
 			this.Controls.Add(this.chkAverageMode);
 			this.Controls.Add(this.lblHeight);
@@ -214,6 +271,10 @@
 		private System.Windows.Forms.Label lblHeight;
 		private System.Windows.Forms.CheckBox chkAverageMode;
 		private System.Windows.Forms.ProgressBar pgPaint;
+		private System.Windows.Forms.Label lblETA;
+		private System.Windows.Forms.Button btnPause;
+		private System.Windows.Forms.Button btnOpenDir;
+		private System.Windows.Forms.Button btnLoadTemplate;
 	}
 }
 

@@ -9,7 +9,7 @@ namespace all_rgb
 			Console.WriteLine("Hello World!");
 
 			var a = new AllRGBGenerator();
-			a.Run();
+			a.ConsoleRun();
 
 			Console.WriteLine("Goodbye World!");
 			Console.ReadLine();

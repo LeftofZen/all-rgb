@@ -8,12 +8,12 @@ namespace all_rgb
 	{
 		public ImageBuffer(int width, int height)
 		{
-			buf = new Color[height, width];
+			buf = new Colour[height, width];
+			isSet = new bool[height, width];
 		}
 
 		public ImageBuffer(Bitmap img) : this(img.Width, img.Height)
 		{
-			//var img = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
 			var rect = new Rectangle(0, 0, Width, Height);
 			var imgData = img.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 			for (var y = 0; y < Height; ++y)
@@ -27,10 +27,14 @@ namespace all_rgb
 			img.UnlockBits(imgData);
 		}
 
-		private Color[,] buf;
+		private Colour[,] buf;
+		private bool[,] isSet;
 
 		public void Clear()
-			=> buf = new Color[Height, Width];
+		{
+			buf = new Colour[Height, Width];
+			isSet = new bool[Height, Width];
+		}
 
 		public bool Contains(int X, int Y)
 			=> X >= 0 && X < Width && Y >= 0 && Y < Height;
@@ -38,18 +42,37 @@ namespace all_rgb
 		public bool Contains(Point p)
 			=> Contains(p.X, p.Y);
 
-		public Color GetPixel(Point p)
+		public Colour GetPixel(Point p)
 			=> GetPixel(p.X, p.Y);
-		public Color GetPixel(int X, int Y)
+		public Colour GetPixel(int X, int Y)
 			=> buf[Y, X];
 
-		public void SetPixel(Point p, Color c)
+		public void SetPixel(Point p, Colour c)
 			=> SetPixel(p.X, p.Y, c);
-		public void SetPixel(int X, int Y, Color c)
-			=> buf[Y, X] = c;
+
+		public void SetPixel(int X, int Y, Colour c)
+		{
+			isSet[Y, X] = true;
+			buf[Y, X] = c;
+		}
 
 		public bool IsEmpty(Point p)
-			=> GetPixel(p).IsEmpty;
+			=> IsEmpty(p.X, p.Y);
+
+		public bool IsEmpty(int X, int Y)
+			//=> !isSet[Y, X];
+			=> buf[Y, X].A == 0;
+
+		public void FillRect(int X, int Y, int Width, int Height, Colour c)
+		{
+			for (var x = X; x < X + Width; ++x)
+			{
+				for (var y = Y; y < Y + Height; ++y)
+				{
+					SetPixel(x, y, c);
+				}
+			}
+		}
 
 		public int Width
 			=> buf.GetLength(1);
@@ -71,7 +94,7 @@ namespace all_rgb
 			{
 				for (var x = 0; x < Width; ++x)
 				{
-					imgData.SetPixel(x, y, GetPixel(x, y));
+					imgData.SetPixel(x, y, isSet[y,x] ? GetPixel(x, y) : Colour.FromSystemColor(Color.White));
 				}
 			}
 
@@ -79,16 +102,18 @@ namespace all_rgb
 			return img;
 		}
 
-		public void Save(int appendix = 0)
-			=> Save(GetImage(), appendix);
+		public void Save()
+			=> Save(GetImage());
 
-		private static void Save(Image i, int appendix = 0)
+		private void Save(Image i)
 		{
 			Console.WriteLine("Saving");
 			//i.Save(@"C:\Users\Benjamin.Sutas\source\repos\all-rgb\all-rgb\content\img.png", ImageFormat.Png);
-			i.Save(@$"{baseFileName}\img{appendix}_.png", ImageFormat.Png);
+			var filename = @$"{BaseFileName}\img_{DateTime.Now.ToString().Replace(':', '-')}_{Width}x{Height}.png";
+			filename = filename.Replace(' ', '_');
+			i.Save(filename, ImageFormat.Png);
 		}
 
-		private static string baseFileName = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
+		public static string BaseFileName = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
 	}
 }

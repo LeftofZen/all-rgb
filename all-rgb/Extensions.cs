@@ -52,20 +52,21 @@ namespace all_rgb
 		//	return ptr[3] != 0; // alpha == 0 means unset
 		//}
 
-		public static unsafe Color GetPixel(this BitmapData d, Point p)
-			=> GetPixel(d, p.X, p.Y);
+		//public static unsafe Color GetPixel(this BitmapData d, Point p)
+		//	=> GetPixel(d, p.X, p.Y);
 
-		public static unsafe Color GetPixel(this BitmapData d, int X, int Y)
+		public static unsafe Colour GetPixel(this BitmapData d, int X, int Y)
 		{
 			var ptr = GetPtrToFirstPixel(d, X, Y);
-			return Color.FromArgb(ptr[3], ptr[2], ptr[1], ptr[0]);
+			return Colour.FromRGB(ptr[3], ptr[2], ptr[1]); // alpha is ptr[0]);
 		}
 
-		public static unsafe void SetPixel(this BitmapData d, Point p, Color c)
+		public static unsafe void SetPixel(this BitmapData d, Point p, Colour c)
 			=> SetPixel(d, p.X, p.Y, c);
 
-		public static unsafe void SetPixel(this BitmapData d, int X, int Y, Color c)
+		public static unsafe void SetPixel(this BitmapData d, int X, int Y, Colour c)
 			=> SetPixel(GetPtrToFirstPixel(d, X, Y), c);
+
 
 		private static unsafe byte* GetPtrToFirstPixel(this BitmapData d, int X, int Y)
 			=> (byte*)d.Scan0.ToPointer() + (Y * d.Stride) + (X * (Image.GetPixelFormatSize(d.PixelFormat) / 8));
@@ -76,6 +77,14 @@ namespace all_rgb
 			ptr[1] = c.G; // Green
 			ptr[2] = c.R; // Red
 			ptr[3] = c.A; // Alpha
+		}
+
+		private static unsafe void SetPixel(byte* ptr, Colour c)
+		{
+			ptr[0] = (byte)(c.B * 255); // Blue
+			ptr[1] = (byte)(c.G * 255); // Green
+			ptr[2] = (byte)(c.R * 255); // Red
+			ptr[3] = (byte)(c.A * 255); // Alpha
 		}
 	}
 }

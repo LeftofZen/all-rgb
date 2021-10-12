@@ -7,7 +7,7 @@ namespace all_rgb
 	/// <summary>
 	/// An ASCII progress bar
 	/// </summary>
-	public class ProgressBar : IDisposable, IProgress<double>
+	public class ConsoleProgressBar : IDisposable, IProgress<double>
 	{
 		private const int blockCount = 10;
 		private readonly TimeSpan animationInterval = TimeSpan.FromSeconds(1.0 / 8);
@@ -21,7 +21,7 @@ namespace all_rgb
 		private int animationIndex = 0;
 		private string additionalText;
 
-		public ProgressBar()
+		public ConsoleProgressBar()
 		{
 			timer = new Timer(TimerHandler);
 
