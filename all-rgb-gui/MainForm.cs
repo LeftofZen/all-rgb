@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using all_rgb;
 
@@ -38,12 +37,28 @@ namespace all_rgb_gui
 		private void btnGenerateColours_Click(object sender, EventArgs e)
 		{
 			gen.CreateBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
-			pbPalette.Image = gen.GetImageFromColours(gen.GenerateColours().ToList(), pbPalette.Width, pbPalette.Height);
+			gen.GeneratedSetOfColours = ColourGenerator.GenerateColours_RGB_Uniform(gen.CurrentBuffer.Width * gen.CurrentBuffer.Height);
+			pbPalette.Image = gen.GetImageFromColours(
+				gen.GeneratedSetOfColours.ToList(),
+				pbPalette.Width,
+				pbPalette.Height);
 		}
 
-		private void btnShuffleColours_Click(object sender, EventArgs e)
+		private void btnLoadPalette_Click(object sender, EventArgs e)
 		{
-			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ShuffleColours(), pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+			using var ofd = new OpenFileDialog();
+			ofd.InitialDirectory = ImageBuffer.BaseFileName;
+
+			if (ofd.ShowDialog() == DialogResult.OK)
+			{
+				var bmp = new Bitmap(ofd.FileName);
+				gen.CreatePalette(bmp);
+
+				pbPalette.Image = gen.GetImageFromColours(
+					gen.GeneratedSetOfColours.ToList(),
+					pbPalette.Width,
+					pbPalette.Height);
+			}
 		}
 
 		private void btnPaint_Click(object sender, EventArgs e)
@@ -64,28 +79,60 @@ namespace all_rgb_gui
 		private void btnPause_Click(object sender, EventArgs e)
 		{
 			gen.Pause = !gen.Pause;
-			btnPause.Text = gen.Pause ? "Resume" : "Pause";
+			btnPausePaint.Text = gen.Pause ? "Resume" : "Pause";
 		}
 
 		private void btnOpenDir_Click(object sender, EventArgs e)
 		{
-			Process.Start("explorer.exe", ImageBuffer.BaseFileName);
+			_ = Process.Start("explorer.exe", ImageBuffer.BaseFileName);
 		}
 
 		private void btnLoadTemplate_Click(object sender, EventArgs e)
 		{
-			using (var ofd = new OpenFileDialog())
+			using var ofd = new OpenFileDialog();
+			ofd.InitialDirectory = ImageBuffer.BaseFileName;
+
+			if (ofd.ShowDialog() == DialogResult.OK)
 			{
-				ofd.InitialDirectory = ImageBuffer.BaseFileName;
-				if (ofd.ShowDialog() == DialogResult.OK)
-				{
-					var bmp = new Bitmap(ofd.FileName);
-					tbWidth.Text = bmp.Width.ToString();
-					tbHeight.Text = bmp.Height.ToString();
-					gen.CreateTemplate(bmp);
-					pbFinalImage.Image = bmp;
-				}
+				var bmp = new Bitmap(ofd.FileName);
+				tbWidth.Text = bmp.Width.ToString();
+				tbHeight.Text = bmp.Height.ToString();
+				gen.CreateTemplate(bmp);
+				pbFinalImage.Image = bmp;
 			}
+		}
+
+		private void btnAbortPaint_Click(object sender, EventArgs e)
+		{
+			gen.Abort();
+		}
+
+		private void btnCopy_Click(object sender, EventArgs e)
+		{
+			gen.ColoursToUseInImage = gen.GeneratedSetOfColours.ToList();
+
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+		}
+
+		private void btnEqualise_Click(object sender, EventArgs e)
+		{
+			gen.ColoursToUseInImage = ColourEqualiser.Equalise(gen.ColoursToUseInImage);
+
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+		}
+
+		private void btnReverse_Click(object sender, EventArgs e)
+		{
+			gen.ColoursToUseInImage = gen.ReverseColours(gen.ColoursToUseInImage);
+
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+		}
+
+		private void btnShuffle_Click(object sender, EventArgs e)
+		{
+			gen.ColoursToUseInImage = gen.ShuffleColours(gen.ColoursToUseInImage);
+
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
 		}
 	}
 }

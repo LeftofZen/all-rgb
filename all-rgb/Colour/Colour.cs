@@ -20,6 +20,9 @@ namespace all_rgb
 			=> R == other.R
 			&& G == other.G
 			&& B == other.B;
+
+		public override string ToString()
+			=> $"RGB=[{R},{G},{B}]";
 	}
 
 	public struct HSB : IVector3Float, IEquatable<HSB>
@@ -38,6 +41,8 @@ namespace all_rgb
 			=> Hue == other.Hue
 			&& Saturation == other.Saturation
 			&& Brightness == other.Brightness;
+		public override string ToString()
+			=> $"HSB=[{Hue},{Saturation},{Brightness}]";
 	}
 
 	public struct Colour : IEquatable<Colour>
@@ -73,14 +78,14 @@ namespace all_rgb
 		public static Colour FromRGB(float r, float g, float b)
 			=> new() { A = 1f, rgb = new RGB { R = r, G = g, B = b } };
 
-		public static Colour FromRGB(RGB _rgb)
-			=> new() { A = 1f, _rgb = _rgb };
+		public static Colour FromRGB(RGB rgb_)
+			=> new() { A = 1f, rgb = rgb_ };
 
 		public static Colour FromHSB(float h, float s, float b)
-			=> new() { hsb = new HSB { Hue = h, Saturation = s, Brightness = b } };
+			=> new() { A = 1f, hsb = new HSB { Hue = h, Saturation = s, Brightness = b } };
 
-		public static Colour FromHSB(HSB _hsb)
-			=> new() { hsb = _hsb };
+		public static Colour FromHSB(HSB hsb_)
+			=> new() { A = 1f, hsb = hsb_ };
 
 		public bool Equals(Colour other)
 			=> rgb.Equals(other._rgb) && hsb.Equals(other._hsb);
@@ -90,6 +95,8 @@ namespace all_rgb
 
 		public override int GetHashCode()
 			=> HashCode.Combine(_rgb.R, _rgb.G, _rgb.B);
+		public override string ToString()
+			=> $"{_rgb} {_hsb}";
 	}
 
 	public class RGBSumColorComparer : IComparer<Colour>
@@ -98,9 +105,36 @@ namespace all_rgb
 			=> (a.rgb.R + a.rgb.B + a.rgb.G).CompareTo(b.rgb.R + b.rgb.B + b.rgb.G);
 	}
 
+	public class RGBComponentColorComparer : IComparer<Colour>
+	{
+		public int Compare(Colour a, Colour b)
+			=> a.rgb.R.CompareTo(b.rgb.R) + a.rgb.B.CompareTo(b.rgb.B) + a.rgb.G.CompareTo(b.rgb.G);
+	}
+
 	public class HSBSumColorComparer : IComparer<Colour>
 	{
 		public int Compare(Colour a, Colour b)
 			=> (a.hsb.Hue + a.hsb.Saturation + a.hsb.Brightness).CompareTo(b.hsb.Hue + b.hsb.Saturation + b.hsb.Brightness);
 	}
+	public class HSBComponentColorComparer : IComparer<Colour>
+	{
+		int hMult;
+		int sMult;
+		int bMult;
+
+		public HSBComponentColorComparer(HSBComparerComponents hsbCompoents)
+		{
+			hMult = (int)(hsbCompoents & HSBComparerComponents.Hue) >> (int)(HSBComparerComponents.Hue-1);
+			sMult = (int)(hsbCompoents & HSBComparerComponents.Saturation) >> (int)(HSBComparerComponents.Saturation - 1);
+			bMult = (int)(hsbCompoents & HSBComparerComponents.Brightness) >> (int)(HSBComparerComponents.Brightness - 1);
+		}
+
+		public int Compare(Colour a, Colour b)
+			=> (hMult * a.hsb.Hue.CompareTo(b.hsb.Hue))
+			+ (sMult * a.hsb.Saturation.CompareTo(b.hsb.Saturation))
+			+ (bMult * a.hsb.Brightness.CompareTo(b.hsb.Brightness));
+	}
+
+	[Flags]
+	public enum HSBComparerComponents { Hue = 1, Saturation = 2, Brightness = 4 };
 }

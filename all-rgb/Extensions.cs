@@ -58,7 +58,7 @@ namespace all_rgb
 		public static unsafe Colour GetPixel(this BitmapData d, int X, int Y)
 		{
 			var ptr = GetPtrToFirstPixel(d, X, Y);
-			return Colour.FromRGB(ptr[3], ptr[2], ptr[1]); // alpha is ptr[0]);
+			return Colour.FromRGB(ptr[2] / 255f, ptr[1] / 255f, ptr[0] / 255f); // alpha is ptr[3]);
 		}
 
 		public static unsafe void SetPixel(this BitmapData d, Point p, Colour c)

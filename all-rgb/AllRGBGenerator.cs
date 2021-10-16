@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace all_rgb
@@ -14,8 +15,8 @@ namespace all_rgb
 		public AllRGBGenerator()
 		{ }
 
-		public List<Colour> ShuffledColours;
-		public HashSet<Colour> SetOfAllColours;
+		public List<Colour> ColoursToUseInImage = new List<Colour>();
+		public HashSet<Colour> GeneratedSetOfColours = new HashSet<Colour>();
 		ImageBuffer buffer;
 
 		public bool UseMin;
@@ -41,30 +42,6 @@ namespace all_rgb
 			return img.GetImage();
 		}
 
-		private static List<Colour> SortColoursHSB(List<Colour> colours)
-		{
-			colours.Sort((Colour a, Colour b)
-				=>
-					a.Hue.CompareTo(b.Hue)
-					+ a.Saturation.CompareTo(b.Saturation)
-					+ a.Brightness.CompareTo(b.Brightness)
-				);
-
-			return colours;
-		}
-
-		private static List<Colour> SortColoursRGB(List<Colour> colours)
-		{
-			colours.Sort((Colour a, Colour b)
-				=>
-					a.R.CompareTo(b.R)
-					+ a.G.CompareTo(b.G)
-					+ a.B.CompareTo(b.B)
-				);
-
-			return colours;
-		}
-
 		private static List<Colour> SortColoursNN(List<Colour> colours)
 		{
 			List<Colour> output = new();
@@ -80,7 +57,7 @@ namespace all_rgb
 				var minDistance = float.MaxValue;
 				for (var i = 1; i < colours.Count; ++i)
 				{
-					var distance = MathHelpers.DistanceSquaredEuclidean(curr.rgb, colours[i].rgb);
+					var distance = MathsHelpers.DistanceSquaredEuclidean(curr.rgb, colours[i].rgb);
 					if (distance < minDistance)
 					{
 						minDistance = distance;
@@ -102,9 +79,9 @@ namespace all_rgb
 		{
 			CreateBuffer();
 
-			SetOfAllColours = ColourGenerator.GenerateColours(buffer.Width * buffer.Height);
+			GeneratedSetOfColours = ColourGenerator.GenerateColours_RGB_Uniform(buffer.Width * buffer.Height);
 
-			ShuffleColours();
+			//RefineColours(true, false);
 
 			Paint();
 
@@ -125,8 +102,23 @@ namespace all_rgb
 				{
 					if (Colour.FromSystemColor(templateImage.GetPixel(x, y)) == Colour.FromSystemColor(Color.Black))
 					{
-						AvailableSet.Add(new Point(x, y));
+						_ = AvailableSet.Add(new Point(x, y));
 					}
+				}
+			}
+		}
+
+		public void CreatePalette(Bitmap paletteImage)
+		{
+			AvailableSet.Clear();
+			var imgBuf = new ImageBuffer(paletteImage);
+			GeneratedSetOfColours.Clear();
+
+			for (var y = 0; y < imgBuf.Height; ++y)
+			{
+				for (var x = 0; x < imgBuf.Width; ++x)
+				{
+					_ = GeneratedSetOfColours.Add(imgBuf.GetPixel(x, y));
 				}
 			}
 		}
@@ -139,56 +131,100 @@ namespace all_rgb
 
 		HashSet<Point> AvailableSet = new HashSet<Point>();
 
-		public List<Colour> ShuffleColours()
+		#region PaletteSelection
+
+		//public List<Colour> RefineColours(bool shuffle, bool reverse)
+		//{
+		//	Console.WriteLine("Refining");
+		//	ShuffledColours = SetOfColours.ToList();
+
+		//	//ShuffledColours = SortColoursRGB(ShuffledColours);
+		//	//ShuffledColours = SortColoursHSB(ShuffledColours);
+		//	//ShuffledColours = SortColoursNN(ShuffledColours);
+
+		//	//ShuffledColours.Sort(new HSBComponentColorComparer(HSBComparerComponents.Saturation));
+
+		//	if (reverse)
+		//	{
+		//		ShuffledColours.Reverse();
+		//	}
+
+
+		//	if (shuffle)
+		//	{
+		//		ShuffledColours.Shuffle();
+		//	}
+
+		//	//ShuffledColours.Sort((Colour a, Colour b)
+		//	//		=>
+		//	//		 a.GetHue().CompareTo(b.GetHue()) * 2
+		//	//		 + a.GetSaturation().CompareTo(b.GetSaturation())
+		//	//		 + b.GetBrightness().CompareTo(a.GetBrightness())
+		//	//		);
+
+		//	return ShuffledColours;
+		//}
+
+		public List<Colour> CopyColoursFromGenerated(List<Colour> colours)
 		{
-			Console.WriteLine("Shuffling");
-			ShuffledColours = SetOfAllColours.ToList();
-
-			ShuffledColours = SortColoursRGB(ShuffledColours);
-			//ShuffledColours = SortColoursHSB(ShuffledColours);
-			//ShuffledColours = SortColoursNN(ShuffledColours);
-			//ShuffledColours.Reverse();
-
-			//ShuffledColours.Shuffle();
-
-			//ShuffledColours.Sort((Colour a, Colour b)
-			//		=>
-			//		 a.GetHue().CompareTo(b.GetHue()) * 2
-			//		 + a.GetSaturation().CompareTo(b.GetSaturation())
-			//		 + b.GetBrightness().CompareTo(a.GetBrightness())
-			//		);
-
-			return ShuffledColours;
+			return GeneratedSetOfColours.ToList();
 		}
 
-		static float RescaleFloat(float val, float min, float max)
-			=> (val * (min - max)) + min;
+		public List<Colour> ReverseColours(List<Colour> colours)
+		{
+			colours.Reverse();
+			return colours;
+		}
+
+		public List<Colour> ShuffleColours(List<Colour> colours)
+		{
+			colours.Shuffle();
+			return colours;
+		}
+
+		#endregion
+
+		public ImageBuffer CurrentBuffer => buffer;
 
 		public Task<Image> Paint()
 		{
 			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
-			PaintTask = Task.Run(() => Paint(buffer, ShuffledColours ?? SetOfAllColours.ToList(), progress));
+			PaintTask = Task.Run(() => Paint(ColoursToUseInImage ?? GeneratedSetOfColours.ToList(), progress), paintTokenSource.Token);
 			return PaintTask;
 		}
 
 		public Task<Image> PaintTask;
+		CancellationTokenSource paintTokenSource = new CancellationTokenSource();
+		//CancellationToken paintToken;
 
 		public Action<ProgressReport> ProgressCallback = new((_) => { });
 
 		float PointOrderFunc(ImageBuffer buf, Point xy, Colour col, bool UseMin)
 		{
 			var c = GetNearestColour(buf, xy, col, UseMin);
-			var d = MathHelpers.DistanceEuclidean(xy, buf.Middle) / 4000000000f;
-			//var d = 0;
+			var d = MathsHelpers.DistanceEuclidean(xy, buf.Middle) / 4000000f;
 
 			return c + d;
 		}
 
 		public bool Pause { get; set; }
 
-		Image Paint(ImageBuffer buf, List<Colour> cols, IProgress<ProgressReport> progress)
+		public void Abort()
 		{
-			buffer?.Clear();
+			paintTokenSource.Cancel();
+		}
+
+		Image Paint(List<Colour> cols, IProgress<ProgressReport> progress)
+		{
+			if (buffer == null)
+			{
+				var size = (int)Math.Sqrt(cols.Count);
+				buffer = new ImageBuffer(size, size);
+			}
+			else
+			{
+				buffer.Clear();
+			}
 
 			Console.WriteLine("Painting");
 
@@ -205,27 +241,49 @@ namespace all_rgb
 
 				foreach (var col in cols)
 				{
-					while (Pause) ;
+					#region Pause
+
+					while (Pause)
+					{
+						stopwatch.Stop();
+						Thread.Yield();
+					}
+
+					if (!stopwatch.IsRunning)
+					{
+						stopwatch.Start();
+					}
+
+					#endregion
+
+					#region Abort
+					if (paintTokenSource.IsCancellationRequested)
+					{
+						var abortStr = $"Aborted at {stopwatch.Elapsed:g}";
+						progress.Report(baseRecord with { percent = 1f, etaText = abortStr, prgi = GetCurrentImage() });
+						break;
+					}
+					#endregion
 
 					if (AvailableSet.Count == 0)
 					{
-						bestXY = buf.Middle;
+						bestXY = buffer.Middle;
 					}
 					else
 					{
 						bestXY = AvailableSet
 							.AsParallel()
-							.OrderBy(xy => PointOrderFunc(buf, xy, col, UseMin))
+							.OrderBy(xy => PointOrderFunc(buffer, xy, col, UseMin))
 							.First();
 					}
 
-					buf.SetPixel(bestXY, col);
+					buffer.SetPixel(bestXY, col);
 					AvailableSet.Remove(bestXY);
 
 					// add neighbours
-					foreach (var nxy in GetNeighbours(buf, bestXY))
+					foreach (var nxy in GetNeighbours(buffer, bestXY))
 					{
-						if (buf.IsEmpty(nxy))
+						if (buffer.IsEmpty(nxy))
 						{
 							_ = AvailableSet.Add(nxy);
 						}
@@ -272,11 +330,13 @@ namespace all_rgb
 			var diffs = new List<float>(8);
 			foreach (var nxy in GetNeighbours(buf, xy))
 			{
+				// count empty neighbours and adjust weighting based on how many
+				// more neighbours = higher weighting
 				if (!buf.IsEmpty(nxy))
 				{
 					var pixel = buf.GetPixel(nxy);
-					var rgb = MathHelpers.DistanceSquaredEuclidean(pixel.rgb, c.rgb) * rgbWeight;
-					var hsb = MathHelpers.DistanceSquaredEuclidean(pixel.hsb, c.hsb) * hsbWeight;
+					var rgb = MathsHelpers.DistanceSquaredEuclidean(pixel.rgb, c.rgb) * rgbWeight;
+					var hsb = MathsHelpers.DistanceSquaredEuclidean(pixel.hsb, c.hsb) * hsbWeight;
 					diffs.Add(rgb); // + hsb);
 				}
 			}

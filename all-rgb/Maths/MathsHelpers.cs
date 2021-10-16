@@ -33,5 +33,9 @@ namespace all_rgb
 
 		public static float DistanceEuclidean(System.Drawing.Point a, System.Drawing.Point b)
 			=> (float)Math.Sqrt(DistanceSquaredEuclidean(a, b));
+
+
+		public static float RescaleFloat(float val, float min, float max)
+			=> (val * (min - max)) + min;
 	}
 }

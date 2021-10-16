@@ -9,7 +9,7 @@ namespace all_rgb
 {
 	public static class ColourGenerator
 	{
-		public static HashSet<Colour> GenerateColours(int pixelCount)
+		public static HashSet<Colour> GenerateColours_RGB_Uniform(int pixelCount)
 		{
 			Console.WriteLine("Generating colours");
 
@@ -22,13 +22,10 @@ namespace all_rgb
 			var setOfAllColours = new HashSet<Colour>(pixelCount);
 
 			var stepsPerChannel = (int)Math.Pow(pixelCount, 1f / 3f);
-			var stepSize = 1f / stepsPerChannel;
+			var stepSize = 1f / (stepsPerChannel - 1); // subtract 1 because range is inclusive - 3 steps is [0, 0.5, 1]
 			var rSteps = stepsPerChannel;
 			var gSteps = stepsPerChannel;
 			var bSteps = stepsPerChannel;
-
-			var minVal = 0.1f;
-			var maxVal = 0.9f;
 
 			for (var r = 0; r < rSteps; ++r)
 			{
@@ -40,20 +37,9 @@ namespace all_rgb
 						var gg = stepSize * g;
 						var bb = stepSize * b;
 
-						//rr = RescaleFloat(rr, minVal, maxVal);
-						//gg = RescaleFloat(gg, minVal, maxVal);
-						//bb = RescaleFloat(bb, minVal, maxVal);
-
 						var c = Colour.FromRGB(rr, gg, bb);
-						//var c = Colour.FromHSB(rr, gg, bb);
-						//const bool Pastel = true;
 
-						//if (Pastel)
-						//{
-						//	// need to replace System.Drawing.Colour with our own colour struct
-						//}
-
-						if (setOfAllColours.Add(c))
+						if (!setOfAllColours.Add(c))
 						{
 							Trace.Assert(false, "duplicate colour detected", c.ToString());
 						}
@@ -61,20 +47,47 @@ namespace all_rgb
 				}
 			}
 
-			//sw.Stop();
+			Trace.Assert(setOfAllColours.Count == stepsPerChannel * stepsPerChannel * stepsPerChannel);
 
 			var rnd = new Random(1);
-			// leftover
+
+			// leftover from non-integer cube root
 			while (setOfAllColours.Count < pixelCount)
 			{
-				Trace.Assert(setOfAllColours.Add(Colour.FromRGB(
+				_ = setOfAllColours.Add(Colour.FromRGB(
 					(float)rnd.NextDouble(),
 					(float)rnd.NextDouble(),
 					(float)rnd.NextDouble()
-					)));
+					));
 			}
 
 			Trace.Assert(setOfAllColours.Count >= pixelCount);
+
+			return setOfAllColours;
+		}
+
+		public static HashSet<Colour> GenerateColours_HSB_Random(int pixelCount)
+		{
+			Console.WriteLine("Generating colours");
+
+			if (pixelCount == 0)
+			{
+				Console.WriteLine("no pixels");
+				return new HashSet<Colour>();
+			}
+
+			var setOfAllColours = new HashSet<Colour>(pixelCount);
+			var rnd = new Random(1);
+
+			while (setOfAllColours.Count < pixelCount)
+			{
+				_ = setOfAllColours.Add(Colour.FromHSB(
+					(float)rnd.NextDouble(),
+					(float)rnd.NextDouble(),
+					(float)rnd.NextDouble()));
+			}
+
+			Trace.Assert(setOfAllColours.Count == pixelCount);
 
 			return setOfAllColours;
 		}
