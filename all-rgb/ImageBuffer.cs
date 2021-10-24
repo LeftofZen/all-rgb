@@ -10,7 +10,10 @@ namespace all_rgb
 		{
 			buf = new Colour[height, width];
 			isSet = new bool[height, width];
+			Radius = MathsHelpers.DistanceEuclidean(new Point(0, 0), Middle);
 		}
+
+		public float Radius { get; init; }
 
 		public ImageBuffer(Bitmap img) : this(img.Width, img.Height)
 		{

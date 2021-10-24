@@ -34,8 +34,15 @@ namespace all_rgb
 		public static float DistanceEuclidean(System.Drawing.Point a, System.Drawing.Point b)
 			=> (float)Math.Sqrt(DistanceSquaredEuclidean(a, b));
 
+		public static float DistanceEuclidean(System.Drawing.Point a, System.Drawing.Point b, float maxDistance)
+			=> (float)Math.Sqrt(DistanceSquaredEuclidean(a, b) / maxDistance);
 
 		public static float RescaleFloat(float val, float min, float max)
 			=> (val * (min - max)) + min;
+
+		internal static float DistanceSquaredManhattan(RGB rgb1, RGB rgb2)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

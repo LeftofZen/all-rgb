@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace all_rgb
 {
@@ -99,6 +100,25 @@ namespace all_rgb
 			=> $"{_rgb} {_hsb}";
 	}
 
+	public static class ColourHelpers
+	{
+		public static Colour Average(IEnumerable<Colour> colours)
+		{
+			var total = new Colour();
+			foreach (var c in colours)
+			{
+				total.R += c.R;
+				total.G += c.G;
+				total.B += c.B;
+			}
+
+			total.R /= colours.Count();
+			total.G /= colours.Count();
+			total.B /= colours.Count();
+			return total;
+		}
+	}
+
 	public class RGBSumColorComparer : IComparer<Colour>
 	{
 		public int Compare(Colour a, Colour b)
@@ -107,8 +127,24 @@ namespace all_rgb
 
 	public class RGBComponentColorComparer : IComparer<Colour>
 	{
+		int rMult;
+		int gMult;
+		int bMult;
+
+		public RGBComponentColorComparer(RGBComparerComponents rgbCompoents)
+		{
+			if (rgbCompoents == RGBComparerComponents.Empty)
+				throw new ArgumentException("RGBComparerComponents cannot be empty");
+
+			rMult = (int)(rgbCompoents & RGBComparerComponents.Red) >> (int)(RGBComparerComponents.Red - 1);
+			gMult = (int)(rgbCompoents & RGBComparerComponents.Green) >> (int)(RGBComparerComponents.Green - 1);
+			bMult = (int)(rgbCompoents & RGBComparerComponents.Blue) >> (int)(RGBComparerComponents.Blue - 1);
+		}
+
 		public int Compare(Colour a, Colour b)
-			=> a.rgb.R.CompareTo(b.rgb.R) + a.rgb.B.CompareTo(b.rgb.B) + a.rgb.G.CompareTo(b.rgb.G);
+			=> (rMult * a.rgb.R.CompareTo(b.rgb.R))
+			+ (gMult * a.rgb.G.CompareTo(b.rgb.G))
+			+ (bMult * a.rgb.B.CompareTo(b.rgb.B));
 	}
 
 	public class HSBSumColorComparer : IComparer<Colour>
@@ -124,6 +160,9 @@ namespace all_rgb
 
 		public HSBComponentColorComparer(HSBComparerComponents hsbCompoents)
 		{
+			if (hsbCompoents == HSBComparerComponents.Empty)
+				throw new ArgumentException("HSBComparerComponents cannot be empty");
+
 			hMult = (int)(hsbCompoents & HSBComparerComponents.Hue) >> (int)(HSBComparerComponents.Hue-1);
 			sMult = (int)(hsbCompoents & HSBComparerComponents.Saturation) >> (int)(HSBComparerComponents.Saturation - 1);
 			bMult = (int)(hsbCompoents & HSBComparerComponents.Brightness) >> (int)(HSBComparerComponents.Brightness - 1);
@@ -136,5 +175,9 @@ namespace all_rgb
 	}
 
 	[Flags]
-	public enum HSBComparerComponents { Hue = 1, Saturation = 2, Brightness = 4 };
+	public enum HSBComparerComponents { Empty = 0, Hue = 1, Saturation = 2, Brightness = 4 };
+
+	[Flags]
+	public enum RGBComparerComponents { Empty = 0, Red = 1, Green = 2, Blue = 4 };
+
 }

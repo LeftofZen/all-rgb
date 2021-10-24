@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -8,20 +9,19 @@ using System.Threading.Tasks;
 
 namespace all_rgb
 {
-	public record ProgressReport(float percent, string etaText, Image prgi);
+	public record ProgressReport(float percent, string etaText, Image prgi, string batchInfo);
 
 	public class AllRGBGenerator
 	{
 		public AllRGBGenerator()
 		{ }
 
-		public List<Colour> ColoursToUseInImage = new List<Colour>();
-		public HashSet<Colour> GeneratedSetOfColours = new HashSet<Colour>();
+		public List<Colour> Colours = new List<Colour>();
 		ImageBuffer buffer;
 
 		public bool UseMin;
 
-		public Image GetImageFromColours(List<Colour> colours, int width, int height)
+		public static Image GetImageFromColours(List<Colour> colours, int width, int height)
 		{
 			var img = new ImageBuffer(width, height);
 			var coloursPerPixel = (float)colours.Count / (width * height);
@@ -40,6 +40,35 @@ namespace all_rgb
 			}
 
 			return img.GetImage();
+		}
+		//private static List<Colour> SortColoursRGB(List<Colour> colours, RGBComparerComponents rgbComponents)
+		//{
+		//	if (rgbComponents != RGBComparerComponents.Empty)
+		//		colours.Sort(new RGBComponentColorComparer(rgbComponents));
+		//	else
+		//		colours.Sort(new RGBSumColorComparer());
+
+		//	return colours;
+		//}
+
+		private static List<Colour> SortColoursRGB(List<Colour> colours, RGBComparerComponents rgbComponents)
+		{
+			if (rgbComponents != RGBComparerComponents.Empty)
+				colours.Sort(new RGBComponentColorComparer(rgbComponents));
+			else
+				colours = colours.OrderBy(c => c.R).ThenBy(c => c.G).ThenBy(c => c.B).ToList();
+
+			return colours;
+		}
+
+		private static List<Colour> SortColoursHSB(List<Colour> colours, HSBComparerComponents hsbComponents)
+		{
+			if (hsbComponents != HSBComparerComponents.Empty)
+				colours.Sort(new HSBComponentColorComparer(hsbComponents));
+			else
+				colours.Sort(new HSBSumColorComparer());
+
+			return colours;
 		}
 
 		private static List<Colour> SortColoursNN(List<Colour> colours)
@@ -79,11 +108,11 @@ namespace all_rgb
 		{
 			CreateBuffer();
 
-			GeneratedSetOfColours = ColourGenerator.GenerateColours_RGB_Uniform(buffer.Width * buffer.Height);
+			Colours = ColourGenerator.GenerateColours_RGB_Uniform(buffer.Width * buffer.Height).ToList();
 
 			//RefineColours(true, false);
-
-			Paint();
+			var nearestColourParam = new NearestColourParam();
+			Paint(nearestColourParam);
 
 			Save();
 		}
@@ -93,7 +122,7 @@ namespace all_rgb
 
 		public void CreateTemplate(Bitmap templateImage)
 		{
-			AvailableSet.Clear();
+			Frontier.Clear();
 			CreateBuffer(templateImage.Width, templateImage.Height);
 
 			for (var y = 0; y < templateImage.Height; ++y)
@@ -102,7 +131,7 @@ namespace all_rgb
 				{
 					if (Colour.FromSystemColor(templateImage.GetPixel(x, y)) == Colour.FromSystemColor(Color.Black))
 					{
-						_ = AvailableSet.Add(new Point(x, y));
+						_ = Frontier.Add(new Point(x, y));
 					}
 				}
 			}
@@ -110,15 +139,15 @@ namespace all_rgb
 
 		public void CreatePalette(Bitmap paletteImage)
 		{
-			AvailableSet.Clear();
+			Frontier.Clear();
 			var imgBuf = new ImageBuffer(paletteImage);
-			GeneratedSetOfColours.Clear();
+			Colours.Clear();
 
 			for (var y = 0; y < imgBuf.Height; ++y)
 			{
 				for (var x = 0; x < imgBuf.Width; ++x)
 				{
-					_ = GeneratedSetOfColours.Add(imgBuf.GetPixel(x, y));
+					Colours.Add(imgBuf.GetPixel(x, y));
 				}
 			}
 		}
@@ -129,96 +158,67 @@ namespace all_rgb
 		public void Save()
 			=> buffer.Save();
 
-		HashSet<Point> AvailableSet = new HashSet<Point>();
-
 		#region PaletteSelection
 
-		//public List<Colour> RefineColours(bool shuffle, bool reverse)
-		//{
-		//	Console.WriteLine("Refining");
-		//	ShuffledColours = SetOfColours.ToList();
-
-		//	//ShuffledColours = SortColoursRGB(ShuffledColours);
-		//	//ShuffledColours = SortColoursHSB(ShuffledColours);
-		//	//ShuffledColours = SortColoursNN(ShuffledColours);
-
-		//	//ShuffledColours.Sort(new HSBComponentColorComparer(HSBComparerComponents.Saturation));
-
-		//	if (reverse)
-		//	{
-		//		ShuffledColours.Reverse();
-		//	}
-
-
-		//	if (shuffle)
-		//	{
-		//		ShuffledColours.Shuffle();
-		//	}
-
-		//	//ShuffledColours.Sort((Colour a, Colour b)
-		//	//		=>
-		//	//		 a.GetHue().CompareTo(b.GetHue()) * 2
-		//	//		 + a.GetSaturation().CompareTo(b.GetSaturation())
-		//	//		 + b.GetBrightness().CompareTo(a.GetBrightness())
-		//	//		);
-
-		//	return ShuffledColours;
-		//}
-
-		public List<Colour> CopyColoursFromGenerated(List<Colour> colours)
-		{
-			return GeneratedSetOfColours.ToList();
-		}
-
-		public List<Colour> ReverseColours(List<Colour> colours)
+		public static List<Colour> ReverseColours(List<Colour> colours)
 		{
 			colours.Reverse();
 			return colours;
 		}
 
-		public List<Colour> ShuffleColours(List<Colour> colours)
+		/// <summary>
+		///  
+		/// </summary>
+		/// <param name="colours"></param>
+		/// <param name="percentToDeviate">0 = no shuffle, 1 = full shuffle, values inbetween mean an item can only move a % distance to a new spot.
+		/// eg 0.5 means an item can move at most 50% away from it's initial position</param>
+		/// <returns></returns>
+		public static List<Colour> ShuffleColours(List<Colour> colours, float percentToDeviate = 1f, int skip = 1)
 		{
-			colours.Shuffle();
+			colours.Shuffle(percentToDeviate, skip);
 			return colours;
 		}
+
+		public enum SortType { RGB, HSB, NN };
+
+		public static List<Colour> SortColours(List<Colour> colours, SortType sortType, RGBComparerComponents? rgbComparerComponents = null, HSBComparerComponents? hsbComparerComponents = null)
+		=> sortType switch
+		{
+			SortType.RGB => SortColoursRGB(colours, rgbComparerComponents.Value),
+			SortType.HSB => SortColoursHSB(colours, hsbComparerComponents.Value),
+			SortType.NN => SortColoursNN(colours),
+			_ => throw new NotImplementedException(),
+		};
 
 		#endregion
 
 		public ImageBuffer CurrentBuffer => buffer;
 
-		public Task<Image> Paint()
+		public Task<Image> Paint(NearestColourParam nearestColourParam)
 		{
 			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
-			PaintTask = Task.Run(() => Paint(ColoursToUseInImage ?? GeneratedSetOfColours.ToList(), progress), paintTokenSource.Token);
+			PaintTask = Task.Run(() => Paint(Colours, progress, nearestColourParam));
 			return PaintTask;
 		}
 
 		public Task<Image> PaintTask;
-		CancellationTokenSource paintTokenSource = new CancellationTokenSource();
-		//CancellationToken paintToken;
 
 		public Action<ProgressReport> ProgressCallback = new((_) => { });
 
-		float PointOrderFunc(ImageBuffer buf, Point xy, Colour col, bool UseMin)
-		{
-			var c = GetNearestColour(buf, xy, col, UseMin);
-			var d = MathsHelpers.DistanceEuclidean(xy, buf.Middle) / 4000000f;
-
-			return c + d;
-		}
-
 		public bool Pause { get; set; }
 
-		public void Abort()
-		{
-			paintTokenSource.Cancel();
-		}
+		bool Abort { get; set; }
 
-		Image Paint(List<Colour> cols, IProgress<ProgressReport> progress)
+		public void AbortPaint() => Abort = true;
+
+
+		HashSet<Point> Frontier = new();
+
+		Image Paint(List<Colour> cols, IProgress<ProgressReport> progress, NearestColourParam  nearestColourParam)
 		{
+			var size = (int)Math.Sqrt(cols.Count);
 			if (buffer == null)
 			{
-				var size = (int)Math.Sqrt(cols.Count);
 				buffer = new ImageBuffer(size, size);
 			}
 			else
@@ -226,14 +226,20 @@ namespace all_rgb
 				buffer.Clear();
 			}
 
+			Abort = false;
+
 			Console.WriteLine("Painting");
 
 			var counter = 0;
+			var refreshRate = size * 2;
 
-			var stopwatch = new Stopwatch();
-			stopwatch.Start();
+			var swTotal = new Stopwatch();
+			swTotal.Start();
 
-			var baseRecord = new ProgressReport(0f, "Forever", null);
+			var swBatch = new Stopwatch();
+			swBatch.Start();
+
+			var baseRecord = new ProgressReport(0f, "Forever", null, "Unknown");
 
 			using (var consoleProgressBar = new ConsoleProgressBar())
 			{
@@ -241,116 +247,141 @@ namespace all_rgb
 
 				foreach (var col in cols)
 				{
+					#region Abort
+
+					if (Abort)
+					{
+						var abortStr = $"Aborted at {swTotal.Elapsed:g}";
+						progress.Report(baseRecord with { percent = 1f, etaText = abortStr, prgi = GetCurrentImage() });
+						break;
+					}
+
+					#endregion
+
 					#region Pause
 
 					while (Pause)
 					{
-						stopwatch.Stop();
-						Thread.Yield();
+						swTotal.Stop();
+						Thread.Sleep(50);
+						_ = Thread.Yield();
 					}
 
-					if (!stopwatch.IsRunning)
+					if (!swTotal.IsRunning)
 					{
-						stopwatch.Start();
+						swTotal.Start();
 					}
 
 					#endregion
 
-					#region Abort
-					if (paintTokenSource.IsCancellationRequested)
-					{
-						var abortStr = $"Aborted at {stopwatch.Elapsed:g}";
-						progress.Report(baseRecord with { percent = 1f, etaText = abortStr, prgi = GetCurrentImage() });
-						break;
-					}
-					#endregion
 
-					if (AvailableSet.Count == 0)
+					if (Frontier.Count == 0)
 					{
 						bestXY = buffer.Middle;
 					}
 					else
 					{
-						bestXY = AvailableSet
+						var avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, buffer.Middle));
+						avgDistance /= buffer.Radius;
+						avgDistance /= Frontier.Count(); // scale to 0-1 range
+
+						bestXY = Frontier
 							.AsParallel()
-							.OrderBy(xy => PointOrderFunc(buffer, xy, col, UseMin))
+							.OrderByDescending(xy => GetNearestColour(buffer, xy, col, nearestColourParam, avgDistance))
 							.First();
 					}
 
 					buffer.SetPixel(bestXY, col);
-					AvailableSet.Remove(bestXY);
+					Frontier.Remove(bestXY);
 
 					// add neighbours
-					foreach (var nxy in GetNeighbours(buffer, bestXY))
+					foreach (var nxy in GetNeighbourPoints(buffer, bestXY))
 					{
 						if (buffer.IsEmpty(nxy))
 						{
-							_ = AvailableSet.Add(nxy);
+							_ = Frontier.Add(nxy);
 						}
 					}
 
 					counter++;
 
-					const int refreshRate = 256;
-
 					var percentDone = (float)counter / cols.Count;
 					if (counter % refreshRate == 0)
 					{
-						var timeElapsed = stopwatch.ElapsedMilliseconds;
+						var timeElapsed = swTotal.ElapsedMilliseconds;
 						var eta = (1f / percentDone * timeElapsed) - timeElapsed;
 						var ts = new TimeSpan(0, 0, 0, 0, (int)eta);
-						var timeStr = $"Elapsed={stopwatch.Elapsed:g}s ETA={ts:g}s Progress={percentDone:P}";
+						var timeStr = $"Elapsed={swTotal.Elapsed:g} ETA={ts:g} Progress={percentDone:P}";
 
 						consoleProgressBar.Report(percentDone, timeStr);
-						progress.Report(baseRecord with { percent = percentDone, etaText = timeStr, prgi = counter % refreshRate == 0 ? GetCurrentImage() : null });
+						progress.Report(baseRecord with { 
+							percent = percentDone, 
+							etaText = timeStr, 
+							prgi = counter % refreshRate == 0 ? GetCurrentImage() : null,
+							batchInfo = $"BatchSize={refreshRate} BatchTime={swBatch.ElapsedMilliseconds}ms FrontierSize={Frontier.Count}"});
+						
+						swBatch.Restart();
 					}
 				}
 
-				stopwatch.Stop();
-				var doneStr = $"Done in {stopwatch.Elapsed:g}";
+				swTotal.Stop();
+				var doneStr = $"Done in {swTotal.Elapsed:g}";
 				consoleProgressBar.Report(1, doneStr);
 				progress.Report(baseRecord with { percent = 1f, etaText = doneStr, prgi = GetCurrentImage() });
 			}
 
-			stopwatch.Reset();
-			AvailableSet.Clear();
-
-			// debug rect
-			//buf.FillRect(0, 0, 40, 40, Colour.FromSystemColor(Color.White));
+			swTotal.Reset();
+			Frontier.Clear();
 
 			return GetCurrentImage();
 		}
 
-		static float GetNearestColour(ImageBuffer buf, Point xy, Colour c, bool UseMin)
+		// this method is not threadsafe
+		static float GetNearestColour(ImageBuffer buf, Point xy, Colour c, NearestColourParam nearestColourParam, float avgDistanceFromCentre)
 		{
-			const float rgbWeight = 1f;
-			const float hsbWeight = 0f;
-
-			// get the diffs for each neighbor separately
+			// get the diffs for each neighbour separately
 			var diffs = new List<float>(8);
-			foreach (var nxy in GetNeighbours(buf, xy))
+			foreach (var nxy in GetNeighbourPoints(buf, xy))
 			{
-				// count empty neighbours and adjust weighting based on how many
-				// more neighbours = higher weighting
 				if (!buf.IsEmpty(nxy))
 				{
 					var pixel = buf.GetPixel(nxy);
-					var rgb = MathsHelpers.DistanceSquaredEuclidean(pixel.rgb, c.rgb) * rgbWeight;
-					var hsb = MathsHelpers.DistanceSquaredEuclidean(pixel.hsb, c.hsb) * hsbWeight;
-					diffs.Add(rgb); // + hsb);
+					var rgb = (1f - MathsHelpers.DistanceEuclidean(pixel.rgb, c.rgb)) * nearestColourParam.RgbWeight;
+					var hsb = (1f - MathsHelpers.DistanceEuclidean(pixel.hsb, c.hsb)) * nearestColourParam.HsbWeight;
+					diffs.Add((rgb + hsb) / 2f);
 				}
 			}
 
+			// distance modifier
+			var distance = MathsHelpers.DistanceEuclidean(xy, buf.Middle) / buf.Radius;
+			var diff = distance / avgDistanceFromCentre * nearestColourParam.DistanceWeight;
+			diffs.Add(diff);
+
 			if (!diffs.Any())
+			{
 				diffs.Add(0);
+			}
 
 			// average or minimum selection
-			return UseMin
-				? (float)diffs.Average()
-				: (float)(diffs.Min());// / diffs.Count);
+			var selectedDiff = nearestColourParam.UseMin
+				? (float)diffs.Max()
+				: (float)diffs.Average();
+
+			// count empty neighbours and adjust weighting based on how many
+			// more neighbours = higher weighting
+
+			var neighbourMulti = 1f;
+			//if (nearestColourParam.NeighbourCountWeight != 0)
+			//{
+			//	const float scalar = 0.5f;
+			//	neighbourMulti = (float)((scalar / Math.Sqrt(diffs.Count)) + (1.0 - scalar)) * nearestColourParam.NeighbourCountWeight * scalar;
+			//	neighbourMulti = diffs.Count > nearestColourParam.NeighbourCountThreshold ? neighbourMulti : 1f;
+			//}
+
+			return selectedDiff * neighbourMulti;
 		}
 
-		static IEnumerable<Point> GetNeighbours(ImageBuffer buf, Point p)
+		static IEnumerable<Point> GetNeighbourPoints(ImageBuffer buf, Point p)
 		{
 			for (var x = -1; x < 2; ++x)
 			{
@@ -359,6 +390,23 @@ namespace all_rgb
 					if (p.X + x >= 0 && p.X + x < buf.Width && p.Y + y >= 0 && p.Y + y < buf.Height)
 					{
 						yield return new Point(p.X + x, p.Y + y);
+					}
+				}
+			}
+		}
+
+		static IEnumerable<Colour> GetNonEmptyNeighbourColours(ImageBuffer buf, Point p)
+		{
+			for (var x = -1; x < 2; ++x)
+			{
+				for (var y = -1; y < 2; ++y)
+				{
+					if (p.X + x >= 0 && p.X + x < buf.Width && p.Y + y >= 0 && p.Y + y < buf.Height)
+					{
+						if (buf.IsEmpty(p.X + x, p.Y + y))
+						{
+							yield return buf.GetPixel(p.X + x, p.Y + y);
+						}
 					}
 				}
 			}

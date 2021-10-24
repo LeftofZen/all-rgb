@@ -8,13 +8,13 @@ namespace all_rgb
 	public static class IListExtensions
 	{
 		static Random rnd = new Random(1);
-		public static void Shuffle<T>(this IList<T> ts)
+		public static void Shuffle<T>(this IList<T> ts, float percentToDeviate = 1f, int skip = 1)
 		{
 			var count = ts.Count;
 			var last = count - 1;
-			for (var i = 0; i < last; ++i)
+			for (var i = 0; i < last; i += skip)
 			{
-				var r = rnd.Next(i, count);
+				var r = rnd.Next(i, (int)(((count - i) * percentToDeviate) + i));
 				var tmp = ts[i];
 				ts[i] = ts[r];
 				ts[r] = tmp;

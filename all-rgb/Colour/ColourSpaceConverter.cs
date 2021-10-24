@@ -29,8 +29,8 @@ namespace all_rgb
 				else
 				{
 					hue = g == max
-						? 2 + (b - r) / delta
-						: 4 + (r - g) / delta;
+						? (2f + (b - r)) / delta
+						: (4f + (r - g)) / delta;
 				}
 				hue *= 60;
 
@@ -44,7 +44,7 @@ namespace all_rgb
 			{
 				outHsb.Hue = 0;
 			}
-			outHsb.Saturation = max == 0 ? 0 : (max - min) / max;
+			outHsb.Saturation = max == 0 ? 0 : delta / max;
 			outHsb.Brightness = max;
 
 			return outHsb;
