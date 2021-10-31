@@ -117,6 +117,6 @@ namespace all_rgb
 			i.Save(filename, ImageFormat.Png);
 		}
 
-		public static string BaseFileName = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
+		public const string BaseFileName = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
 	}
 }

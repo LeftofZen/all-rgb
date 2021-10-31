@@ -6,9 +6,7 @@ namespace all_rgb_gui
 	public partial class BetterTrackBar : UserControl
 	{
 		public BetterTrackBar()
-		{
-			InitializeComponent();
-		}
+			=> InitializeComponent();
 
 		public string Caption { get => lblCaption.Text; set => lblCaption.Text = value; }
 		public int Minimum { get => trbInner.Minimum; set => trbInner.Minimum = value; }

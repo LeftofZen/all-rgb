@@ -66,6 +66,7 @@
 			this.trbRGBWeight = new all_rgb_gui.BetterTrackBar();
 			this.btnAbortPaint = new System.Windows.Forms.Button();
 			this.grpImageProperties = new System.Windows.Forms.GroupBox();
+			this.cmbPresetSizes = new System.Windows.Forms.ComboBox();
 			this.lblBatchTime = new System.Windows.Forms.Label();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -104,9 +105,9 @@
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.pbPalette.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbPalette.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-			this.pbPalette.Location = new System.Drawing.Point(12, 405);
+			this.pbPalette.Location = new System.Drawing.Point(317, 316);
 			this.pbPalette.Name = "pbPalette";
-			this.pbPalette.Size = new System.Drawing.Size(663, 579);
+			this.pbPalette.Size = new System.Drawing.Size(358, 668);
 			this.pbPalette.TabIndex = 7;
 			this.pbPalette.TabStop = false;
 			// 
@@ -118,7 +119,7 @@
 			this.btnGenerateRGBUniform.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnGenerateRGBUniform.Location = new System.Drawing.Point(6, 21);
 			this.btnGenerateRGBUniform.Name = "btnGenerateRGBUniform";
-			this.btnGenerateRGBUniform.Size = new System.Drawing.Size(111, 23);
+			this.btnGenerateRGBUniform.Size = new System.Drawing.Size(133, 23);
 			this.btnGenerateRGBUniform.TabIndex = 1;
 			this.btnGenerateRGBUniform.Text = "Generate RGB Uniform";
 			this.btnGenerateRGBUniform.UseVisualStyleBackColor = false;
@@ -146,7 +147,7 @@
 			// 
 			// tbHeight
 			// 
-			this.tbHeight.Location = new System.Drawing.Point(151, 16);
+			this.tbHeight.Location = new System.Drawing.Point(145, 16);
 			this.tbHeight.Name = "tbHeight";
 			this.tbHeight.Size = new System.Drawing.Size(39, 23);
 			this.tbHeight.TabIndex = 6;
@@ -164,7 +165,7 @@
 			// lblHeight
 			// 
 			this.lblHeight.AutoSize = true;
-			this.lblHeight.Location = new System.Drawing.Point(102, 19);
+			this.lblHeight.Location = new System.Drawing.Point(96, 19);
 			this.lblHeight.Name = "lblHeight";
 			this.lblHeight.Size = new System.Drawing.Size(43, 15);
 			this.lblHeight.TabIndex = 11;
@@ -232,7 +233,7 @@
 			this.grpPalette.Controls.Add(this.btnSortNN);
 			this.grpPalette.Location = new System.Drawing.Point(12, 80);
 			this.grpPalette.Name = "grpPalette";
-			this.grpPalette.Size = new System.Drawing.Size(256, 319);
+			this.grpPalette.Size = new System.Drawing.Size(299, 319);
 			this.grpPalette.TabIndex = 18;
 			this.grpPalette.TabStop = false;
 			this.grpPalette.Text = "Palette";
@@ -260,9 +261,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnGenerateHSBRandom.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnGenerateHSBRandom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnGenerateHSBRandom.Location = new System.Drawing.Point(139, 21);
+			this.btnGenerateHSBRandom.Location = new System.Drawing.Point(173, 21);
 			this.btnGenerateHSBRandom.Name = "btnGenerateHSBRandom";
-			this.btnGenerateHSBRandom.Size = new System.Drawing.Size(111, 23);
+			this.btnGenerateHSBRandom.Size = new System.Drawing.Size(120, 23);
 			this.btnGenerateHSBRandom.TabIndex = 26;
 			this.btnGenerateHSBRandom.Text = "Generate HSB Random";
 			this.btnGenerateHSBRandom.UseVisualStyleBackColor = false;
@@ -279,7 +280,7 @@
 			this.trbShufflePercentage.Maximum = 100;
 			this.trbShufflePercentage.Minimum = 0;
 			this.trbShufflePercentage.Name = "trbShufflePercentage";
-			this.trbShufflePercentage.Size = new System.Drawing.Size(244, 26);
+			this.trbShufflePercentage.Size = new System.Drawing.Size(287, 26);
 			this.trbShufflePercentage.TabIndex = 25;
 			this.trbShufflePercentage.Value = "100";
 			// 
@@ -311,7 +312,7 @@
 			this.btnReverse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnReverse.Location = new System.Drawing.Point(6, 50);
 			this.btnReverse.Name = "btnReverse";
-			this.btnReverse.Size = new System.Drawing.Size(111, 23);
+			this.btnReverse.Size = new System.Drawing.Size(133, 23);
 			this.btnReverse.TabIndex = 11;
 			this.btnReverse.Text = "Reverse";
 			this.btnReverse.UseVisualStyleBackColor = false;
@@ -335,7 +336,7 @@
 			this.btnShuffle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnShuffle.Location = new System.Drawing.Point(6, 79);
 			this.btnShuffle.Name = "btnShuffle";
-			this.btnShuffle.Size = new System.Drawing.Size(244, 23);
+			this.btnShuffle.Size = new System.Drawing.Size(287, 23);
 			this.btnShuffle.TabIndex = 10;
 			this.btnShuffle.Text = "Shuffle";
 			this.btnShuffle.UseVisualStyleBackColor = false;
@@ -357,9 +358,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnEqualise.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnEqualise.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnEqualise.Location = new System.Drawing.Point(139, 50);
+			this.btnEqualise.Location = new System.Drawing.Point(173, 50);
 			this.btnEqualise.Name = "btnEqualise";
-			this.btnEqualise.Size = new System.Drawing.Size(111, 23);
+			this.btnEqualise.Size = new System.Drawing.Size(120, 23);
 			this.btnEqualise.TabIndex = 8;
 			this.btnEqualise.Text = "Equalise";
 			this.btnEqualise.UseVisualStyleBackColor = false;
@@ -383,7 +384,7 @@
 			this.btnSortRGB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSortRGB.Location = new System.Drawing.Point(6, 236);
 			this.btnSortRGB.Name = "btnSortRGB";
-			this.btnSortRGB.Size = new System.Drawing.Size(244, 23);
+			this.btnSortRGB.Size = new System.Drawing.Size(287, 23);
 			this.btnSortRGB.TabIndex = 12;
 			this.btnSortRGB.Text = "Sort RGB";
 			this.btnSortRGB.UseVisualStyleBackColor = false;
@@ -407,7 +408,7 @@
 			this.btnSortHSB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSortHSB.Location = new System.Drawing.Point(6, 182);
 			this.btnSortHSB.Name = "btnSortHSB";
-			this.btnSortHSB.Size = new System.Drawing.Size(244, 23);
+			this.btnSortHSB.Size = new System.Drawing.Size(287, 23);
 			this.btnSortHSB.TabIndex = 13;
 			this.btnSortHSB.Text = "Sort HSB";
 			this.btnSortHSB.UseVisualStyleBackColor = false;
@@ -421,7 +422,7 @@
 			this.btnSortNN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSortNN.Location = new System.Drawing.Point(0, 290);
 			this.btnSortNN.Name = "btnSortNN";
-			this.btnSortNN.Size = new System.Drawing.Size(250, 23);
+			this.btnSortNN.Size = new System.Drawing.Size(293, 23);
 			this.btnSortNN.TabIndex = 14;
 			this.btnSortNN.Text = "Sort NN (slow)";
 			this.btnSortNN.UseVisualStyleBackColor = false;
@@ -433,9 +434,9 @@
 			this.grpPaint.Controls.Add(this.btnAbortPaint);
 			this.grpPaint.Controls.Add(this.btnPaint);
 			this.grpPaint.Controls.Add(this.btnPausePaint);
-			this.grpPaint.Location = new System.Drawing.Point(274, 27);
+			this.grpPaint.Location = new System.Drawing.Point(317, 27);
 			this.grpPaint.Name = "grpPaint";
-			this.grpPaint.Size = new System.Drawing.Size(401, 372);
+			this.grpPaint.Size = new System.Drawing.Size(358, 283);
 			this.grpPaint.TabIndex = 10;
 			this.grpPaint.TabStop = false;
 			this.grpPaint.Text = "Paint";
@@ -452,7 +453,7 @@
 			this.grpPaintParams.Controls.Add(this.chkAverageMode);
 			this.grpPaintParams.Location = new System.Drawing.Point(6, 53);
 			this.grpPaintParams.Name = "grpPaintParams";
-			this.grpPaintParams.Size = new System.Drawing.Size(389, 234);
+			this.grpPaintParams.Size = new System.Drawing.Size(346, 224);
 			this.grpPaintParams.TabIndex = 19;
 			this.grpPaintParams.TabStop = false;
 			this.grpPaintParams.Text = "Paint Params";
@@ -468,7 +469,7 @@
 			this.trbNeighbourCountThreshold.Maximum = 8;
 			this.trbNeighbourCountThreshold.Minimum = 0;
 			this.trbNeighbourCountThreshold.Name = "trbNeighbourCountThreshold";
-			this.trbNeighbourCountThreshold.Size = new System.Drawing.Size(377, 26);
+			this.trbNeighbourCountThreshold.Size = new System.Drawing.Size(334, 26);
 			this.trbNeighbourCountThreshold.TabIndex = 24;
 			this.trbNeighbourCountThreshold.Value = "0";
 			// 
@@ -483,7 +484,7 @@
 			this.trbNeighbourCountWeight.Maximum = 100;
 			this.trbNeighbourCountWeight.Minimum = 0;
 			this.trbNeighbourCountWeight.Name = "trbNeighbourCountWeight";
-			this.trbNeighbourCountWeight.Size = new System.Drawing.Size(377, 26);
+			this.trbNeighbourCountWeight.Size = new System.Drawing.Size(334, 26);
 			this.trbNeighbourCountWeight.TabIndex = 23;
 			this.trbNeighbourCountWeight.Value = "0";
 			// 
@@ -498,7 +499,7 @@
 			this.trbDistanceWeight.Maximum = 100;
 			this.trbDistanceWeight.Minimum = 0;
 			this.trbDistanceWeight.Name = "trbDistanceWeight";
-			this.trbDistanceWeight.Size = new System.Drawing.Size(377, 26);
+			this.trbDistanceWeight.Size = new System.Drawing.Size(334, 26);
 			this.trbDistanceWeight.TabIndex = 22;
 			this.trbDistanceWeight.Value = "0";
 			// 
@@ -513,7 +514,7 @@
 			this.trbHSBWeight.Maximum = 100;
 			this.trbHSBWeight.Minimum = 0;
 			this.trbHSBWeight.Name = "trbHSBWeight";
-			this.trbHSBWeight.Size = new System.Drawing.Size(377, 26);
+			this.trbHSBWeight.Size = new System.Drawing.Size(334, 26);
 			this.trbHSBWeight.TabIndex = 21;
 			this.trbHSBWeight.Value = "0";
 			// 
@@ -528,7 +529,7 @@
 			this.trbRGBWeight.Maximum = 100;
 			this.trbRGBWeight.Minimum = 0;
 			this.trbRGBWeight.Name = "trbRGBWeight";
-			this.trbRGBWeight.Size = new System.Drawing.Size(377, 26);
+			this.trbRGBWeight.Size = new System.Drawing.Size(334, 26);
 			this.trbRGBWeight.TabIndex = 20;
 			this.trbRGBWeight.Value = "100";
 			// 
@@ -546,16 +547,33 @@
 			// 
 			// grpImageProperties
 			// 
+			this.grpImageProperties.Controls.Add(this.cmbPresetSizes);
 			this.grpImageProperties.Controls.Add(this.tbWidth);
 			this.grpImageProperties.Controls.Add(this.tbHeight);
 			this.grpImageProperties.Controls.Add(this.lblWidth);
 			this.grpImageProperties.Controls.Add(this.lblHeight);
 			this.grpImageProperties.Location = new System.Drawing.Point(12, 27);
 			this.grpImageProperties.Name = "grpImageProperties";
-			this.grpImageProperties.Size = new System.Drawing.Size(256, 47);
+			this.grpImageProperties.Size = new System.Drawing.Size(299, 47);
 			this.grpImageProperties.TabIndex = 19;
 			this.grpImageProperties.TabStop = false;
 			this.grpImageProperties.Text = "Image";
+			// 
+			// cmbPresetSizes
+			// 
+			this.cmbPresetSizes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.cmbPresetSizes.FormattingEnabled = true;
+			this.cmbPresetSizes.Items.AddRange(new object[] {
+            "64x64",
+            "128x128",
+            "256x256",
+            "512x512",
+            "2560x1440"});
+			this.cmbPresetSizes.Location = new System.Drawing.Point(190, 16);
+			this.cmbPresetSizes.Name = "cmbPresetSizes";
+			this.cmbPresetSizes.Size = new System.Drawing.Size(103, 23);
+			this.cmbPresetSizes.TabIndex = 22;
+			this.cmbPresetSizes.SelectedIndexChanged += new System.EventHandler(this.cmbPresetSizes_SelectedIndexChanged);
 			// 
 			// lblBatchTime
 			// 
@@ -715,6 +733,7 @@
 		private System.Windows.Forms.Button btnGenerateHSBRandom;
 		private System.Windows.Forms.Label lblShuffleSkip;
 		private System.Windows.Forms.TextBox tbShuffleSkip;
+		private System.Windows.Forms.ComboBox cmbPresetSizes;
 	}
 }
 

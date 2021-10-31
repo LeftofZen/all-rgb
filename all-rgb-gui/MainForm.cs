@@ -13,39 +13,37 @@ namespace all_rgb_gui
 		public MainForm()
 		{
 			InitializeComponent();
-			gen = new AllRGBGenerator();
-			gen.ProgressCallback = OnGeneratorProgressReport;
+			gen = new AllRGBGenerator
+			{
+				ProgressCallback = OnGeneratorProgressReport
+			};
 		}
 
-		AllRGBGenerator gen;
+		readonly AllRGBGenerator gen;
 
 		void OnGeneratorProgressReport(ProgressReport pr)
 		{
 			if (IsHandleCreated)
 			{
-				pgPaint.Invoke((MethodInvoker)delegate
+				_ = pgPaint.Invoke((MethodInvoker)delegate
 				{
-					pgPaint.Value = (int)(pr.percent * 100);
-					lblETA.Text = pr.etaText;
-					if (pr.prgi != null)
+					pgPaint.Value = (int)(pr.Percent * 100);
+					lblETA.Text = pr.ETAText;
+					if (pr.ProgressReportImage != null)
 					{
-						pbFinalImage.Image = pr.prgi;
+						pbFinalImage.Image = pr.ProgressReportImage;
 					}
 
-					lblBatchTime.Text = pr.batchInfo;
+					lblBatchTime.Text = pr.BatchInfo;
 				});
 			}
 		}
 
 		private void btnGenerateRGBUniform_Click(object sender, EventArgs e)
-		{
-			btnGenerate_Handler(ColourGenerator.GenerateColours_RGB_Uniform);
-		}
+			=> btnGenerate_Handler(ColourGenerator.GenerateColours_RGB_Uniform);
 
 		private void btnGenerateHSBRandom_Click(object sender, EventArgs e)
-		{
-			btnGenerate_Handler(ColourGenerator.GenerateColours_HSB_Random);
-		}
+			=> btnGenerate_Handler(ColourGenerator.GenerateColours_HSB_Random);
 
 		private void btnGenerate_Handler(Func<int, HashSet<Colour>> genFunc)
 		{
@@ -79,28 +77,23 @@ namespace all_rgb_gui
 		}
 
 		private void btnAbortPaint_Click(object sender, EventArgs e)
-		{
-			gen.AbortPaint();
-		}
+			=> gen.AbortPaint();
 
 		private void btnEqualise_Click(object sender, EventArgs e)
 		{
 			gen.Colours = ColourEqualiser.Equalise(gen.Colours);
-
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
 		private void btnReverse_Click(object sender, EventArgs e)
 		{
 			gen.Colours = AllRGBGenerator.ReverseColours(gen.Colours);
-
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
 		private void btnShuffle_Click(object sender, EventArgs e)
 		{
 			gen.Colours = AllRGBGenerator.ShuffleColours(gen.Colours, trbShufflePercentage.ValueAsNormalisedFloat, int.TryParse(tbShuffleSkip.Text, out var result) ? result : 1);
-
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
@@ -108,15 +101,11 @@ namespace all_rgb_gui
 		{
 			var rgbComponents = RGBComparerComponents.Empty;
 
-			if (chkSortRed.Checked)
-				rgbComponents |= RGBComparerComponents.Red;
-			if (chkSortGreen.Checked)
-				rgbComponents |= RGBComparerComponents.Green;
-			if (chkSortBlue.Checked)
-				rgbComponents |= RGBComparerComponents.Blue;
+			rgbComponents |= chkSortRed.Checked ? RGBComparerComponents.Red : RGBComparerComponents.Empty;
+			rgbComponents |= chkSortGreen.Checked ? RGBComparerComponents.Green : RGBComparerComponents.Empty;
+			rgbComponents |= chkSortBlue.Checked ? RGBComparerComponents.Blue : RGBComparerComponents.Empty;
 
 			gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.RGB, rgbComponents, null);
-
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
@@ -124,22 +113,17 @@ namespace all_rgb_gui
 		{
 			var hsbComponents = HSBComparerComponents.Empty;
 
-			if (chkSortHue.Checked)
-				hsbComponents |= HSBComparerComponents.Hue;
-			if (chkSortSat.Checked)
-				hsbComponents |= HSBComparerComponents.Saturation;
-			if (chkSortBri.Checked)
-				hsbComponents |= HSBComparerComponents.Brightness;
+			hsbComponents |= chkSortHue.Checked ? HSBComparerComponents.Hue : HSBComparerComponents.Empty;
+			hsbComponents |= chkSortSat.Checked ? HSBComparerComponents.Saturation : HSBComparerComponents.Empty;
+			hsbComponents |= chkSortBri.Checked ? HSBComparerComponents.Brightness : HSBComparerComponents.Empty;
 
 			gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.HSB, null, hsbComponents);
-
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
 		private void btnSortNN_Click(object sender, EventArgs e)
 		{
 			gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.NN);
-
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
@@ -176,15 +160,16 @@ namespace all_rgb_gui
 		}
 
 		private void saveCurrentImage_Click(object sender, EventArgs e)
-		{
-			gen.Save();
-		}
+			=> gen.Save();
 
 		private void openImagesFolder_Click(object sender, EventArgs e)
+			=> _ = Process.Start("explorer.exe", ImageBuffer.BaseFileName);
+
+		private void cmbPresetSizes_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			_ = Process.Start("explorer.exe", ImageBuffer.BaseFileName);
+			var txt = cmbPresetSizes.SelectedItem.ToString().Split('x');
+			tbWidth.Text = txt[0];
+			tbHeight.Text = txt[1];
 		}
-
-
 	}
 }

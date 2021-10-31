@@ -43,7 +43,7 @@ namespace all_rgb
 		{
 			// Make sure value is in [0..1] range
 			value = Math.Max(0, Math.Min(1, value));
-			Interlocked.Exchange(ref currentProgress, value);
+			_ = Interlocked.Exchange(ref currentProgress, value);
 		}
 
 		private void TimerHandler(object state)
@@ -80,27 +80,25 @@ namespace all_rgb
 
 			// Backtrack to the first differing character
 			var outputBuilder = new StringBuilder();
-			outputBuilder.Append('\b', currentText.Length - commonPrefixLength);
+			_ = outputBuilder.Append('\b', currentText.Length - commonPrefixLength);
 
 			// Output new suffix
-			outputBuilder.Append(text.Substring(commonPrefixLength));
+			_ = outputBuilder.Append(text[commonPrefixLength..]);
 
 			// If the new text is shorter than the old one: delete overlapping characters
 			var overlapCount = currentText.Length - text.Length;
 			if (overlapCount > 0)
 			{
-				outputBuilder.Append(' ', overlapCount);
-				outputBuilder.Append('\b', overlapCount);
+				_ = outputBuilder.Append(' ', overlapCount);
+				_ = outputBuilder.Append('\b', overlapCount);
 			}
 
 			Console.Write(outputBuilder);
 			currentText = text;
 		}
 
-		private void ResetTimer()
-		{
-			timer.Change(animationInterval, TimeSpan.FromMilliseconds(-1));
-		}
+		private void ResetTimer() =>
+			_ = timer.Change(animationInterval, TimeSpan.FromMilliseconds(-1));
 
 		public void Dispose()
 		{
@@ -109,7 +107,8 @@ namespace all_rgb
 				disposed = true;
 				UpdateText(string.Empty);
 			}
-		}
 
+			GC.SuppressFinalize(this);
+		}
 	}
 }

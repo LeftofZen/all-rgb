@@ -7,7 +7,8 @@ namespace all_rgb
 {
 	public static class IListExtensions
 	{
-		static Random rnd = new Random(1);
+		static readonly Random rnd = new(1);
+
 		public static void Shuffle<T>(this IList<T> ts, float percentToDeviate = 1f, int skip = 1)
 		{
 			var count = ts.Count;
@@ -66,7 +67,6 @@ namespace all_rgb
 
 		public static unsafe void SetPixel(this BitmapData d, int X, int Y, Colour c)
 			=> SetPixel(GetPtrToFirstPixel(d, X, Y), c);
-
 
 		private static unsafe byte* GetPtrToFirstPixel(this BitmapData d, int X, int Y)
 			=> (byte*)d.Scan0.ToPointer() + (Y * d.Stride) + (X * (Image.GetPixelFormatSize(d.PixelFormat) / 8));

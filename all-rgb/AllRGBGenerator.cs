@@ -9,16 +9,14 @@ using System.Threading.Tasks;
 
 namespace all_rgb
 {
-	public record ProgressReport(float percent, string etaText, Image prgi, string batchInfo);
+	public record ProgressReport(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo);
 
 	public class AllRGBGenerator
 	{
 		public AllRGBGenerator()
 		{ }
 
-		public List<Colour> Colours = new List<Colour>();
-		ImageBuffer buffer;
-
+		public List<Colour> Colours = new();
 		public bool UseMin;
 
 		public static Image GetImageFromColours(List<Colour> colours, int width, int height)
@@ -54,9 +52,13 @@ namespace all_rgb
 		private static List<Colour> SortColoursRGB(List<Colour> colours, RGBComparerComponents rgbComponents)
 		{
 			if (rgbComponents != RGBComparerComponents.Empty)
+			{
 				colours.Sort(new RGBComponentColorComparer(rgbComponents));
+			}
 			else
+			{
 				colours = colours.OrderBy(c => c.R).ThenBy(c => c.G).ThenBy(c => c.B).ToList();
+			}
 
 			return colours;
 		}
@@ -64,9 +66,13 @@ namespace all_rgb
 		private static List<Colour> SortColoursHSB(List<Colour> colours, HSBComparerComponents hsbComponents)
 		{
 			if (hsbComponents != HSBComparerComponents.Empty)
+			{
 				colours.Sort(new HSBComponentColorComparer(hsbComponents));
+			}
 			else
+			{
 				colours.Sort(new HSBSumColorComparer());
+			}
 
 			return colours;
 		}
@@ -86,7 +92,7 @@ namespace all_rgb
 				var minDistance = float.MaxValue;
 				for (var i = 1; i < colours.Count; ++i)
 				{
-					var distance = MathsHelpers.DistanceSquaredEuclidean(curr.rgb, colours[i].rgb);
+					var distance = MathsHelpers.DistanceSquaredEuclidean(curr.RGB, colours[i].RGB);
 					if (distance < minDistance)
 					{
 						minDistance = distance;
@@ -108,17 +114,17 @@ namespace all_rgb
 		{
 			CreateBuffer();
 
-			Colours = ColourGenerator.GenerateColours_RGB_Uniform(buffer.Width * buffer.Height).ToList();
+			Colours = ColourGenerator.GenerateColours_RGB_Uniform(CurrentBuffer.Width * CurrentBuffer.Height).ToList();
 
 			//RefineColours(true, false);
 			var nearestColourParam = new NearestColourParam();
-			Paint(nearestColourParam);
+			_ = Paint(nearestColourParam);
 
 			Save();
 		}
 
 		public Image GetCurrentImage()
-			=> buffer.GetImage();
+			=> CurrentBuffer.GetImage();
 
 		public void CreateTemplate(Bitmap templateImage)
 		{
@@ -153,10 +159,10 @@ namespace all_rgb
 		}
 
 		public void CreateBuffer(int width = 128, int height = 128)
-			=> buffer = new ImageBuffer(width, height);
+			=> CurrentBuffer = new ImageBuffer(width, height);
 
 		public void Save()
-			=> buffer.Save();
+			=> CurrentBuffer.Save();
 
 		#region PaletteSelection
 
@@ -182,17 +188,17 @@ namespace all_rgb
 		public enum SortType { RGB, HSB, NN };
 
 		public static List<Colour> SortColours(List<Colour> colours, SortType sortType, RGBComparerComponents? rgbComparerComponents = null, HSBComparerComponents? hsbComparerComponents = null)
-		=> sortType switch
-		{
-			SortType.RGB => SortColoursRGB(colours, rgbComparerComponents.Value),
-			SortType.HSB => SortColoursHSB(colours, hsbComparerComponents.Value),
-			SortType.NN => SortColoursNN(colours),
-			_ => throw new NotImplementedException(),
-		};
+			=> sortType switch
+			{
+				SortType.RGB => SortColoursRGB(colours, rgbComparerComponents.Value),
+				SortType.HSB => SortColoursHSB(colours, hsbComparerComponents.Value),
+				SortType.NN => SortColoursNN(colours),
+				_ => throw new NotImplementedException(),
+			};
 
 		#endregion
 
-		public ImageBuffer CurrentBuffer => buffer;
+		public ImageBuffer CurrentBuffer { get; private set; }
 
 		public Task<Image> Paint(NearestColourParam nearestColourParam)
 		{
@@ -211,19 +217,18 @@ namespace all_rgb
 
 		public void AbortPaint() => Abort = true;
 
-
-		HashSet<Point> Frontier = new();
+		readonly HashSet<Point> Frontier = new();
 
 		Image Paint(List<Colour> cols, IProgress<ProgressReport> progress, NearestColourParam  nearestColourParam)
 		{
 			var size = (int)Math.Sqrt(cols.Count);
-			if (buffer == null)
+			if (CurrentBuffer == null)
 			{
-				buffer = new ImageBuffer(size, size);
+				CurrentBuffer = new ImageBuffer(size, size);
 			}
 			else
 			{
-				buffer.Clear();
+				CurrentBuffer.Clear();
 			}
 
 			Abort = false;
@@ -252,7 +257,7 @@ namespace all_rgb
 					if (Abort)
 					{
 						var abortStr = $"Aborted at {swTotal.Elapsed:g}";
-						progress.Report(baseRecord with { percent = 1f, etaText = abortStr, prgi = GetCurrentImage() });
+						progress.Report(baseRecord with { Percent = 1f, ETAText = abortStr, ProgressReportImage = GetCurrentImage() });
 						break;
 					}
 
@@ -274,30 +279,29 @@ namespace all_rgb
 
 					#endregion
 
-
 					if (Frontier.Count == 0)
 					{
-						bestXY = buffer.Middle;
+						bestXY = CurrentBuffer.Middle;
 					}
 					else
 					{
-						var avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, buffer.Middle));
-						avgDistance /= buffer.Radius;
-						avgDistance /= Frontier.Count(); // scale to 0-1 range
+						var avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, CurrentBuffer.Middle));
+						avgDistance /= CurrentBuffer.Radius;
+						avgDistance /= Frontier.Count; // scale to 0-1 range
 
 						bestXY = Frontier
 							.AsParallel()
-							.OrderByDescending(xy => GetNearestColour(buffer, xy, col, nearestColourParam, avgDistance))
+							.OrderByDescending(xy => GetNearestColour(CurrentBuffer, xy, col, nearestColourParam, avgDistance))
 							.First();
 					}
 
-					buffer.SetPixel(bestXY, col);
-					Frontier.Remove(bestXY);
+					CurrentBuffer.SetPixel(bestXY, col);
+					_ = Frontier.Remove(bestXY);
 
 					// add neighbours
-					foreach (var nxy in GetNeighbourPoints(buffer, bestXY))
+					foreach (var nxy in GetNeighbourPoints(CurrentBuffer, bestXY))
 					{
-						if (buffer.IsEmpty(nxy))
+						if (CurrentBuffer.IsEmpty(nxy))
 						{
 							_ = Frontier.Add(nxy);
 						}
@@ -315,10 +319,10 @@ namespace all_rgb
 
 						consoleProgressBar.Report(percentDone, timeStr);
 						progress.Report(baseRecord with { 
-							percent = percentDone, 
-							etaText = timeStr, 
-							prgi = counter % refreshRate == 0 ? GetCurrentImage() : null,
-							batchInfo = $"BatchSize={refreshRate} BatchTime={swBatch.ElapsedMilliseconds}ms FrontierSize={Frontier.Count}"});
+							Percent = percentDone, 
+							ETAText = timeStr, 
+							ProgressReportImage = counter % refreshRate == 0 ? GetCurrentImage() : null,
+							BatchInfo = $"BatchSize={refreshRate} BatchTime={swBatch.ElapsedMilliseconds}ms FrontierSize={Frontier.Count}"});
 						
 						swBatch.Restart();
 					}
@@ -327,7 +331,7 @@ namespace all_rgb
 				swTotal.Stop();
 				var doneStr = $"Done in {swTotal.Elapsed:g}";
 				consoleProgressBar.Report(1, doneStr);
-				progress.Report(baseRecord with { percent = 1f, etaText = doneStr, prgi = GetCurrentImage() });
+				progress.Report(baseRecord with { Percent = 1f, ETAText = doneStr, ProgressReportImage = GetCurrentImage() });
 			}
 
 			swTotal.Reset();
@@ -346,8 +350,8 @@ namespace all_rgb
 				if (!buf.IsEmpty(nxy))
 				{
 					var pixel = buf.GetPixel(nxy);
-					var rgb = (1f - MathsHelpers.DistanceEuclidean(pixel.rgb, c.rgb)) * nearestColourParam.RgbWeight;
-					var hsb = (1f - MathsHelpers.DistanceEuclidean(pixel.hsb, c.hsb)) * nearestColourParam.HsbWeight;
+					var rgb = (1f - MathsHelpers.DistanceEuclidean(pixel.RGB, c.RGB)) * nearestColourParam.RgbWeight;
+					var hsb = (1f - MathsHelpers.DistanceEuclidean(pixel.HSB, c.HSB)) * nearestColourParam.HsbWeight;
 					diffs.Add((rgb + hsb) / 2f);
 				}
 			}

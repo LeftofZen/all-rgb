@@ -22,6 +22,7 @@ namespace all_rgb
 			if (delta != 0)
 			{
 				float hue;
+
 				if (r == max)
 				{
 					hue = (g - b) / delta;
@@ -32,18 +33,21 @@ namespace all_rgb
 						? (2f + (b - r)) / delta
 						: (4f + (r - g)) / delta;
 				}
+
 				hue *= 60;
 
 				if (hue < 0)
+				{
 					hue += 360;
+				}
 
 				outHsb.Hue = hue / 360f;
 			}
-
 			else
 			{
 				outHsb.Hue = 0;
 			}
+
 			outHsb.Saturation = max == 0 ? 0 : delta / max;
 			outHsb.Brightness = max;
 
@@ -73,8 +77,8 @@ namespace all_rgb
 				var fractionalSector = sectorPosition - sectorNumber;
 
 				var p = b * (1 - s);
-				var q = b * (1 - s * fractionalSector);
-				var t = b * (1 - s * (1 - fractionalSector));
+				var q = b * ((1 - s) * fractionalSector);
+				var t = b * ((1 - s) * (1 - fractionalSector));
 
 				// Assign the fractional colors to r, g, and b
 				// based on the sector the angle is in.
