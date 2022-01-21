@@ -568,7 +568,12 @@
             "128x128",
             "256x256",
             "512x512",
-            "2560x1440"});
+			"1024x1024",
+			"1920x1080",
+            "2560x1440",
+			"2048x2048",
+			"3840x2160",
+			"4096x4096",});
 			this.cmbPresetSizes.Location = new System.Drawing.Point(190, 16);
 			this.cmbPresetSizes.Name = "cmbPresetSizes";
 			this.cmbPresetSizes.Size = new System.Drawing.Size(103, 23);

@@ -15,6 +15,6 @@ namespace all_rgb
 		public float NeighbourCountWeight { get; init; } = 0f;
 		public int NeighbourCountThreshold { get; init; } = 0;
 
-		public bool UseMin { get; init; } = true;
+		public bool UseMax { get; init; } = true;
 	}
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using all_rgb.PixelSelectorAlgorithms;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -9,12 +9,18 @@ using System.Threading.Tasks;
 
 namespace all_rgb
 {
-	public record ProgressReport(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo);
+	public record ProgressReport(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo, float CurrentAverageRadius);
 
 	public class AllRGBGenerator
 	{
 		public AllRGBGenerator()
-		{ }
+		{
+			// todo: read this list from UI
+			// save/reload this list as config
+			pixelSelectorDelegates.Add(ColourAlgorithms.RGBandHSB);
+			pixelSelectorDelegates.Add(DistanceAlgorithms.DistanceFromCenter);
+			pixelSelectorDelegates.Add(NeighbourAlgorithms.AddMaxAgain);
+		}
 
 		public List<Colour> Colours = new();
 		public bool UseMin;
@@ -39,15 +45,6 @@ namespace all_rgb
 
 			return img.GetImage();
 		}
-		//private static List<Colour> SortColoursRGB(List<Colour> colours, RGBComparerComponents rgbComponents)
-		//{
-		//	if (rgbComponents != RGBComparerComponents.Empty)
-		//		colours.Sort(new RGBComponentColorComparer(rgbComponents));
-		//	else
-		//		colours.Sort(new RGBSumColorComparer());
-
-		//	return colours;
-		//}
 
 		private static List<Colour> SortColoursRGB(List<Colour> colours, RGBComparerComponents rgbComponents)
 		{
@@ -219,7 +216,7 @@ namespace all_rgb
 
 		readonly HashSet<Point> Frontier = new();
 
-		Image Paint(List<Colour> cols, IProgress<ProgressReport> progress, NearestColourParam  nearestColourParam)
+		Image Paint(List<Colour> cols, IProgress<ProgressReport> progress, NearestColourParam nearestColourParam)
 		{
 			var size = (int)Math.Sqrt(cols.Count);
 			if (CurrentBuffer == null)
@@ -244,7 +241,7 @@ namespace all_rgb
 			var swBatch = new Stopwatch();
 			swBatch.Start();
 
-			var baseRecord = new ProgressReport(0f, "Forever", null, "Unknown");
+			var baseRecord = new ProgressReport(0f, "Forever", null, "Unknown", 0f);
 
 			using (var consoleProgressBar = new ConsoleProgressBar())
 			{
@@ -279,19 +276,20 @@ namespace all_rgb
 
 					#endregion
 
+					var avgDistance = 0f;
 					if (Frontier.Count == 0)
 					{
 						bestXY = CurrentBuffer.Middle;
 					}
 					else
 					{
-						var avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, CurrentBuffer.Middle));
+						avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, CurrentBuffer.Middle));
 						avgDistance /= CurrentBuffer.Radius;
 						avgDistance /= Frontier.Count; // scale to 0-1 range
 
 						bestXY = Frontier
 							.AsParallel()
-							.OrderByDescending(xy => GetNearestColour(CurrentBuffer, xy, col, nearestColourParam, avgDistance))
+							.OrderByDescending(xy => GetNearestColourFromAlgos(CurrentBuffer, xy, col, nearestColourParam, avgDistance, pixelSelectorDelegates))
 							.First();
 					}
 
@@ -318,12 +316,15 @@ namespace all_rgb
 						var timeStr = $"Elapsed={swTotal.Elapsed:g} ETA={ts:g} Progress={percentDone:P}";
 
 						consoleProgressBar.Report(percentDone, timeStr);
-						progress.Report(baseRecord with { 
-							Percent = percentDone, 
-							ETAText = timeStr, 
+						progress.Report(baseRecord with
+						{
+							Percent = percentDone,
+							ETAText = timeStr,
 							ProgressReportImage = counter % refreshRate == 0 ? GetCurrentImage() : null,
-							BatchInfo = $"BatchSize={refreshRate} BatchTime={swBatch.ElapsedMilliseconds}ms FrontierSize={Frontier.Count}"});
-						
+							BatchInfo = $"BatchSize={refreshRate} BatchTime={swBatch.ElapsedMilliseconds}ms FrontierSize={Frontier.Count}",
+							CurrentAverageRadius = avgDistance * CurrentBuffer.Radius, // put from 0-1 to 0-radius
+						});
+
 						swBatch.Restart();
 					}
 				}
@@ -340,52 +341,50 @@ namespace all_rgb
 			return GetCurrentImage();
 		}
 
-		// this method is not threadsafe
-		static float GetNearestColour(ImageBuffer buf, Point xy, Colour c, NearestColourParam nearestColourParam, float avgDistanceFromCentre)
+		List<PixelSelectorDelegate> pixelSelectorDelegates = new List<PixelSelectorDelegate>();
+
+		static float GetNearestColourFromAlgos(ImageBuffer buf, Point xy, Colour c, NearestColourParam nearestColourParam, float avgDistanceFromCentre, List<PixelSelectorDelegate> algos)
 		{
 			// get the diffs for each neighbour separately
 			var diffs = new List<float>(8);
-			foreach (var nxy in GetNeighbourPoints(buf, xy))
-			{
-				if (!buf.IsEmpty(nxy))
-				{
-					var pixel = buf.GetPixel(nxy);
-					var rgb = (1f - MathsHelpers.DistanceEuclidean(pixel.RGB, c.RGB)) * nearestColourParam.RgbWeight;
-					var hsb = (1f - MathsHelpers.DistanceEuclidean(pixel.HSB, c.HSB)) * nearestColourParam.HsbWeight;
-					diffs.Add((rgb + hsb) / 2f);
-				}
-			}
 
-			// distance modifier
-			var distance = MathsHelpers.DistanceEuclidean(xy, buf.Middle) / buf.Radius;
-			var diff = distance / avgDistanceFromCentre * nearestColourParam.DistanceWeight;
-			diffs.Add(diff);
-
-			if (!diffs.Any())
+			foreach (var algo in algos)
 			{
-				diffs.Add(0);
+				algo(ref buf, ref xy, ref c, ref nearestColourParam, ref diffs);
 			}
 
 			// average or minimum selection
-			var selectedDiff = nearestColourParam.UseMin
+			var selectedDiff = nearestColourParam.UseMax
 				? (float)diffs.Max()
 				: (float)diffs.Average();
 
-			// count empty neighbours and adjust weighting based on how many
-			// more neighbours = higher weighting
-
-			var neighbourMulti = 1f;
-			//if (nearestColourParam.NeighbourCountWeight != 0)
-			//{
-			//	const float scalar = 0.5f;
-			//	neighbourMulti = (float)((scalar / Math.Sqrt(diffs.Count)) + (1.0 - scalar)) * nearestColourParam.NeighbourCountWeight * scalar;
-			//	neighbourMulti = diffs.Count > nearestColourParam.NeighbourCountThreshold ? neighbourMulti : 1f;
-			//}
-
-			return selectedDiff * neighbourMulti;
+			return selectedDiff;
 		}
 
-		static IEnumerable<Point> GetNeighbourPoints(ImageBuffer buf, Point p)
+		//// this method is not threadsafe
+		//static float GetNearestColour(ImageBuffer buf, Point xy, Colour c, NearestColourParam nearestColourParam, float avgDistanceFromCentre)
+		//{
+		//	// get the diffs for each neighbour separately
+		//	var diffs = new List<float>(8);
+
+		//	// Colour algorithms
+		//	ColourAlgorithms.RGBandHSB(ref buf, ref xy, ref nearestColourParam, ref diffs);
+
+		//	// Distance algorithms
+		//	DistanceAlgorithms.DistanceFromCenter(ref nearestColourParam, ref diffs);
+
+		//	// Neighbour algorithms
+		//	NeighbourAlgorithms.AddMaxAgain(ref nearestColourParam, ref diffs);
+
+		//	// average or minimum selection
+		//	var selectedDiff = nearestColourParam.UseMax
+		//		? (float)diffs.Max()
+		//		: (float)diffs.Average();
+
+		//	return selectedDiff;
+		//}
+
+		public static IEnumerable<Point> GetNeighbourPoints(ImageBuffer buf, Point p)
 		{
 			for (var x = -1; x < 2; ++x)
 			{

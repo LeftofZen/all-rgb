@@ -90,6 +90,11 @@ namespace all_rgb
 
 		public Image GetImage()
 		{
+			if (Width == 0 || Height == 0)
+			{
+				return null;
+			}
+
 			var img = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
 			var rect = new Rectangle(0, 0, Width, Height);
 			var imgData = img.LockBits(rect, ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
@@ -97,7 +102,7 @@ namespace all_rgb
 			{
 				for (var x = 0; x < Width; ++x)
 				{
-					imgData.SetPixel(x, y, isSet[y,x] ? GetPixel(x, y) : Colour.FromSystemColor(Color.White));
+					imgData.SetPixel(x, y, isSet[y, x] ? GetPixel(x, y) : Colour.FromSystemColor(Color.White));
 				}
 			}
 

@@ -31,7 +31,16 @@ namespace all_rgb_gui
 					lblETA.Text = pr.ETAText;
 					if (pr.ProgressReportImage != null)
 					{
-						pbFinalImage.Image = pr.ProgressReportImage;
+						var img = pr.ProgressReportImage;
+						var g = Graphics.FromImage(img);
+						var circleCentre = new Point(img.Width / 2, img.Height / 2);
+						var rect = new Rectangle(
+							circleCentre.X - (int)pr.CurrentAverageRadius,
+							circleCentre.Y - (int)pr.CurrentAverageRadius,
+							(int)pr.CurrentAverageRadius * 2,
+							(int)pr.CurrentAverageRadius * 2);
+						g.DrawEllipse(Pens.Red, rect);
+						pbFinalImage.Image = img;
 					}
 
 					lblBatchTime.Text = pr.BatchInfo;
@@ -59,7 +68,7 @@ namespace all_rgb_gui
 		{
 			var nearestColourParam = new NearestColourParam
 			{
-				UseMin = !chkAverageMode.Checked,
+				UseMax = !chkAverageMode.Checked,
 				RgbWeight = trbRGBWeight.ValueAsNormalisedFloat,
 				HsbWeight = trbHSBWeight.ValueAsNormalisedFloat,
 				NeighbourCountWeight = trbNeighbourCountWeight.ValueAsNormalisedFloat,
