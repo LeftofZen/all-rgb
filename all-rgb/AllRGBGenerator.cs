@@ -1,4 +1,6 @@
 ﻿using all_rgb.PixelSelectorAlgorithms;
+using KdTree;
+using KdTree.Math;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -74,15 +76,48 @@ namespace all_rgb
 			return colours;
 		}
 
-		private static List<Colour> SortColoursNN(List<Colour> colours)
+		private static List<Colour> SortColoursNNKDTree(List<Colour> colours)
 		{
-			List<Colour> output = new();
+			var tree = new KdTree<float, Colour>(3, new FloatMath());
+			List<Colour> result = new();
+			var curr = colours[0];
 
+			// add to tree
+			foreach (var c in colours.Skip(1))
+			{
+				_ = tree.Add(new float[] { c.R, c.G, c.B }, c);
+			}
+
+			// construct result
+			result.Add(curr);
+			var currIndex = new float[3];
+			currIndex[0] = curr.R;
+			currIndex[1] = curr.G;
+			currIndex[2] = curr.B;
+
+			while (tree.Count > 0)
+			{
+				var neighbour = tree.GetNearestNeighbours(currIndex, 1);
+				curr = neighbour.First().Value;
+				result.Add(curr);
+				currIndex[0] = curr.R;
+				currIndex[1] = curr.G;
+				currIndex[2] = curr.B;
+				tree.RemoveAt(currIndex);
+			}
+
+			Trace.Assert(result.Count == colours.Count);
+			return result;
+		}
+
+		private static List<Colour> SortColoursNNBruteForce(List<Colour> colours)
+		{
+			List<Colour> result = new();
 			var curr = colours[0];
 
 			while (colours.Count > 1)
 			{
-				output.Add(curr);
+				result.Add(curr);
 				_ = colours.Remove(curr);
 
 				Colour nearest = default;
@@ -102,9 +137,9 @@ namespace all_rgb
 
 			// should only be 1 colour left
 			Trace.Assert(colours.Count == 1);
-			output.Add(colours[0]);
+			result.Add(colours[0]);
 
-			return output;
+			return result;
 		}
 
 		public void ConsoleRun()
@@ -194,12 +229,12 @@ namespace all_rgb
 
 		void SavePalette()
 		{
-			var imgDim = (int)Math.Sqrt(Colours.Count) + 1;
 			var paletteBuffer = new ImageBuffer(CurrentBuffer.Width, CurrentBuffer.Height);
 			int count = 0;
 			foreach (var c in Colours)
 			{
 				paletteBuffer.SetPixel(count % CurrentBuffer.Width, count / CurrentBuffer.Width, c);
+				count++;
 			}
 			paletteBuffer.Save();
 		}
@@ -232,7 +267,7 @@ namespace all_rgb
 			{
 				SortType.RGB => SortColoursRGB(colours, rgbComparerComponents.Value),
 				SortType.HSB => SortColoursHSB(colours, hsbComparerComponents.Value),
-				SortType.NN => SortColoursNN(colours),
+				SortType.NN => SortColoursNNKDTree(colours),
 				_ => throw new NotImplementedException(),
 			};
 

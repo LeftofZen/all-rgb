@@ -15,16 +15,16 @@ namespace all_rgb
 		readonly int gMult;
 		readonly int bMult;
 
-		public RGBComponentColorComparer(RGBComparerComponents rgbCompoents)
+		public RGBComponentColorComparer(RGBComparerComponents rgbComponents)
 		{
-			if (rgbCompoents == RGBComparerComponents.Empty)
+			if (rgbComponents == RGBComparerComponents.Empty)
 			{
 				throw new ArgumentException("RGBComparerComponents cannot be empty");
 			}
 
-			rMult = (int)(rgbCompoents & RGBComparerComponents.Red) >> (int)(RGBComparerComponents.Red - 1);
-			gMult = (int)(rgbCompoents & RGBComparerComponents.Green) >> (int)(RGBComparerComponents.Green - 1);
-			bMult = (int)(rgbCompoents & RGBComparerComponents.Blue) >> (int)(RGBComparerComponents.Blue - 1);
+			rMult = (int)(rgbComponents & RGBComparerComponents.Red) >> 0;
+			gMult = (int)(rgbComponents & RGBComparerComponents.Green) >> 1;
+			bMult = (int)(rgbComponents & RGBComparerComponents.Blue) >> 2;
 		}
 
 		public int Compare(Colour a, Colour b)
@@ -44,16 +44,16 @@ namespace all_rgb
 		readonly int sMult;
 		readonly int bMult;
 
-		public HSBComponentColorComparer(HSBComparerComponents hsbCompoents)
+		public HSBComponentColorComparer(HSBComparerComponents hsbComponents)
 		{
-			if (hsbCompoents == HSBComparerComponents.Empty)
+			if (hsbComponents == HSBComparerComponents.Empty)
 			{
 				throw new ArgumentException("HSBComparerComponents cannot be empty");
 			}
 
-			hMult = (int)(hsbCompoents & HSBComparerComponents.Hue) >> (int)(HSBComparerComponents.Hue - 1);
-			sMult = (int)(hsbCompoents & HSBComparerComponents.Saturation) >> (int)(HSBComparerComponents.Saturation - 1);
-			bMult = (int)(hsbCompoents & HSBComparerComponents.Brightness) >> (int)(HSBComparerComponents.Brightness - 1);
+			hMult = (int)(hsbComponents & HSBComparerComponents.Hue) >> 0;
+			sMult = (int)(hsbComponents & HSBComparerComponents.Saturation) >> 1;
+			bMult = (int)(hsbComponents & HSBComparerComponents.Brightness) >> 2;
 		}
 
 		public int Compare(Colour a, Colour b)

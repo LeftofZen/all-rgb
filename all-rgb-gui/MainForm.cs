@@ -74,8 +74,14 @@ namespace all_rgb_gui
 				pbPalette.Height);
 		}
 
-		private void btnPaint_Click(object sender, EventArgs e)
+		private async void btnPaint_Click(object sender, EventArgs e)
 		{
+			gen.AbortPaint();
+			if (gen.PaintTask != null)
+			{
+				await gen.PaintTask;
+			}
+
 			var nearestColourParam = new NearestColourParam
 			{
 				NearestColourSelector = GetNearestColourSelector(),
