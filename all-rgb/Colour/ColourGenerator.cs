@@ -94,5 +94,28 @@ namespace all_rgb
 
 			return setOfAllColours;
 		}
+
+		public static HashSet<Colour> GenerateColours_RGB_Pastel(int pixelCount)
+		{
+			var baseline = GenerateColours_RGB_All().ToList();
+			var list = AllRGBGenerator.ShuffleColours(baseline);
+
+			var result = new List<Colour>();
+			var enumerator = list.GetEnumerator();
+			do
+			{
+				var current = enumerator.Current;
+				if (IsPastel(current))
+				{
+					result.Add(current);
+				}
+			}
+			while (result.Count < pixelCount && enumerator.MoveNext());
+
+			return result.ToHashSet();
+		}
+
+		public static bool IsPastel(Colour colour)
+			=> colour.Brightness > 0.5f && colour.Saturation < 0.7f && colour.Saturation > 0.2f;
 	}
 }

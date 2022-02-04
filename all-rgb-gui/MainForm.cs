@@ -54,10 +54,19 @@ namespace all_rgb_gui
 		private void btnGenerateHSBRandom_Click(object sender, EventArgs e)
 			=> btnGenerate_Handler(ColourGenerator.GenerateColours_HSB_Random);
 
+
+		private void btnGenerateRGBPastel_Click(object sender, EventArgs e)
+		=> btnGenerate_Handler(ColourGenerator.GenerateColours_RGB_Pastel);
+
 		private void btnGenerate_Handler(Func<int, HashSet<Colour>> genFunc)
 		{
 			gen.CreateBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
 			gen.Colours = genFunc(gen.CurrentBuffer.Width * gen.CurrentBuffer.Height).ToList();
+			if (gen.Colours == null)
+			{
+				return;
+			}
+
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(
 				gen.Colours,
 				pbPalette.Width,

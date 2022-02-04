@@ -43,6 +43,7 @@
 			this.grpPalette = new System.Windows.Forms.GroupBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tpGeneration = new System.Windows.Forms.TabPage();
+			this.btnGenerateRGBPastel = new System.Windows.Forms.Button();
 			this.btnGenerateHSBRandom = new System.Windows.Forms.Button();
 			this.tpPaletteSorting = new System.Windows.Forms.TabPage();
 			this.chkSortHue = new System.Windows.Forms.CheckBox();
@@ -85,7 +86,6 @@
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.grpDenoiserParams = new System.Windows.Forms.GroupBox();
 			this.trbPixelNoiseThreshold = new all_rgb_gui.BetterTrackBar();
-			this.btnGenerateRGBPastel = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).BeginInit();
 			this.grpPalette.SuspendLayout();
@@ -266,6 +266,20 @@
 			this.tpGeneration.TabIndex = 0;
 			this.tpGeneration.Text = "Generation";
 			this.tpGeneration.UseVisualStyleBackColor = true;
+			// 
+			// btnGenerateRGBPastel
+			// 
+			this.btnGenerateRGBPastel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnGenerateRGBPastel.BackColor = System.Drawing.SystemColors.ControlLight;
+			this.btnGenerateRGBPastel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnGenerateRGBPastel.Location = new System.Drawing.Point(4, 66);
+			this.btnGenerateRGBPastel.Name = "btnGenerateRGBPastel";
+			this.btnGenerateRGBPastel.Size = new System.Drawing.Size(276, 23);
+			this.btnGenerateRGBPastel.TabIndex = 27;
+			this.btnGenerateRGBPastel.Text = "Generate RGB Pastel";
+			this.btnGenerateRGBPastel.UseVisualStyleBackColor = false;
+			this.btnGenerateRGBPastel.Click += new System.EventHandler(this.btnGenerateRGBPastel_Click);
 			// 
 			// btnGenerateHSBRandom
 			// 
@@ -772,19 +786,6 @@
 			this.trbPixelNoiseThreshold.Size = new System.Drawing.Size(334, 26);
 			this.trbPixelNoiseThreshold.TabIndex = 25;
 			this.trbPixelNoiseThreshold.Value = "100";
-			// 
-			// btnGenerateRGBPastel
-			// 
-			this.btnGenerateRGBPastel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
-			this.btnGenerateRGBPastel.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnGenerateRGBPastel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnGenerateRGBPastel.Location = new System.Drawing.Point(4, 66);
-			this.btnGenerateRGBPastel.Name = "btnGenerateRGBPastel";
-			this.btnGenerateRGBPastel.Size = new System.Drawing.Size(276, 23);
-			this.btnGenerateRGBPastel.TabIndex = 27;
-			this.btnGenerateRGBPastel.Text = "Generate RGB Pastel";
-			this.btnGenerateRGBPastel.UseVisualStyleBackColor = false;
 			// 
 			// MainForm
 			// 
