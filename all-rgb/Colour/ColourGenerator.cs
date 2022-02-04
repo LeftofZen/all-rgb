@@ -9,6 +9,9 @@ namespace all_rgb
 {
 	public static class ColourGenerator
 	{
+		public static HashSet<Colour> GenerateColours_RGB_All()
+			=> GenerateColours_RGB_Uniform((int)Math.Pow(2, 24));
+
 		public static HashSet<Colour> GenerateColours_RGB_Uniform(int pixelCount)
 		{
 			Console.WriteLine("Generating colours");

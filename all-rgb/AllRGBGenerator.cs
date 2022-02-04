@@ -123,6 +123,20 @@ namespace all_rgb
 		public Image GetCurrentImage()
 			=> CurrentBuffer.GetImage();
 
+		public void BufferFromImage(Bitmap image)
+		{
+			Frontier.Clear();
+			CreateBuffer(image.Width, image.Height);
+
+			for (var y = 0; y < image.Height; ++y)
+			{
+				for (var x = 0; x < image.Width; ++x)
+				{
+					CurrentBuffer.SetPixel(new Point(x, y), Colour.FromSystemColor(image.GetPixel(x, y)));
+				}
+			}
+		}
+
 		public void CreateTemplate(Bitmap templateImage)
 		{
 			Frontier.Clear();
@@ -350,7 +364,7 @@ namespace all_rgb
 
 			foreach (var algo in algos)
 			{
-				algo(ref buf, ref xy, ref c, ref nearestColourParam, ref diffs);
+				algo(ref buf, ref xy, ref c, ref nearestColourParam, avgDistanceFromCentre, ref diffs);
 			}
 
 			// average or minimum selection
@@ -390,9 +404,12 @@ namespace all_rgb
 			{
 				for (var y = -1; y < 2; ++y)
 				{
-					if (p.X + x >= 0 && p.X + x < buf.Width && p.Y + y >= 0 && p.Y + y < buf.Height)
+					if (x != 0 || y != 0)
 					{
-						yield return new Point(p.X + x, p.Y + y);
+						if (p.X + x >= 0 && p.X + x < buf.Width && p.Y + y >= 0 && p.Y + y < buf.Height)
+						{
+							yield return new Point(p.X + x, p.Y + y);
+						}
 					}
 				}
 			}

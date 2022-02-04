@@ -6,7 +6,7 @@ namespace all_rgb.PixelSelectorAlgorithms
 {
 	public static class ColourAlgorithms
 	{
-		public static void RGBandHSB(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, ref List<float> diffs)
+		public static void RGBandHSB(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
 		{
 			foreach (var nxy in AllRGBGenerator.GetNeighbourPoints(buf, xy))
 			{

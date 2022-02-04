@@ -8,15 +8,23 @@ namespace all_rgb.PixelSelectorAlgorithms
 	// more neighbours = higher weighting
 	public static class NeighbourAlgorithms
 	{
-		public static void AddMaxAgain(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, ref List<float> diffs)
+		public static void AddMaxAgain(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
 		{
 			if (nearestColourParam.NeighbourCountWeight != 0 && diffs.Count >= nearestColourParam.NeighbourCountThreshold)
 			{
-				diffs.Add(diffs.Max() + nearestColourParam.NeighbourCountWeight);
+				diffs.Add(nearestColourParam.NeighbourCountWeight);
 			}
 		}
 
-		public static void Exp(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, ref List<float> diffs)
+		public static void AddMultMaxAgain(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
+		{
+			if (nearestColourParam.NeighbourCountWeight != 0 && diffs.Count >= nearestColourParam.NeighbourCountThreshold)
+			{
+				diffs.Add(diffs.Max() * nearestColourParam.NeighbourCountWeight);
+			}
+		}
+
+		public static void Exp(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
 		{
 			//const float scalar = 0.5f;
 			//var neighbourMulti = (diffs.Count / (8 - nearestColourParam.NeighbourCountThreshold)) * nearestColourParam.NeighbourCountWeight;

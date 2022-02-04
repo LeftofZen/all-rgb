@@ -85,6 +85,17 @@ namespace all_rgb_gui
 			btnPausePaint.Text = gen.Pause ? "Resume" : "Pause";
 		}
 
+		private void btnDenoisePaint_Click(object sender, EventArgs e)
+		{
+			var denoiserParams = new DenoiserParam
+			{
+				DenoisePixelThreshold = trbPixelNoiseThreshold.ValueAsNormalisedFloat
+			};
+
+			Denoiser.Denoise(gen.CurrentBuffer, denoiserParams);
+			pbFinalImage.Image = gen.GetCurrentImage();
+		}
+
 		private void btnAbortPaint_Click(object sender, EventArgs e)
 			=> gen.AbortPaint();
 
@@ -165,6 +176,21 @@ namespace all_rgb_gui
 				tbHeight.Text = bmp.Height.ToString();
 				gen.CreateTemplate(bmp);
 				pbFinalImage.Image = bmp;
+			}
+		}
+
+		private void loadImage_Click(object sender, EventArgs e)
+		{
+			using var ofd = new OpenFileDialog();
+			ofd.InitialDirectory = ImageBuffer.BaseFileName;
+
+			if (ofd.ShowDialog() == DialogResult.OK)
+			{
+				var bmp = new Bitmap(ofd.FileName);
+				tbWidth.Text = bmp.Width.ToString();
+				tbHeight.Text = bmp.Height.ToString();
+				gen.BufferFromImage(bmp);
+				pbFinalImage.Image = gen.GetCurrentImage();
 			}
 		}
 
