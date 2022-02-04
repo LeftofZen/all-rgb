@@ -15,18 +15,21 @@ namespace all_rgb_test
 		{
 			//Assert.Multiple(() =>
 			//{
-				var cyan = ColourSpaceConverter.RGBtoHSB(new RGB { R = 0.5f, G = 1f, B = 1f });
-				Assert.AreEqual(new HSB { Hue = 0.5f, Saturation = 0.5f, Brightness = 1f }, cyan);
+			var aquamarine = ColourSpaceConverter.RGBtoHSB(new RGB { R = 0.5f, G = 1f, B = 1f });
+			Assert.AreEqual(new HSB { Hue = 0.5f, Saturation = 0.5f, Brightness = 1f }, aquamarine);
 
-				var white = ColourSpaceConverter.RGBtoHSB(new RGB { R = 1f, G = 1f, B = 1f });
-				Assert.AreEqual(new HSB { Hue = 0f, Saturation = 0f, Brightness = 1f }, white);
+			var white = ColourSpaceConverter.RGBtoHSB(new RGB { R = 1f, G = 1f, B = 1f });
+			Assert.AreEqual(new HSB { Hue = 0f, Saturation = 0f, Brightness = 1f }, white);
 
-				var black = ColourSpaceConverter.RGBtoHSB(new RGB { R = 0f, G = 0f, B = 0f });
-				Assert.AreEqual(new HSB { Hue = 0f, Saturation = 0f, Brightness = 0f }, black);
+			var black = ColourSpaceConverter.RGBtoHSB(new RGB { R = 0f, G = 0f, B = 0f });
+			Assert.AreEqual(new HSB { Hue = 0f, Saturation = 0f, Brightness = 0f }, black);
 
-				// H and S can be anything in grayscale, only B affects RGB
-				var greyish = ColourSpaceConverter.RGBtoHSB(new RGB { R = 123/255f, G = 123/255f, B = 123/255f });
-				Assert.AreEqual(0.48235294f, greyish.Brightness);
+			// H and S can be anything in grayscale, only B affects RGB
+			var greyish = ColourSpaceConverter.RGBtoHSB(new RGB { R = 123 / 255f, G = 123 / 255f, B = 123 / 255f });
+			Assert.AreEqual(0.48235294f, greyish.Brightness);
+
+			var darkMagenta = ColourSpaceConverter.RGBtoHSB(new RGB { R = 138 / 255f, G = 21 / 255f, B = 170 / 255f });
+			Assert.AreEqual(new HSB { Hue = 0.7975392f, Saturation = 0.87647057f, Brightness = 0.6666667f }, darkMagenta);
 			//});
 		}
 
@@ -35,17 +38,17 @@ namespace all_rgb_test
 		{
 			//Assert.Multiple(() =>
 			//{
-				var cyan = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0.5f, Saturation = 0.5f, Brightness = 1f });
-				Assert.AreEqual(new RGB { R = 0.5f, G = 1f, B = 1f }, cyan);
+			var aquamarine = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0.5f, Saturation = 0.5f, Brightness = 1f });
+			Assert.AreEqual(new RGB { R = 0.5f, G = 1f, B = 1f }, aquamarine);
 
-				var white = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0f, Saturation = 0f, Brightness = 1f });
-				Assert.AreEqual(new RGB { R = 1f, G = 1f, B = 1f }, white);
+			var white = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0f, Saturation = 0f, Brightness = 1f });
+			Assert.AreEqual(new RGB { R = 1f, G = 1f, B = 1f }, white);
 
-				var black = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0f, Saturation = 0f, Brightness = 0f });
-				Assert.AreEqual(new RGB { R = 0f, G = 0f, B = 0f }, black);
+			var black = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0f, Saturation = 0f, Brightness = 0f });
+			Assert.AreEqual(new RGB { R = 0f, G = 0f, B = 0f }, black);
 
-				var greyish = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0f, Saturation = 0f, Brightness = 0.48235294f });
-				Assert.AreEqual(new RGB { R = 123 / 255f, G = 123 / 255f, B = 123 / 255f }, greyish);
+			var greyish = ColourSpaceConverter.HSBtoRGB(new HSB { Hue = 0f, Saturation = 0f, Brightness = 0.48235294f });
+			Assert.AreEqual(new RGB { R = 123 / 255f, G = 123 / 255f, B = 123 / 255f }, greyish);
 			//});
 		}
 

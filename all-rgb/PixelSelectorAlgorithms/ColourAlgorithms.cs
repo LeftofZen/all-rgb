@@ -14,7 +14,8 @@ namespace all_rgb.PixelSelectorAlgorithms
 				{
 					var pixel = buf.GetPixel(nxy);
 					var dRGB = MathsHelpers.DistanceEuclidean(pixel.RGB, colour.RGB);
-					var dHSB = MathsHelpers.DistanceEuclidean(pixel.HSB, colour.HSB);
+					//var dHSB = MathsHelpers.DistanceEuclidean(pixel.HSB, colour.HSB);
+					var dHSB = Math.Abs(pixel.Hue - colour.Hue);
 					var rgb = (1f - dRGB) * nearestColourParam.RgbWeight;
 					var hsb = (1f - dHSB) * nearestColourParam.HsbWeight;
 					diffs.Add((rgb + hsb) / 2f);

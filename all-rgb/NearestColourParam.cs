@@ -15,6 +15,8 @@ namespace all_rgb
 		public float NeighbourCountWeight { get; init; } = 0f;
 		public int NeighbourCountThreshold { get; init; } = 0;
 
-		public bool UseMax { get; init; } = true;
+		public NearestColourSelector NearestColourSelector { get; init; } = NearestColourSelector.Max;
+
 	}
+	public enum NearestColourSelector { Min, Max, Sum, Average };
 }

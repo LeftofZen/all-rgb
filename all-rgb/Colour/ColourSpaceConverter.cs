@@ -10,123 +10,109 @@ namespace all_rgb
 	{
 		public static HSB RGBtoHSB(RGB rgb)
 		{
-			HSB outHsb = new();
-			var r = rgb.R; // / 255.0f;
-			var g = rgb.G; // / 255.0f;
-			var b = rgb.B; // / 255.0f;
+			double delta, min;
+			double h = 0, s, b;
 
-			var max = (float)Math.Max(Math.Max(r, g), b);
-			var min = (float)Math.Min(Math.Min(r, g), b);
-			var delta = max - min;
+			min = Math.Min(Math.Min(rgb.R, rgb.G), rgb.B);
+			b = Math.Max(Math.Max(rgb.R, rgb.G), rgb.B);
+			delta = b - min;
 
-			if (delta != 0)
-			{
-				float hue;
+			if (b == 0.0)
+				s = 0;
+			else
+				s = delta / b;
 
-				if (r == max)
-				{
-					hue = (g - b) / delta;
-				}
-				else
-				{
-					hue = g == max
-						? (2f + (b - r)) / delta
-						: (4f + (r - g)) / delta;
-				}
+			if (s == 0)
+				h = 0.0;
 
-				hue *= 60;
-
-				if (hue < 0)
-				{
-					hue += 360;
-				}
-
-				outHsb.Hue = hue / 360f;
-			}
 			else
 			{
-				outHsb.Hue = 0;
+				if (rgb.R == b)
+					h = (rgb.G - rgb.B) / delta;
+				else if (rgb.G == b)
+					h = 2 + (rgb.B - rgb.R) / delta;
+				else if (rgb.B == b)
+					h = 4 + (rgb.R - rgb.G) / delta;
+
+				h *= 60;
+
+				if (h < 0.0)
+					h = h + 360;
 			}
 
-			outHsb.Saturation = max == 0 ? 0 : delta / max;
-			outHsb.Brightness = max;
-
-			return outHsb;
+			return new HSB { Hue = (float)h / 360f, Saturation = (float)s, Brightness = (float)b };
 		}
 
 		public static RGB HSBtoRGB(HSB hsb)
 		{
-			double red = 0, green = 0, blue = 0;
+			double r = 0, g = 0, b = 0;
 
-			double h = hsb.Hue;
-			var s = (double)hsb.Saturation; /// 100;
-			var b = (double)hsb.Brightness; /// 100;
-
-			if (Math.Abs(s - 0) < double.Epsilon)
+			if (hsb.Saturation == 0)
 			{
-				red = b;
-				green = b;
-				blue = b;
+				r = hsb.Brightness;
+				g = hsb.Brightness;
+				b = hsb.Brightness;
 			}
 			else
 			{
-				// the color wheel has six sectors.
+				int i;
+				double f, p, q, t;
 
-				var sectorPosition = h * 6; // / 60;
-				var sectorNumber = (int)Math.Floor(sectorPosition);
-				var fractionalSector = sectorPosition - sectorNumber;
+				hsb.Hue = (360 * hsb.Hue);
 
-				var p = b * (1 - s);
-				var q = b * ((1 - s) * fractionalSector);
-				var t = b * ((1 - s) * (1 - fractionalSector));
+				if ((int)hsb.Hue == 360)
+					hsb.Hue = 0;
+				else
+					hsb.Hue = hsb.Hue / 60;
 
-				// Assign the fractional colors to r, g, and b
-				// based on the sector the angle is in.
-				switch (sectorNumber)
+				i = (int)Math.Truncate(hsb.Hue);
+				f = hsb.Hue - i;
+
+				p = hsb.Brightness * (1.0 - hsb.Saturation);
+				q = hsb.Brightness * (1.0 - (hsb.Saturation * f));
+				t = hsb.Brightness * (1.0 - (hsb.Saturation * (1.0 - f)));
+
+				switch (i)
 				{
 					case 0:
-						red = b;
-						green = t;
-						blue = p;
+						r = hsb.Brightness;
+						g = t;
+						b = p;
 						break;
 
 					case 1:
-						red = q;
-						green = b;
-						blue = p;
+						r = q;
+						g = hsb.Brightness;
+						b = p;
 						break;
 
 					case 2:
-						red = p;
-						green = b;
-						blue = t;
+						r = p;
+						g = hsb.Brightness;
+						b = t;
 						break;
 
 					case 3:
-						red = p;
-						green = q;
-						blue = b;
+						r = p;
+						g = q;
+						b = hsb.Brightness;
 						break;
 
 					case 4:
-						red = t;
-						green = p;
-						blue = b;
+						r = t;
+						g = p;
+						b = hsb.Brightness;
 						break;
 
-					case 5:
-						red = b;
-						green = p;
-						blue = q;
+					default:
+						r = hsb.Brightness;
+						g = p;
+						b = q;
 						break;
 				}
 			}
 
-			//var nRed = Convert.ToInt32(red );
-			//var nGreen = Convert.ToInt32(green );
-			//var nBlue = Convert.ToInt32(blue);
-
-			return new RGB { R = (float)red, G = (float)green, B = (float)blue };
+			return new RGB { R = (float)r, G = (float)g, B = (float)b };
 		}
 	}
 }

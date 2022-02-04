@@ -36,7 +36,6 @@
 			this.tbHeight = new System.Windows.Forms.TextBox();
 			this.lblWidth = new System.Windows.Forms.Label();
 			this.lblHeight = new System.Windows.Forms.Label();
-			this.chkAverageMode = new System.Windows.Forms.CheckBox();
 			this.pgPaint = new System.Windows.Forms.ProgressBar();
 			this.lblETA = new System.Windows.Forms.Label();
 			this.btnPausePaint = new System.Windows.Forms.Button();
@@ -65,6 +64,10 @@
 			this.btnEqualise = new System.Windows.Forms.Button();
 			this.grpPaint = new System.Windows.Forms.GroupBox();
 			this.grpPaintParams = new System.Windows.Forms.GroupBox();
+			this.rbPixelSelectorSum = new System.Windows.Forms.RadioButton();
+			this.rbPixelSelectorAvg = new System.Windows.Forms.RadioButton();
+			this.rbPixelSelectorMax = new System.Windows.Forms.RadioButton();
+			this.rbPixelSelectorMin = new System.Windows.Forms.RadioButton();
 			this.trbNeighbourCountThreshold = new all_rgb_gui.BetterTrackBar();
 			this.trbNeighbourCountWeight = new all_rgb_gui.BetterTrackBar();
 			this.trbDistanceWeight = new all_rgb_gui.BetterTrackBar();
@@ -86,6 +89,7 @@
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.grpDenoiserParams = new System.Windows.Forms.GroupBox();
 			this.trbPixelNoiseThreshold = new all_rgb_gui.BetterTrackBar();
+			this.paletteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).BeginInit();
 			this.grpPalette.SuspendLayout();
@@ -103,9 +107,9 @@
 			// 
 			// pbFinalImage
 			// 
-			this.pbFinalImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-			| System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.pbFinalImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.pbFinalImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
 			this.pbFinalImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbFinalImage.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -118,21 +122,21 @@
 			// 
 			// pbPalette
 			// 
-			this.pbPalette.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-			| System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.pbPalette.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.pbPalette.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pbPalette.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 			this.pbPalette.Location = new System.Drawing.Point(3, 207);
 			this.pbPalette.Name = "pbPalette";
-			this.pbPalette.Size = new System.Drawing.Size(293, 692);
+			this.pbPalette.Size = new System.Drawing.Size(293, 691);
 			this.pbPalette.TabIndex = 7;
 			this.pbPalette.TabStop = false;
 			// 
 			// btnGenerateRGBUniform
 			// 
-			this.btnGenerateRGBUniform.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnGenerateRGBUniform.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnGenerateRGBUniform.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnGenerateRGBUniform.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnGenerateRGBUniform.Location = new System.Drawing.Point(3, 6);
@@ -189,20 +193,10 @@
 			this.lblHeight.TabIndex = 11;
 			this.lblHeight.Text = "Height";
 			// 
-			// chkAverageMode
-			// 
-			this.chkAverageMode.AutoSize = true;
-			this.chkAverageMode.Location = new System.Drawing.Point(6, 22);
-			this.chkAverageMode.Name = "chkAverageMode";
-			this.chkAverageMode.Size = new System.Drawing.Size(87, 19);
-			this.chkAverageMode.TabIndex = 12;
-			this.chkAverageMode.Text = "Min Or Avg";
-			this.chkAverageMode.UseVisualStyleBackColor = true;
-			// 
 			// pgPaint
 			// 
-			this.pgPaint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.pgPaint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.pgPaint.Location = new System.Drawing.Point(12, 991);
 			this.pgPaint.Name = "pgPaint";
 			this.pgPaint.Size = new System.Drawing.Size(1879, 23);
@@ -236,7 +230,7 @@
 			this.grpPalette.Controls.Add(this.pbPalette);
 			this.grpPalette.Location = new System.Drawing.Point(12, 80);
 			this.grpPalette.Name = "grpPalette";
-			this.grpPalette.Size = new System.Drawing.Size(299, 905);
+			this.grpPalette.Size = new System.Drawing.Size(299, 904);
 			this.grpPalette.TabIndex = 18;
 			this.grpPalette.TabStop = false;
 			this.grpPalette.Text = "Palette";
@@ -269,8 +263,8 @@
 			// 
 			// btnGenerateRGBPastel
 			// 
-			this.btnGenerateRGBPastel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnGenerateRGBPastel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnGenerateRGBPastel.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnGenerateRGBPastel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnGenerateRGBPastel.Location = new System.Drawing.Point(4, 66);
@@ -283,8 +277,8 @@
 			// 
 			// btnGenerateHSBRandom
 			// 
-			this.btnGenerateHSBRandom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnGenerateHSBRandom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnGenerateHSBRandom.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnGenerateHSBRandom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnGenerateHSBRandom.Location = new System.Drawing.Point(3, 35);
@@ -326,8 +320,8 @@
 			// 
 			// btnSortNN
 			// 
-			this.btnSortNN.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnSortNN.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnSortNN.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnSortNN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSortNN.Location = new System.Drawing.Point(3, 114);
@@ -340,8 +334,8 @@
 			// 
 			// btnSortRGB
 			// 
-			this.btnSortRGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnSortRGB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnSortRGB.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnSortRGB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSortRGB.Location = new System.Drawing.Point(3, 85);
@@ -404,8 +398,8 @@
 			// 
 			// btnSortHSB
 			// 
-			this.btnSortHSB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnSortHSB.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnSortHSB.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnSortHSB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnSortHSB.Location = new System.Drawing.Point(3, 31);
@@ -431,8 +425,8 @@
 			// 
 			// btnShuffle
 			// 
-			this.btnShuffle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnShuffle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnShuffle.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnShuffle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnShuffle.Location = new System.Drawing.Point(0, 65);
@@ -462,8 +456,8 @@
 			// 
 			// trbShufflePercentage
 			// 
-			this.trbShufflePercentage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.trbShufflePercentage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.trbShufflePercentage.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbShufflePercentage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbShufflePercentage.Caption = "%";
@@ -488,8 +482,8 @@
 			// 
 			// btnReverse
 			// 
-			this.btnReverse.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnReverse.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnReverse.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnReverse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnReverse.Location = new System.Drawing.Point(3, 3);
@@ -502,8 +496,8 @@
 			// 
 			// btnEqualise
 			// 
-			this.btnEqualise.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.btnEqualise.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.btnEqualise.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.btnEqualise.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnEqualise.Location = new System.Drawing.Point(3, 32);
@@ -529,14 +523,17 @@
 			// 
 			// grpPaintParams
 			// 
-			this.grpPaintParams.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.grpPaintParams.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.grpPaintParams.Controls.Add(this.rbPixelSelectorSum);
+			this.grpPaintParams.Controls.Add(this.rbPixelSelectorAvg);
+			this.grpPaintParams.Controls.Add(this.rbPixelSelectorMax);
+			this.grpPaintParams.Controls.Add(this.rbPixelSelectorMin);
 			this.grpPaintParams.Controls.Add(this.trbNeighbourCountThreshold);
 			this.grpPaintParams.Controls.Add(this.trbNeighbourCountWeight);
 			this.grpPaintParams.Controls.Add(this.trbDistanceWeight);
 			this.grpPaintParams.Controls.Add(this.trbHSBWeight);
 			this.grpPaintParams.Controls.Add(this.trbRGBWeight);
-			this.grpPaintParams.Controls.Add(this.chkAverageMode);
 			this.grpPaintParams.Location = new System.Drawing.Point(6, 53);
 			this.grpPaintParams.Name = "grpPaintParams";
 			this.grpPaintParams.Size = new System.Drawing.Size(346, 224);
@@ -544,10 +541,52 @@
 			this.grpPaintParams.TabStop = false;
 			this.grpPaintParams.Text = "Paint Params";
 			// 
+			// rbPixelSelectorSum
+			// 
+			this.rbPixelSelectorSum.AutoSize = true;
+			this.rbPixelSelectorSum.Location = new System.Drawing.Point(112, 22);
+			this.rbPixelSelectorSum.Name = "rbPixelSelectorSum";
+			this.rbPixelSelectorSum.Size = new System.Drawing.Size(49, 19);
+			this.rbPixelSelectorSum.TabIndex = 25;
+			this.rbPixelSelectorSum.Text = "Sum";
+			this.rbPixelSelectorSum.UseVisualStyleBackColor = true;
+			// 
+			// rbPixelSelectorAvg
+			// 
+			this.rbPixelSelectorAvg.AutoSize = true;
+			this.rbPixelSelectorAvg.Location = new System.Drawing.Point(167, 22);
+			this.rbPixelSelectorAvg.Name = "rbPixelSelectorAvg";
+			this.rbPixelSelectorAvg.Size = new System.Drawing.Size(68, 19);
+			this.rbPixelSelectorAvg.TabIndex = 25;
+			this.rbPixelSelectorAvg.Text = "Average";
+			this.rbPixelSelectorAvg.UseVisualStyleBackColor = true;
+			// 
+			// rbPixelSelectorMax
+			// 
+			this.rbPixelSelectorMax.AutoSize = true;
+			this.rbPixelSelectorMax.Checked = true;
+			this.rbPixelSelectorMax.Location = new System.Drawing.Point(58, 22);
+			this.rbPixelSelectorMax.Name = "rbPixelSelectorMax";
+			this.rbPixelSelectorMax.Size = new System.Drawing.Size(48, 19);
+			this.rbPixelSelectorMax.TabIndex = 25;
+			this.rbPixelSelectorMax.TabStop = true;
+			this.rbPixelSelectorMax.Text = "Max";
+			this.rbPixelSelectorMax.UseVisualStyleBackColor = true;
+			// 
+			// rbPixelSelectorMin
+			// 
+			this.rbPixelSelectorMin.AutoSize = true;
+			this.rbPixelSelectorMin.Location = new System.Drawing.Point(6, 22);
+			this.rbPixelSelectorMin.Name = "rbPixelSelectorMin";
+			this.rbPixelSelectorMin.Size = new System.Drawing.Size(46, 19);
+			this.rbPixelSelectorMin.TabIndex = 25;
+			this.rbPixelSelectorMin.Text = "Min";
+			this.rbPixelSelectorMin.UseVisualStyleBackColor = true;
+			// 
 			// trbNeighbourCountThreshold
 			// 
-			this.trbNeighbourCountThreshold.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.trbNeighbourCountThreshold.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.trbNeighbourCountThreshold.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbNeighbourCountThreshold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbNeighbourCountThreshold.Caption = "Neighbour # Thresh";
@@ -561,8 +600,8 @@
 			// 
 			// trbNeighbourCountWeight
 			// 
-			this.trbNeighbourCountWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.trbNeighbourCountWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.trbNeighbourCountWeight.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbNeighbourCountWeight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbNeighbourCountWeight.Caption = "Neighbour # Weight";
@@ -576,8 +615,8 @@
 			// 
 			// trbDistanceWeight
 			// 
-			this.trbDistanceWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.trbDistanceWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.trbDistanceWeight.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbDistanceWeight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbDistanceWeight.Caption = "Distance Weight";
@@ -591,8 +630,8 @@
 			// 
 			// trbHSBWeight
 			// 
-			this.trbHSBWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.trbHSBWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.trbHSBWeight.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbHSBWeight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbHSBWeight.Caption = "HSB Weight";
@@ -606,8 +645,8 @@
 			// 
 			// trbRGBWeight
 			// 
-			this.trbRGBWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.trbRGBWeight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.trbRGBWeight.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbRGBWeight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbRGBWeight.Caption = "RGB Weight";
@@ -662,16 +701,16 @@
 			this.cmbPresetSizes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.cmbPresetSizes.FormattingEnabled = true;
 			this.cmbPresetSizes.Items.AddRange(new object[] {
-			"64x64",
-			"128x128",
-			"256x256",
-			"512x512",
-			"1024x1024",
-			"1920x1080",
-			"2560x1440",
-			"2048x2048",
-			"3840x2160",
-			"4096x4096"});
+            "64x64",
+            "128x128",
+            "256x256",
+            "512x512",
+            "1024x1024",
+            "1920x1080",
+            "2560x1440",
+            "2048x2048",
+            "3840x2160",
+            "4096x4096"});
 			this.cmbPresetSizes.Location = new System.Drawing.Point(190, 16);
 			this.cmbPresetSizes.Name = "cmbPresetSizes";
 			this.cmbPresetSizes.Size = new System.Drawing.Size(103, 23);
@@ -691,7 +730,7 @@
 			// menuStrip1
 			// 
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
 			this.menuStrip1.Size = new System.Drawing.Size(1904, 24);
@@ -701,9 +740,9 @@
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.loadPaletteToolStripMenuItem,
-			this.openSavedImagesToolStripMenuItem,
-			this.saveToolStripMenuItem});
+            this.loadPaletteToolStripMenuItem,
+            this.openSavedImagesToolStripMenuItem,
+            this.saveToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
@@ -711,9 +750,9 @@
 			// loadPaletteToolStripMenuItem
 			// 
 			this.loadPaletteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.paletteToolStripMenuItem,
-			this.templateToolStripMenuItem,
-			this.imageToolStripMenuItem});
+            this.paletteToolStripMenuItem,
+            this.templateToolStripMenuItem,
+            this.imageToolStripMenuItem});
 			this.loadPaletteToolStripMenuItem.Name = "loadPaletteToolStripMenuItem";
 			this.loadPaletteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.loadPaletteToolStripMenuItem.Text = "Load";
@@ -742,7 +781,8 @@
 			// openSavedImagesToolStripMenuItem
 			// 
 			this.openSavedImagesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.currentImageToolStripMenuItem});
+            this.currentImageToolStripMenuItem,
+            this.paletteToolStripMenuItem1});
 			this.openSavedImagesToolStripMenuItem.Name = "openSavedImagesToolStripMenuItem";
 			this.openSavedImagesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.openSavedImagesToolStripMenuItem.Text = "Save";
@@ -750,7 +790,7 @@
 			// currentImageToolStripMenuItem
 			// 
 			this.currentImageToolStripMenuItem.Name = "currentImageToolStripMenuItem";
-			this.currentImageToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+			this.currentImageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.currentImageToolStripMenuItem.Text = "Current Image";
 			this.currentImageToolStripMenuItem.Click += new System.EventHandler(this.saveCurrentImage_Click);
 			// 
@@ -774,8 +814,8 @@
 			// 
 			// trbPixelNoiseThreshold
 			// 
-			this.trbPixelNoiseThreshold.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-			| System.Windows.Forms.AnchorStyles.Right)));
+			this.trbPixelNoiseThreshold.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.trbPixelNoiseThreshold.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbPixelNoiseThreshold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbPixelNoiseThreshold.Caption = "Pixel Noise Threshold";
@@ -786,6 +826,13 @@
 			this.trbPixelNoiseThreshold.Size = new System.Drawing.Size(334, 26);
 			this.trbPixelNoiseThreshold.TabIndex = 25;
 			this.trbPixelNoiseThreshold.Value = "100";
+			// 
+			// paletteToolStripMenuItem1
+			// 
+			this.paletteToolStripMenuItem1.Name = "paletteToolStripMenuItem1";
+			this.paletteToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+			this.paletteToolStripMenuItem1.Text = "Palette";
+			this.paletteToolStripMenuItem1.Click += new System.EventHandler(this.saveCurrentPalette_Click);
 			// 
 			// MainForm
 			// 
@@ -838,7 +885,6 @@
 		private System.Windows.Forms.TextBox tbHeight;
 		private System.Windows.Forms.Label lblWidth;
 		private System.Windows.Forms.Label lblHeight;
-		private System.Windows.Forms.CheckBox chkAverageMode;
 		private System.Windows.Forms.ProgressBar pgPaint;
 		private System.Windows.Forms.Label lblETA;
 		private System.Windows.Forms.Button btnPausePaint;
@@ -888,6 +934,11 @@
 		private System.Windows.Forms.TabPage tpPaletteShuffing;
 		private System.Windows.Forms.TabPage tpPaletteMisc;
 		private System.Windows.Forms.Button btnGenerateRGBPastel;
+		private System.Windows.Forms.RadioButton rbPixelSelectorSum;
+		private System.Windows.Forms.RadioButton rbPixelSelectorAvg;
+		private System.Windows.Forms.RadioButton rbPixelSelectorMax;
+		private System.Windows.Forms.RadioButton rbPixelSelectorMin;
+		private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem1;
 	}
 }
 

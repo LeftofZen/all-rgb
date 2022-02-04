@@ -117,7 +117,7 @@ namespace all_rgb
 			var nearestColourParam = new NearestColourParam();
 			_ = Paint(nearestColourParam);
 
-			Save();
+			Save(GenSaveOptions.Image);
 		}
 
 		public Image GetCurrentImage()
@@ -158,22 +158,51 @@ namespace all_rgb
 		{
 			Frontier.Clear();
 			var imgBuf = new ImageBuffer(paletteImage);
-			Colours.Clear();
+			var colours = new HashSet<Colour>();
 
 			for (var y = 0; y < imgBuf.Height; ++y)
 			{
 				for (var x = 0; x < imgBuf.Width; ++x)
 				{
-					Colours.Add(imgBuf.GetPixel(x, y));
+					_ = colours.Add(imgBuf.GetPixel(x, y));
 				}
 			}
+
+			Colours = colours.ToList();
 		}
 
 		public void CreateBuffer(int width = 128, int height = 128)
 			=> CurrentBuffer = new ImageBuffer(width, height);
 
-		public void Save()
-			=> CurrentBuffer.Save();
+		public enum GenSaveOptions
+		{
+			Palette, Image
+		}
+
+		public void Save(GenSaveOptions options)
+		{
+			switch (options)
+			{
+				case GenSaveOptions.Palette:
+					SavePalette();
+					break;
+				case GenSaveOptions.Image:
+					CurrentBuffer.Save();
+					break;
+			}
+		}
+
+		void SavePalette()
+		{
+			var imgDim = (int)Math.Sqrt(Colours.Count) + 1;
+			var paletteBuffer = new ImageBuffer(CurrentBuffer.Width, CurrentBuffer.Height);
+			int count = 0;
+			foreach (var c in Colours)
+			{
+				paletteBuffer.SetPixel(count % CurrentBuffer.Width, count / CurrentBuffer.Width, c);
+			}
+			paletteBuffer.Save();
+		}
 
 		#region PaletteSelection
 
@@ -368,11 +397,15 @@ namespace all_rgb
 			}
 
 			// average or minimum selection
-			var selectedDiff = nearestColourParam.UseMax
-				? (float)diffs.Max()
-				: (float)diffs.Average();
-
-			return selectedDiff;
+			var selectedDiff = 0f;
+			return nearestColourParam.NearestColourSelector switch
+			{
+				NearestColourSelector.Min => (float)diffs.Min(),
+				NearestColourSelector.Max => (float)diffs.Max(),
+				NearestColourSelector.Sum => (float)diffs.Sum(),
+				NearestColourSelector.Average => (float)diffs.Average(),
+				_ => selectedDiff,
+			};
 		}
 
 		//// this method is not threadsafe

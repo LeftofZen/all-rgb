@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace all_rgb
 {
@@ -116,6 +114,6 @@ namespace all_rgb
 		}
 
 		public static bool IsPastel(Colour colour)
-			=> colour.Brightness > 0.5f && colour.Saturation < 0.7f && colour.Saturation > 0.2f;
+			=> colour.Brightness > 0.5f && colour.Saturation < 0.5f && colour.Saturation > 0.2f;
 	}
 }

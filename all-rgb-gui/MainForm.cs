@@ -54,16 +54,17 @@ namespace all_rgb_gui
 		private void btnGenerateHSBRandom_Click(object sender, EventArgs e)
 			=> btnGenerate_Handler(ColourGenerator.GenerateColours_HSB_Random);
 
-
 		private void btnGenerateRGBPastel_Click(object sender, EventArgs e)
 		=> btnGenerate_Handler(ColourGenerator.GenerateColours_RGB_Pastel);
 
 		private void btnGenerate_Handler(Func<int, HashSet<Colour>> genFunc)
 		{
 			gen.CreateBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
-			gen.Colours = genFunc(gen.CurrentBuffer.Width * gen.CurrentBuffer.Height).ToList();
-			if (gen.Colours == null)
+			var totalColoursNeeded = gen.CurrentBuffer.Width * gen.CurrentBuffer.Height;
+			gen.Colours = genFunc(totalColoursNeeded).ToList();
+			if (gen.Colours == null || gen.Colours.Count != totalColoursNeeded)
 			{
+				MessageBox.Show("Unable to generate enough colours for input image size.");
 				return;
 			}
 
@@ -77,7 +78,7 @@ namespace all_rgb_gui
 		{
 			var nearestColourParam = new NearestColourParam
 			{
-				UseMax = !chkAverageMode.Checked,
+				NearestColourSelector = GetNearestColourSelector(),
 				RgbWeight = trbRGBWeight.ValueAsNormalisedFloat,
 				HsbWeight = trbHSBWeight.ValueAsNormalisedFloat,
 				NeighbourCountWeight = trbNeighbourCountWeight.ValueAsNormalisedFloat,
@@ -86,6 +87,21 @@ namespace all_rgb_gui
 			};
 
 			_ = gen.Paint(nearestColourParam);
+		}
+
+		NearestColourSelector GetNearestColourSelector()
+		{
+			if (rbPixelSelectorMin.Checked)
+				return NearestColourSelector.Min;
+			if (rbPixelSelectorMax.Checked)
+				return NearestColourSelector.Max;
+			if (rbPixelSelectorSum.Checked)
+				return NearestColourSelector.Sum;
+			if (rbPixelSelectorAvg.Checked)
+				return NearestColourSelector.Average;
+
+			// default
+			return NearestColourSelector.Min;
 		}
 
 		private void btnPause_Click(object sender, EventArgs e)
@@ -204,7 +220,11 @@ namespace all_rgb_gui
 		}
 
 		private void saveCurrentImage_Click(object sender, EventArgs e)
-			=> gen.Save();
+			=> gen.Save(AllRGBGenerator.GenSaveOptions.Image);
+
+
+		private void saveCurrentPalette_Click(object sender, EventArgs e)
+			=> gen.Save(AllRGBGenerator.GenSaveOptions.Palette);
 
 		private void openImagesFolder_Click(object sender, EventArgs e)
 			=> _ = Process.Start("explorer.exe", ImageBuffer.BaseFileName);
@@ -215,5 +235,6 @@ namespace all_rgb_gui
 			tbWidth.Text = txt[0];
 			tbHeight.Text = txt[1];
 		}
+
 	}
 }
