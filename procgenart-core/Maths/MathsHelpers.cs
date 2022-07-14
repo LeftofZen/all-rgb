@@ -1,4 +1,6 @@
-﻿namespace procgenart_core
+﻿using System.Drawing;
+
+namespace procgenart_core
 {
 	public static class MathsHelpers
 	{
@@ -21,14 +23,14 @@
 			 + Math.Abs(a.Y - b.Y)
 			 + Math.Abs(a.Z - b.Z);
 
-		public static float DistanceSquaredEuclidean(System.Drawing.Point a, System.Drawing.Point b)
+		public static float DistanceSquaredEuclidean(Point a, Point b)
 			=> ((a.X - b.X) * (a.X - b.X))
 			 + ((a.Y - b.Y) * (a.Y - b.Y));
 
-		public static float DistanceEuclidean(System.Drawing.Point a, System.Drawing.Point b)
+		public static float DistanceEuclidean(Point a, Point b)
 			=> (float)Math.Sqrt(DistanceSquaredEuclidean(a, b));
 
-		public static float DistanceEuclidean(System.Drawing.Point a, System.Drawing.Point b, float maxDistance)
+		public static float DistanceEuclidean(Point a, Point b, float maxDistance)
 			=> (float)Math.Sqrt(DistanceSquaredEuclidean(a, b) / maxDistance);
 
 		public static float RescaleFloat(float val, float min, float max)

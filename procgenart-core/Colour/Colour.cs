@@ -1,4 +1,6 @@
-﻿namespace procgenart_core
+﻿using System.Drawing;
+
+namespace procgenart_core
 {
 	public struct RGB : IVector3Float, IEquatable<RGB>
 	{
@@ -91,9 +93,6 @@
 		public static bool operator !=(Colour a, Colour b)
 			=> !(a == b);
 
-		public System.Drawing.Color ToSystemColor()
-			=> System.Drawing.Color.FromArgb((int)(A * 255), (int)(R * 255), (int)(G * 255), (int)(B * 255));
-
 		public static Colour FromSystemColor(System.Drawing.Color c)
 			=> new() { A = c.A / 255f, RGB = new RGB { R = c.R / 255f, G = c.G / 255f, B = c.B / 255f } };
 
@@ -119,6 +118,12 @@
 			=> HashCode.Combine(_rgb.R, _rgb.G, _rgb.B);
 		public override string ToString()
 			=> $"{_rgb} {_hsb}";
+	}
+
+	public static class ColourExtensions
+	{
+		public static Color ToSystemColor(this Colour colour)
+			=> Color.FromArgb((int)(colour.A * 255), (int)(colour.R * 255), (int)(colour.G * 255), (int)(colour.B * 255));
 	}
 
 	public static class ColourHelpers

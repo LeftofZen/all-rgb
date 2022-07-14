@@ -14,9 +14,7 @@ namespace procgenart_core
 			for (var i = 0; i < last; i += skip)
 			{
 				var r = rnd.Next(i, (int)(((count - i) * percentToDeviate) + i));
-				var tmp = ts[i];
-				ts[i] = ts[r];
-				ts[r] = tmp;
+				(ts[r], ts[i]) = (ts[i], ts[r]);
 			}
 		}
 	}
@@ -34,6 +32,7 @@ namespace procgenart_core
 			}
 		}
 	}
+
 	public static class BitmapDataExtensions
 	{
 		//static unsafe bool IsPixelSet(Color[,] d, Point p) => IsPixelSet(d, (p.X, p.Y));
