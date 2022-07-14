@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace all_rgb
+﻿namespace procgenart_core
 {
 	public class RGBSumColorComparer : IComparer<Colour>
 	{

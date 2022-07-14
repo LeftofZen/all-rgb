@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using all_rgb;
+using procgenart_core;
 
 namespace all_rgb_gui
 {
@@ -98,13 +99,24 @@ namespace all_rgb_gui
 		NearestColourSelector GetNearestColourSelector()
 		{
 			if (rbPixelSelectorMin.Checked)
+			{
 				return NearestColourSelector.Min;
+			}
+
 			if (rbPixelSelectorMax.Checked)
+			{
 				return NearestColourSelector.Max;
+			}
+
 			if (rbPixelSelectorSum.Checked)
+			{
 				return NearestColourSelector.Sum;
+			}
+
 			if (rbPixelSelectorAvg.Checked)
+			{
 				return NearestColourSelector.Average;
+			}
 
 			// default
 			return NearestColourSelector.Min;

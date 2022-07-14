@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace all_rgb
+﻿namespace procgenart_core
 {
 	public static class ColourSpaceConverter
 	{
@@ -18,26 +12,39 @@ namespace all_rgb
 			delta = b - min;
 
 			if (b == 0.0)
+			{
 				s = 0;
+			}
 			else
+			{
 				s = delta / b;
+			}
 
 			if (s == 0)
+			{
 				h = 0.0;
-
+			}
 			else
 			{
 				if (rgb.R == b)
+				{
 					h = (rgb.G - rgb.B) / delta;
+				}
 				else if (rgb.G == b)
+				{
 					h = 2 + (rgb.B - rgb.R) / delta;
+				}
 				else if (rgb.B == b)
+				{
 					h = 4 + (rgb.R - rgb.G) / delta;
+				}
 
 				h *= 60;
 
 				if (h < 0.0)
+				{
 					h = h + 360;
+				}
 			}
 
 			return new HSB { Hue = (float)h / 360f, Saturation = (float)s, Brightness = (float)b };
@@ -61,9 +68,13 @@ namespace all_rgb
 				hsb.Hue = (360 * hsb.Hue);
 
 				if ((int)hsb.Hue == 360)
+				{
 					hsb.Hue = 0;
+				}
 				else
+				{
 					hsb.Hue = hsb.Hue / 60;
+				}
 
 				i = (int)Math.Truncate(hsb.Hue);
 				f = hsb.Hue - i;

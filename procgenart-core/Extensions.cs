@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace all_rgb
+namespace procgenart_core
 {
 	public static class IListExtensions
 	{

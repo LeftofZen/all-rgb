@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace all_rgb
+﻿namespace procgenart_core
 {
 	public interface IVector3<T>
 	{

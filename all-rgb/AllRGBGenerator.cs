@@ -1,13 +1,13 @@
-﻿using all_rgb.PixelSelectorAlgorithms;
-using KdTree;
-using KdTree.Math;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using KdTree;
+using KdTree.Math;
+using procgenart_core;
 
 namespace all_rgb
 {
@@ -230,7 +230,7 @@ namespace all_rgb
 		void SavePalette()
 		{
 			var paletteBuffer = new ImageBuffer(CurrentBuffer.Width, CurrentBuffer.Height);
-			int count = 0;
+			var count = 0;
 			foreach (var c in Colours)
 			{
 				paletteBuffer.SetPixel(count % CurrentBuffer.Width, count / CurrentBuffer.Width, c);
@@ -375,7 +375,7 @@ namespace all_rgb
 					_ = Frontier.Remove(bestXY);
 
 					// add neighbours
-					foreach (var nxy in GetNeighbourPoints(CurrentBuffer, bestXY))
+					foreach (var nxy in Core.GetNeighbourPoints(CurrentBuffer, bestXY))
 					{
 						if (CurrentBuffer.IsEmpty(nxy))
 						{
@@ -466,38 +466,6 @@ namespace all_rgb
 		//	return selectedDiff;
 		//}
 
-		public static IEnumerable<Point> GetNeighbourPoints(ImageBuffer buf, Point p)
-		{
-			for (var x = -1; x < 2; ++x)
-			{
-				for (var y = -1; y < 2; ++y)
-				{
-					if (x != 0 || y != 0)
-					{
-						if (p.X + x >= 0 && p.X + x < buf.Width && p.Y + y >= 0 && p.Y + y < buf.Height)
-						{
-							yield return new Point(p.X + x, p.Y + y);
-						}
-					}
-				}
-			}
-		}
 
-		static IEnumerable<Colour> GetNonEmptyNeighbourColours(ImageBuffer buf, Point p)
-		{
-			for (var x = -1; x < 2; ++x)
-			{
-				for (var y = -1; y < 2; ++y)
-				{
-					if (p.X + x >= 0 && p.X + x < buf.Width && p.Y + y >= 0 && p.Y + y < buf.Height)
-					{
-						if (buf.IsEmpty(p.X + x, p.Y + y))
-						{
-							yield return buf.GetPixel(p.X + x, p.Y + y);
-						}
-					}
-				}
-			}
-		}
 	}
 }

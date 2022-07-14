@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace all_rgb
+﻿namespace procgenart_core
 {
 	public struct RGB : IVector3Float, IEquatable<RGB>
 	{

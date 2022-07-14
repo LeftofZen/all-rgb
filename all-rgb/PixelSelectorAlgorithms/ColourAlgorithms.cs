@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using procgenart_core;
 
-namespace all_rgb.PixelSelectorAlgorithms
+namespace all_rgb
 {
 	public static class ColourAlgorithms
 	{
 		public static void RGBandHSB(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
 		{
-			foreach (var nxy in AllRGBGenerator.GetNeighbourPoints(buf, xy))
+			foreach (var nxy in Core.GetNeighbourPoints(buf, xy))
 			{
 				if (!buf.IsEmpty(nxy))
 				{

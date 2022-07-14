@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using procgenart_core;
 
-namespace all_rgb.PixelSelectorAlgorithms
+namespace all_rgb
 {
 	// count empty neighbours and adjust weighting based on how many
 	// more neighbours = higher weighting

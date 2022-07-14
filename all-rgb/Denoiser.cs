@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using procgenart_core;
 
 namespace all_rgb
 {
@@ -26,7 +26,7 @@ namespace all_rgb
 			{
 				for (var x = 0; x < buf.Width; ++x)
 				{
-					var neighbours = AllRGBGenerator.GetNeighbourPoints(buf, new Point(x, y));
+					var neighbours = Core.GetNeighbourPoints(buf, new Point(x, y));
 					var colours = neighbours.Select(n => buf.GetPixel(n));
 					var avg = ColourHelpers.Average(colours);
 					var distance = MathsHelpers.DistanceSquaredEuclidean(avg.RGB, buf.GetPixel(x, y).RGB);
@@ -86,8 +86,8 @@ namespace all_rgb
 
 		public static Colour FindClosestColour(ref HashSet<Colour> colours, Colour colour)
 		{
-			Colour minColour = colour;
-			float minDistance = float.MaxValue;
+			var minColour = colour;
+			var minDistance = float.MaxValue;
 			foreach (var c in colours)
 			{
 				var distance = MathsHelpers.DistanceSquaredEuclidean(c.RGB, colour.RGB);

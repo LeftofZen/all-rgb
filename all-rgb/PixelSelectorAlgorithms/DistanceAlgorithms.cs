@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using procgenart_core;
 
-namespace all_rgb.PixelSelectorAlgorithms
+namespace all_rgb
 {
 	public static class DistanceAlgorithms
 	{

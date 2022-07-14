@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using all_rgb;
 using NUnit.Framework;
+using procgenart_core;
 
 namespace all_rgb_test
 {

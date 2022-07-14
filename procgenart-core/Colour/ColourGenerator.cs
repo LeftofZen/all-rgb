@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 
-namespace all_rgb
+namespace procgenart_core
 {
 	public static class ColourGenerator
 	{
@@ -96,10 +93,10 @@ namespace all_rgb
 		public static HashSet<Colour> GenerateColours_RGB_Pastel(int pixelCount)
 		{
 			var baseline = GenerateColours_RGB_All().ToList();
-			var list = AllRGBGenerator.ShuffleColours(baseline);
+			baseline.Shuffle();
 
 			var result = new List<Colour>();
-			var enumerator = list.GetEnumerator();
+			var enumerator = baseline.GetEnumerator();
 			do
 			{
 				var current = enumerator.Current;

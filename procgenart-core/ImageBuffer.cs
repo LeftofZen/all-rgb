@@ -1,8 +1,7 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace all_rgb
+namespace procgenart_core
 {
 	public class ImageBuffer
 	{
