@@ -96,6 +96,12 @@ namespace all_rgb_gui
 			_ = gen.Paint(nearestColourParam);
 		}
 
+		private void btnClearCanvas_Click(object sender, EventArgs e)
+		{
+			var buf = new ImageBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
+			pbFinalImage.Image = buf.GetImage();
+		}
+
 		NearestColourSelector GetNearestColourSelector()
 		{
 			if (rbPixelSelectorMin.Checked)
@@ -253,6 +259,5 @@ namespace all_rgb_gui
 			tbWidth.Text = txt[0];
 			tbHeight.Text = txt[1];
 		}
-
 	}
 }

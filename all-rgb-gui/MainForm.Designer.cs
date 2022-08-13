@@ -63,6 +63,7 @@
 			this.btnReverse = new System.Windows.Forms.Button();
 			this.btnEqualise = new System.Windows.Forms.Button();
 			this.grpPaint = new System.Windows.Forms.GroupBox();
+			this.btnClearCanvas = new System.Windows.Forms.Button();
 			this.grpPaintParams = new System.Windows.Forms.GroupBox();
 			this.rbPixelSelectorSum = new System.Windows.Forms.RadioButton();
 			this.rbPixelSelectorAvg = new System.Windows.Forms.RadioButton();
@@ -86,10 +87,10 @@
 			this.imageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openSavedImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.currentImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.paletteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.grpDenoiserParams = new System.Windows.Forms.GroupBox();
 			this.trbPixelNoiseThreshold = new all_rgb_gui.BetterTrackBar();
-			this.paletteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).BeginInit();
 			this.grpPalette.SuspendLayout();
@@ -510,6 +511,7 @@
 			// 
 			// grpPaint
 			// 
+			this.grpPaint.Controls.Add(this.btnClearCanvas);
 			this.grpPaint.Controls.Add(this.grpPaintParams);
 			this.grpPaint.Controls.Add(this.btnAbortPaint);
 			this.grpPaint.Controls.Add(this.btnPaint);
@@ -520,6 +522,18 @@
 			this.grpPaint.TabIndex = 10;
 			this.grpPaint.TabStop = false;
 			this.grpPaint.Text = "Paint";
+			// 
+			// btnClearCanvas
+			// 
+			this.btnClearCanvas.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
+			this.btnClearCanvas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnClearCanvas.Location = new System.Drawing.Point(249, 17);
+			this.btnClearCanvas.Name = "btnClearCanvas";
+			this.btnClearCanvas.Size = new System.Drawing.Size(75, 23);
+			this.btnClearCanvas.TabIndex = 20;
+			this.btnClearCanvas.Text = "Clear";
+			this.btnClearCanvas.UseVisualStyleBackColor = false;
+			this.btnClearCanvas.Click += new System.EventHandler(this.btnClearCanvas_Click);
 			// 
 			// grpPaintParams
 			// 
@@ -790,9 +804,16 @@
 			// currentImageToolStripMenuItem
 			// 
 			this.currentImageToolStripMenuItem.Name = "currentImageToolStripMenuItem";
-			this.currentImageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.currentImageToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
 			this.currentImageToolStripMenuItem.Text = "Current Image";
 			this.currentImageToolStripMenuItem.Click += new System.EventHandler(this.saveCurrentImage_Click);
+			// 
+			// paletteToolStripMenuItem1
+			// 
+			this.paletteToolStripMenuItem1.Name = "paletteToolStripMenuItem1";
+			this.paletteToolStripMenuItem1.Size = new System.Drawing.Size(150, 22);
+			this.paletteToolStripMenuItem1.Text = "Palette";
+			this.paletteToolStripMenuItem1.Click += new System.EventHandler(this.saveCurrentPalette_Click);
 			// 
 			// saveToolStripMenuItem
 			// 
@@ -826,13 +847,6 @@
 			this.trbPixelNoiseThreshold.Size = new System.Drawing.Size(334, 26);
 			this.trbPixelNoiseThreshold.TabIndex = 25;
 			this.trbPixelNoiseThreshold.Value = "100";
-			// 
-			// paletteToolStripMenuItem1
-			// 
-			this.paletteToolStripMenuItem1.Name = "paletteToolStripMenuItem1";
-			this.paletteToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-			this.paletteToolStripMenuItem1.Text = "Palette";
-			this.paletteToolStripMenuItem1.Click += new System.EventHandler(this.saveCurrentPalette_Click);
 			// 
 			// MainForm
 			// 
@@ -939,6 +953,7 @@
 		private System.Windows.Forms.RadioButton rbPixelSelectorMax;
 		private System.Windows.Forms.RadioButton rbPixelSelectorMin;
 		private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem1;
+		private System.Windows.Forms.Button btnClearCanvas;
 	}
 }
 
