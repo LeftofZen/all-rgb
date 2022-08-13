@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using all_rgb;
+using poisson_disk_sampling;
 using procgenart_core;
 
 namespace all_rgb_gui
@@ -80,20 +81,46 @@ namespace all_rgb_gui
 			gen.AbortPaint();
 			if (gen.PaintTask != null)
 			{
-				await gen.PaintTask;
+				_ = await gen.PaintTask;
 			}
 
-			var nearestColourParam = new NearestColourParam
+			// contextual gen based on open tab
+			if (tcProcGenTypes.SelectedTab == tpAllRGB)
 			{
-				NearestColourSelector = GetNearestColourSelector(),
-				RgbWeight = trbRGBWeight.ValueAsNormalisedFloat,
-				HsbWeight = trbHSBWeight.ValueAsNormalisedFloat,
-				NeighbourCountWeight = trbNeighbourCountWeight.ValueAsNormalisedFloat,
-				NeighbourCountThreshold = trbNeighbourCountThreshold.ValueAsInt,
-				DistanceWeight = trbDistanceWeight.ValueAsNormalisedFloat,
-			};
+				var nearestColourParam = new NearestColourParam
+				{
+					NearestColourSelector = GetNearestColourSelector(),
+					RgbWeight = trbRGBWeight.ValueAsNormalisedFloat,
+					HsbWeight = trbHSBWeight.ValueAsNormalisedFloat,
+					NeighbourCountWeight = trbNeighbourCountWeight.ValueAsNormalisedFloat,
+					NeighbourCountThreshold = trbNeighbourCountThreshold.ValueAsInt,
+					DistanceWeight = trbDistanceWeight.ValueAsNormalisedFloat,
+				};
 
-			_ = gen.Paint(nearestColourParam);
+				_ = gen.Paint(nearestColourParam);
+			}
+			else if (tcProcGenTypes.SelectedTab == tpPoissonCircles)
+			{
+				var width = int.Parse(tbWidth.Text);
+				var height = int.Parse(tbHeight.Text);
+				var minimumDistanceBetweenSamples = 50;
+
+				var points = Algorithm.Sample2D(width, height, minimumDistanceBetweenSamples);
+				var image = new Bitmap(width, height);
+
+				using (var graphics = Graphics.FromImage(image))
+				{
+					graphics.FillRectangle(Brushes.Black, 0f, 0f, width, height);
+					//var pen = new Pen(Color.DarkRed, 2f);
+					foreach (var p in points)
+					{
+						graphics.FillRectangle(Brushes.Yellow, p.X, p.Y, 1, 1);
+						//graphics.FillEllipse(Brushes.Yellow, p.X - dot_r, p.Y - dot_r, 2f * dot_r, 2f * dot_r);
+						//graphics.DrawEllipse(pen, p.X - minimumDistanceBetweenSamples / 2f, p.Y - minimumDistanceBetweenSamples / 2f, minimumDistanceBetweenSamples, minimumDistanceBetweenSamples);
+					}
+				}
+				pbFinalImage.Image = image;
+			}
 		}
 
 		private void btnClearCanvas_Click(object sender, EventArgs e)

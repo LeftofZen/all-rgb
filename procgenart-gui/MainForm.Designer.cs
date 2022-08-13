@@ -40,7 +40,7 @@
 			this.lblETA = new System.Windows.Forms.Label();
 			this.btnPausePaint = new System.Windows.Forms.Button();
 			this.grpPalette = new System.Windows.Forms.GroupBox();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tcAllRGB = new System.Windows.Forms.TabControl();
 			this.tpGeneration = new System.Windows.Forms.TabPage();
 			this.btnGenerateRGBPastel = new System.Windows.Forms.Button();
 			this.btnGenerateHSBRandom = new System.Windows.Forms.Button();
@@ -64,6 +64,7 @@
 			this.btnEqualise = new System.Windows.Forms.Button();
 			this.grpPaint = new System.Windows.Forms.GroupBox();
 			this.btnClearCanvas = new System.Windows.Forms.Button();
+			this.btnAbortPaint = new System.Windows.Forms.Button();
 			this.grpPaintParams = new System.Windows.Forms.GroupBox();
 			this.rbPixelSelectorSum = new System.Windows.Forms.RadioButton();
 			this.rbPixelSelectorAvg = new System.Windows.Forms.RadioButton();
@@ -74,7 +75,6 @@
 			this.trbDistanceWeight = new all_rgb_gui.BetterTrackBar();
 			this.trbHSBWeight = new all_rgb_gui.BetterTrackBar();
 			this.trbRGBWeight = new all_rgb_gui.BetterTrackBar();
-			this.btnAbortPaint = new System.Windows.Forms.Button();
 			this.btnDenoise = new System.Windows.Forms.Button();
 			this.grpImageProperties = new System.Windows.Forms.GroupBox();
 			this.cmbPresetSizes = new System.Windows.Forms.ComboBox();
@@ -91,10 +91,13 @@
 			this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.grpDenoiserParams = new System.Windows.Forms.GroupBox();
 			this.trbPixelNoiseThreshold = new all_rgb_gui.BetterTrackBar();
+			this.tcProcGenTypes = new System.Windows.Forms.TabControl();
+			this.tpAllRGB = new System.Windows.Forms.TabPage();
+			this.tpPoissonCircles = new System.Windows.Forms.TabPage();
 			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).BeginInit();
 			this.grpPalette.SuspendLayout();
-			this.tabControl1.SuspendLayout();
+			this.tcAllRGB.SuspendLayout();
 			this.tpGeneration.SuspendLayout();
 			this.tpPaletteSorting.SuspendLayout();
 			this.tpPaletteShuffing.SuspendLayout();
@@ -104,6 +107,8 @@
 			this.grpImageProperties.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.grpDenoiserParams.SuspendLayout();
+			this.tcProcGenTypes.SuspendLayout();
+			this.tpAllRGB.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// pbFinalImage
@@ -130,7 +135,7 @@
 			this.pbPalette.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 			this.pbPalette.Location = new System.Drawing.Point(3, 207);
 			this.pbPalette.Name = "pbPalette";
-			this.pbPalette.Size = new System.Drawing.Size(293, 691);
+			this.pbPalette.Size = new System.Drawing.Size(293, 663);
 			this.pbPalette.TabIndex = 7;
 			this.pbPalette.TabStop = false;
 			// 
@@ -227,27 +232,27 @@
 			// 
 			// grpPalette
 			// 
-			this.grpPalette.Controls.Add(this.tabControl1);
+			this.grpPalette.Controls.Add(this.tcAllRGB);
 			this.grpPalette.Controls.Add(this.pbPalette);
-			this.grpPalette.Location = new System.Drawing.Point(12, 80);
+			this.grpPalette.Location = new System.Drawing.Point(8, 3);
 			this.grpPalette.Name = "grpPalette";
 			this.grpPalette.Size = new System.Drawing.Size(299, 904);
 			this.grpPalette.TabIndex = 18;
 			this.grpPalette.TabStop = false;
 			this.grpPalette.Text = "Palette";
 			// 
-			// tabControl1
+			// tcAllRGB
 			// 
-			this.tabControl1.Controls.Add(this.tpGeneration);
-			this.tabControl1.Controls.Add(this.tpPaletteSorting);
-			this.tabControl1.Controls.Add(this.tpPaletteShuffing);
-			this.tabControl1.Controls.Add(this.tpPaletteMisc);
-			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Top;
-			this.tabControl1.Location = new System.Drawing.Point(3, 19);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(293, 182);
-			this.tabControl1.TabIndex = 23;
+			this.tcAllRGB.Controls.Add(this.tpGeneration);
+			this.tcAllRGB.Controls.Add(this.tpPaletteSorting);
+			this.tcAllRGB.Controls.Add(this.tpPaletteShuffing);
+			this.tcAllRGB.Controls.Add(this.tpPaletteMisc);
+			this.tcAllRGB.Dock = System.Windows.Forms.DockStyle.Top;
+			this.tcAllRGB.Location = new System.Drawing.Point(3, 19);
+			this.tcAllRGB.Name = "tcAllRGB";
+			this.tcAllRGB.SelectedIndex = 0;
+			this.tcAllRGB.Size = new System.Drawing.Size(293, 182);
+			this.tcAllRGB.TabIndex = 23;
 			// 
 			// tpGeneration
 			// 
@@ -512,13 +517,12 @@
 			// grpPaint
 			// 
 			this.grpPaint.Controls.Add(this.btnClearCanvas);
-			this.grpPaint.Controls.Add(this.grpPaintParams);
 			this.grpPaint.Controls.Add(this.btnAbortPaint);
 			this.grpPaint.Controls.Add(this.btnPaint);
 			this.grpPaint.Controls.Add(this.btnPausePaint);
 			this.grpPaint.Location = new System.Drawing.Point(317, 27);
 			this.grpPaint.Name = "grpPaint";
-			this.grpPaint.Size = new System.Drawing.Size(358, 283);
+			this.grpPaint.Size = new System.Drawing.Size(358, 47);
 			this.grpPaint.TabIndex = 10;
 			this.grpPaint.TabStop = false;
 			this.grpPaint.Text = "Paint";
@@ -535,6 +539,18 @@
 			this.btnClearCanvas.UseVisualStyleBackColor = false;
 			this.btnClearCanvas.Click += new System.EventHandler(this.btnClearCanvas_Click);
 			// 
+			// btnAbortPaint
+			// 
+			this.btnAbortPaint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+			this.btnAbortPaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnAbortPaint.Location = new System.Drawing.Point(168, 17);
+			this.btnAbortPaint.Name = "btnAbortPaint";
+			this.btnAbortPaint.Size = new System.Drawing.Size(75, 23);
+			this.btnAbortPaint.TabIndex = 18;
+			this.btnAbortPaint.Text = "Abort";
+			this.btnAbortPaint.UseVisualStyleBackColor = false;
+			this.btnAbortPaint.Click += new System.EventHandler(this.btnAbortPaint_Click);
+			// 
 			// grpPaintParams
 			// 
 			this.grpPaintParams.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -548,9 +564,9 @@
 			this.grpPaintParams.Controls.Add(this.trbDistanceWeight);
 			this.grpPaintParams.Controls.Add(this.trbHSBWeight);
 			this.grpPaintParams.Controls.Add(this.trbRGBWeight);
-			this.grpPaintParams.Location = new System.Drawing.Point(6, 53);
+			this.grpPaintParams.Location = new System.Drawing.Point(313, 3);
 			this.grpPaintParams.Name = "grpPaintParams";
-			this.grpPaintParams.Size = new System.Drawing.Size(346, 224);
+			this.grpPaintParams.Size = new System.Drawing.Size(339, 224);
 			this.grpPaintParams.TabIndex = 19;
 			this.grpPaintParams.TabStop = false;
 			this.grpPaintParams.Text = "Paint Params";
@@ -608,7 +624,7 @@
 			this.trbNeighbourCountThreshold.Maximum = 8;
 			this.trbNeighbourCountThreshold.Minimum = 0;
 			this.trbNeighbourCountThreshold.Name = "trbNeighbourCountThreshold";
-			this.trbNeighbourCountThreshold.Size = new System.Drawing.Size(334, 26);
+			this.trbNeighbourCountThreshold.Size = new System.Drawing.Size(327, 26);
 			this.trbNeighbourCountThreshold.TabIndex = 24;
 			this.trbNeighbourCountThreshold.Value = "0";
 			// 
@@ -623,7 +639,7 @@
 			this.trbNeighbourCountWeight.Maximum = 100;
 			this.trbNeighbourCountWeight.Minimum = 0;
 			this.trbNeighbourCountWeight.Name = "trbNeighbourCountWeight";
-			this.trbNeighbourCountWeight.Size = new System.Drawing.Size(334, 26);
+			this.trbNeighbourCountWeight.Size = new System.Drawing.Size(327, 26);
 			this.trbNeighbourCountWeight.TabIndex = 23;
 			this.trbNeighbourCountWeight.Value = "0";
 			// 
@@ -638,7 +654,7 @@
 			this.trbDistanceWeight.Maximum = 100;
 			this.trbDistanceWeight.Minimum = 0;
 			this.trbDistanceWeight.Name = "trbDistanceWeight";
-			this.trbDistanceWeight.Size = new System.Drawing.Size(334, 26);
+			this.trbDistanceWeight.Size = new System.Drawing.Size(327, 26);
 			this.trbDistanceWeight.TabIndex = 22;
 			this.trbDistanceWeight.Value = "0";
 			// 
@@ -653,7 +669,7 @@
 			this.trbHSBWeight.Maximum = 100;
 			this.trbHSBWeight.Minimum = 0;
 			this.trbHSBWeight.Name = "trbHSBWeight";
-			this.trbHSBWeight.Size = new System.Drawing.Size(334, 26);
+			this.trbHSBWeight.Size = new System.Drawing.Size(327, 26);
 			this.trbHSBWeight.TabIndex = 21;
 			this.trbHSBWeight.Value = "0";
 			// 
@@ -668,27 +684,15 @@
 			this.trbRGBWeight.Maximum = 100;
 			this.trbRGBWeight.Minimum = 0;
 			this.trbRGBWeight.Name = "trbRGBWeight";
-			this.trbRGBWeight.Size = new System.Drawing.Size(334, 26);
+			this.trbRGBWeight.Size = new System.Drawing.Size(327, 26);
 			this.trbRGBWeight.TabIndex = 20;
 			this.trbRGBWeight.Value = "100";
-			// 
-			// btnAbortPaint
-			// 
-			this.btnAbortPaint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-			this.btnAbortPaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnAbortPaint.Location = new System.Drawing.Point(168, 17);
-			this.btnAbortPaint.Name = "btnAbortPaint";
-			this.btnAbortPaint.Size = new System.Drawing.Size(75, 23);
-			this.btnAbortPaint.TabIndex = 18;
-			this.btnAbortPaint.Text = "Abort";
-			this.btnAbortPaint.UseVisualStyleBackColor = false;
-			this.btnAbortPaint.Click += new System.EventHandler(this.btnAbortPaint_Click);
 			// 
 			// btnDenoise
 			// 
 			this.btnDenoise.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
 			this.btnDenoise.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnDenoise.Location = new System.Drawing.Point(12, 54);
+			this.btnDenoise.Location = new System.Drawing.Point(6, 54);
 			this.btnDenoise.Name = "btnDenoise";
 			this.btnDenoise.Size = new System.Drawing.Size(75, 23);
 			this.btnDenoise.TabIndex = 18;
@@ -826,9 +830,9 @@
 			// 
 			this.grpDenoiserParams.Controls.Add(this.trbPixelNoiseThreshold);
 			this.grpDenoiserParams.Controls.Add(this.btnDenoise);
-			this.grpDenoiserParams.Location = new System.Drawing.Point(317, 316);
+			this.grpDenoiserParams.Location = new System.Drawing.Point(313, 233);
 			this.grpDenoiserParams.Name = "grpDenoiserParams";
-			this.grpDenoiserParams.Size = new System.Drawing.Size(358, 184);
+			this.grpDenoiserParams.Size = new System.Drawing.Size(339, 93);
 			this.grpDenoiserParams.TabIndex = 22;
 			this.grpDenoiserParams.TabStop = false;
 			this.grpDenoiserParams.Text = "Denoiser";
@@ -840,25 +844,55 @@
 			this.trbPixelNoiseThreshold.BackColor = System.Drawing.SystemColors.ControlLight;
 			this.trbPixelNoiseThreshold.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.trbPixelNoiseThreshold.Caption = "Pixel Noise Threshold";
-			this.trbPixelNoiseThreshold.Location = new System.Drawing.Point(12, 22);
+			this.trbPixelNoiseThreshold.Location = new System.Drawing.Point(6, 22);
 			this.trbPixelNoiseThreshold.Maximum = 100;
 			this.trbPixelNoiseThreshold.Minimum = 0;
 			this.trbPixelNoiseThreshold.Name = "trbPixelNoiseThreshold";
-			this.trbPixelNoiseThreshold.Size = new System.Drawing.Size(334, 26);
+			this.trbPixelNoiseThreshold.Size = new System.Drawing.Size(327, 26);
 			this.trbPixelNoiseThreshold.TabIndex = 25;
 			this.trbPixelNoiseThreshold.Value = "100";
+			// 
+			// tcProcGenTypes
+			// 
+			this.tcProcGenTypes.Controls.Add(this.tpAllRGB);
+			this.tcProcGenTypes.Controls.Add(this.tpPoissonCircles);
+			this.tcProcGenTypes.Location = new System.Drawing.Point(12, 80);
+			this.tcProcGenTypes.Name = "tcProcGenTypes";
+			this.tcProcGenTypes.SelectedIndex = 0;
+			this.tcProcGenTypes.Size = new System.Drawing.Size(663, 904);
+			this.tcProcGenTypes.TabIndex = 23;
+			// 
+			// tpAllRGB
+			// 
+			this.tpAllRGB.Controls.Add(this.grpPalette);
+			this.tpAllRGB.Controls.Add(this.grpDenoiserParams);
+			this.tpAllRGB.Controls.Add(this.grpPaintParams);
+			this.tpAllRGB.Location = new System.Drawing.Point(4, 24);
+			this.tpAllRGB.Name = "tpAllRGB";
+			this.tpAllRGB.Size = new System.Drawing.Size(655, 876);
+			this.tpAllRGB.TabIndex = 0;
+			this.tpAllRGB.Text = "AllRGB";
+			this.tpAllRGB.UseVisualStyleBackColor = true;
+			// 
+			// tpPoissonCircles
+			// 
+			this.tpPoissonCircles.Location = new System.Drawing.Point(4, 24);
+			this.tpPoissonCircles.Name = "tpPoissonCircles";
+			this.tpPoissonCircles.Size = new System.Drawing.Size(655, 876);
+			this.tpPoissonCircles.TabIndex = 1;
+			this.tpPoissonCircles.Text = "PoissonCircles";
+			this.tpPoissonCircles.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1904, 1041);
-			this.Controls.Add(this.grpDenoiserParams);
+			this.Controls.Add(this.tcProcGenTypes);
 			this.Controls.Add(this.lblBatchTime);
 			this.Controls.Add(this.grpImageProperties);
 			this.Controls.Add(this.grpPaint);
 			this.Controls.Add(this.pbFinalImage);
-			this.Controls.Add(this.grpPalette);
 			this.Controls.Add(this.lblETA);
 			this.Controls.Add(this.pgPaint);
 			this.Controls.Add(this.menuStrip1);
@@ -869,7 +903,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).EndInit();
 			this.grpPalette.ResumeLayout(false);
-			this.tabControl1.ResumeLayout(false);
+			this.tcAllRGB.ResumeLayout(false);
 			this.tpGeneration.ResumeLayout(false);
 			this.tpPaletteSorting.ResumeLayout(false);
 			this.tpPaletteSorting.PerformLayout();
@@ -884,6 +918,8 @@
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.grpDenoiserParams.ResumeLayout(false);
+			this.tcProcGenTypes.ResumeLayout(false);
+			this.tpAllRGB.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -942,7 +978,7 @@
 		private System.Windows.Forms.ToolStripMenuItem imageToolStripMenuItem;
 		private System.Windows.Forms.GroupBox grpDenoiserParams;
 		private BetterTrackBar trbPixelNoiseThreshold;
-		private System.Windows.Forms.TabControl tabControl1;
+		private System.Windows.Forms.TabControl tcAllRGB;
 		private System.Windows.Forms.TabPage tpGeneration;
 		private System.Windows.Forms.TabPage tpPaletteSorting;
 		private System.Windows.Forms.TabPage tpPaletteShuffing;
@@ -954,6 +990,9 @@
 		private System.Windows.Forms.RadioButton rbPixelSelectorMin;
 		private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem1;
 		private System.Windows.Forms.Button btnClearCanvas;
+		private System.Windows.Forms.TabControl tcProcGenTypes;
+		private System.Windows.Forms.TabPage tpAllRGB;
+		private System.Windows.Forms.TabPage tpPoissonCircles;
 	}
 }
 

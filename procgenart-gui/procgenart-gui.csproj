@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\all-rgb\all-rgb.csproj" />
+    <ProjectReference Include="..\poisson-disk-sampling\poisson-disk-sampling.csproj" />
   </ItemGroup>
 
 </Project>
