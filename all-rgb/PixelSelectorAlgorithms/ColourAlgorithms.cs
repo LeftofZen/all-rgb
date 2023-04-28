@@ -9,7 +9,7 @@ namespace all_rgb
 	{
 		public static void RGBandHSB(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
 		{
-			foreach (var nxy in Core.GetNeighbourPoints(buf, xy))
+			foreach (var nxy in Utilities.GetNeighbourPoints(buf, xy))
 			{
 				if (!buf.IsEmpty(nxy))
 				{

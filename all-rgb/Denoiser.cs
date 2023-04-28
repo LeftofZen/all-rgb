@@ -26,9 +26,9 @@ namespace all_rgb
 			{
 				for (var x = 0; x < buf.Width; ++x)
 				{
-					var neighbours = Core.GetNeighbourPoints(buf, new Point(x, y));
+					var neighbours = Utilities.GetNeighbourPoints(buf, new Point(x, y));
 					var colours = neighbours.Select(n => buf.GetPixel(n));
-					var avg = ColourHelpers.Average(colours);
+					var avg = ColourHelpers.AverageRGB(colours);
 					var distance = MathsHelpers.DistanceSquaredEuclidean(avg.RGB, buf.GetPixel(x, y).RGB);
 
 					if (distance > denoiserParams.DenoisePixelThreshold)

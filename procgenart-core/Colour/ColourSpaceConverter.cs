@@ -65,7 +65,7 @@
 				int i;
 				double f, p, q, t;
 
-				hsb.Hue = (360 * hsb.Hue);
+				hsb.Hue = 360 * hsb.Hue;
 
 				if ((int)hsb.Hue == 360)
 				{
@@ -73,7 +73,7 @@
 				}
 				else
 				{
-					hsb.Hue = hsb.Hue / 60;
+					hsb.Hue /= 60;
 				}
 
 				i = (int)Math.Truncate(hsb.Hue);

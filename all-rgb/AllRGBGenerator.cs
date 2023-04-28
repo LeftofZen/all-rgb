@@ -11,6 +11,53 @@ using procgenart_core;
 
 namespace all_rgb
 {
+	public interface IAction
+	{
+		void Run();
+		void Pause();
+		void Abort();
+
+		IProgress<ProgressReport> Progress { get; }
+
+		Action<IProgress<ProgressReport>> Action { get; init; }
+	}
+
+	//public class BaseAction : IAction
+	//{
+	//	public void Run()
+	//	{
+	//		if (_task == null && _task?.Status == TaskStatus.Created && Action != null && !tokenSource.IsCancellationRequested)
+	//		{
+	//			token = tokenSource.Token;
+	//			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
+	//			_task = Task.Run(Action.Invoke(progress), token);
+	//		}
+	//	}
+
+	//	public void Pause()
+	//	{
+
+	//	}
+
+	//	public void Abort()
+	//	{
+	//		if (!tokenSource.IsCancellationRequested)
+	//		{
+	//			tokenSource.Cancel();
+	//		}
+	//	}
+
+	//	CancellationToken token;
+	//	CancellationTokenSource tokenSource;
+
+	//	public Task _task;
+
+	//	Action<ProgressReport> ProgressCallback = new((_) => { });
+
+	//	IProgress<ProgressReport> Progress;
+	//	Action<IProgress<ProgressReport>> Action { get; init; }
+	//}
+
 	public record ProgressReport(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo, float CurrentAverageRadius);
 
 	public class AllRGBGenerator
@@ -56,7 +103,11 @@ namespace all_rgb
 			}
 			else
 			{
-				colours = colours.OrderBy(c => c.R).ThenBy(c => c.G).ThenBy(c => c.B).ToList();
+				colours = colours
+					.OrderBy(c => c.R)
+					.ThenBy(c => c.G)
+					.ThenBy(c => c.B)
+					.ToList();
 			}
 
 			return colours;
@@ -64,13 +115,40 @@ namespace all_rgb
 
 		private static List<Colour> SortColoursHSB(List<Colour> colours, HSBComparerComponents hsbComponents)
 		{
-			if (hsbComponents != HSBComparerComponents.Empty)
+			//IComparer<Colour> comparer = hsbComponents != HSBComparerComponents.Empty
+			//	? new HSBComponentColorComparer(hsbComponents)
+			//	: new HSBSumColorComparer();
+
+			//colours.Sort(comparer);
+
+			if (hsbComponents.HasFlag(HSBComparerComponents.Hue))
 			{
-				colours.Sort(new HSBComponentColorComparer(hsbComponents));
+				var result = colours.OrderBy(c => c.Hue);
+
+				if (hsbComponents.HasFlag(HSBComparerComponents.Saturation))
+				{
+					result = result.ThenBy(c => c.Saturation);
+				}
+
+				if (hsbComponents.HasFlag(HSBComparerComponents.Brightness))
+				{
+					result = result.ThenBy(c => c.Brightness);
+				}
+				colours = result.ToList();
 			}
-			else
+			else if (hsbComponents.HasFlag(HSBComparerComponents.Saturation))
 			{
-				colours.Sort(new HSBSumColorComparer());
+				var result = colours.OrderBy(c => c.Saturation);
+				if (hsbComponents.HasFlag(HSBComparerComponents.Brightness))
+				{
+					result = result.ThenBy(c => c.Brightness);
+				}
+				colours = result.ToList();
+			}
+			else if (hsbComponents.HasFlag(HSBComparerComponents.Brightness))
+			{
+				var result = colours.OrderBy(c => c.Brightness);
+				colours = result.ToList();
 			}
 
 			return colours;
@@ -142,18 +220,18 @@ namespace all_rgb
 			return result;
 		}
 
-		public void ConsoleRun()
-		{
-			CreateBuffer();
+		//public void ConsoleRun()
+		//{
+		//	CreateBuffer();
 
-			Colours = ColourGenerator.GenerateColours_RGB_Uniform(CurrentBuffer.Width * CurrentBuffer.Height).ToList();
+		//	Colours = ColourGenerator.GenerateColours_RGB_Uniform(CurrentBuffer.Width * CurrentBuffer.Height).ToList();
 
-			//RefineColours(true, false);
-			var nearestColourParam = new NearestColourParam();
-			_ = Paint(nearestColourParam);
+		//	//RefineColours(true, false);
+		//	var nearestColourParam = new NearestColourParam();
+		//	_ = Paint(nearestColourParam);
 
-			Save(GenSaveOptions.Image);
-		}
+		//	Save(GenSaveOptions.Image);
+		//}
 
 		public Image GetCurrentImage()
 			=> CurrentBuffer.GetImage();
@@ -278,7 +356,7 @@ namespace all_rgb
 		public Task<Image> Paint(NearestColourParam nearestColourParam)
 		{
 			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
-			PaintTask = Task.Run(() => Paint(Colours, progress, nearestColourParam));
+			PaintTask = Task.Run(() => Paint(progress, Colours, nearestColourParam));
 			return PaintTask;
 		}
 
@@ -294,7 +372,9 @@ namespace all_rgb
 
 		readonly HashSet<Point> Frontier = new();
 
-		Image Paint(List<Colour> cols, IProgress<ProgressReport> progress, NearestColourParam nearestColourParam)
+		static readonly ProgressReport BaseRecord = new ProgressReport(0f, "Forever", null, "Unknown", 0f);
+
+		Image Paint(IProgress<ProgressReport> progress, List<Colour> cols, NearestColourParam nearestColourParam)
 		{
 			var size = (int)Math.Sqrt(cols.Count);
 			if (CurrentBuffer == null)
@@ -319,8 +399,6 @@ namespace all_rgb
 			var swBatch = new Stopwatch();
 			swBatch.Start();
 
-			var baseRecord = new ProgressReport(0f, "Forever", null, "Unknown", 0f);
-
 			using (var consoleProgressBar = new ConsoleProgressBar())
 			{
 				Point bestXY;
@@ -332,7 +410,7 @@ namespace all_rgb
 					if (Abort)
 					{
 						var abortStr = $"Aborted at {swTotal.Elapsed:g}";
-						progress.Report(baseRecord with { Percent = 1f, ETAText = abortStr, ProgressReportImage = GetCurrentImage() });
+						progress.Report(BaseRecord with { Percent = 1f, ETAText = abortStr, ProgressReportImage = GetCurrentImage() });
 						break;
 					}
 
@@ -375,7 +453,7 @@ namespace all_rgb
 					_ = Frontier.Remove(bestXY);
 
 					// add neighbours
-					foreach (var nxy in Core.GetNeighbourPoints(CurrentBuffer, bestXY))
+					foreach (var nxy in Utilities.GetNeighbourPoints(CurrentBuffer, bestXY))
 					{
 						if (CurrentBuffer.IsEmpty(nxy))
 						{
@@ -394,7 +472,7 @@ namespace all_rgb
 						var timeStr = $"Elapsed={swTotal.Elapsed:g} ETA={ts:g} Progress={percentDone:P}";
 
 						consoleProgressBar.Report(percentDone, timeStr);
-						progress.Report(baseRecord with
+						progress.Report(BaseRecord with
 						{
 							Percent = percentDone,
 							ETAText = timeStr,
@@ -410,7 +488,7 @@ namespace all_rgb
 				swTotal.Stop();
 				var doneStr = $"Done in {swTotal.Elapsed:g}";
 				consoleProgressBar.Report(1, doneStr);
-				progress.Report(baseRecord with { Percent = 1f, ETAText = doneStr, ProgressReportImage = GetCurrentImage() });
+				progress.Report(BaseRecord with { Percent = 1f, ETAText = doneStr, ProgressReportImage = GetCurrentImage() });
 			}
 
 			swTotal.Reset();

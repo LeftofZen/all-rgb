@@ -2,7 +2,7 @@
 
 namespace procgenart_core
 {
-	public static class Core
+	public static class Utilities
 	{
 		public static IEnumerable<Point> GetNeighbourPoints(ImageBuffer buf, Point p)
 		{
