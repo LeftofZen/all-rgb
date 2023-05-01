@@ -80,7 +80,7 @@ namespace all_rgb
 				var minDistance = float.MaxValue;
 				for (var i = 1; i < colours.Count; ++i)
 				{
-					var distance = MathHelpers.DistanceSquaredEuclidean(curr.rgb, colours[i].rgb);
+					var distance = MathsHelpers.DistanceSquaredEuclidean(curr.rgb, colours[i].rgb);
 					if (distance < minDistance)
 					{
 						minDistance = distance;
@@ -102,7 +102,7 @@ namespace all_rgb
 		{
 			CreateBuffer();
 
-			SetOfAllColours = ColourGenerator.GenerateColours(buffer.Width * buffer.Height);
+			SetOfAllColours = ColourGenerator.GenerateColours_RGB_Uniform(buffer.Width * buffer.Height);
 
 			ShuffleColours();
 
@@ -142,6 +142,11 @@ namespace all_rgb
 		public List<Colour> ShuffleColours()
 		{
 			Console.WriteLine("Shuffling");
+
+			if (SetOfAllColours is null)
+			{
+				SetOfAllColours = ColourGenerator.GenerateColours_RGB_Uniform(buffer.Width * buffer.Height);
+			}
 			ShuffledColours = SetOfAllColours.ToList();
 
 			ShuffledColours = SortColoursRGB(ShuffledColours);
@@ -178,7 +183,7 @@ namespace all_rgb
 		float PointOrderFunc(ImageBuffer buf, Point xy, Colour col, bool UseMin)
 		{
 			var c = GetNearestColour(buf, xy, col, UseMin);
-			var d = MathHelpers.DistanceEuclidean(xy, buf.Middle) / 4000000000f;
+			var d = MathsHelpers.DistanceEuclidean(xy, buf.Middle) / 4000000000f;
 			//var d = 0;
 
 			return c + d;
@@ -275,8 +280,8 @@ namespace all_rgb
 				if (!buf.IsEmpty(nxy))
 				{
 					var pixel = buf.GetPixel(nxy);
-					var rgb = MathHelpers.DistanceSquaredEuclidean(pixel.rgb, c.rgb) * rgbWeight;
-					var hsb = MathHelpers.DistanceSquaredEuclidean(pixel.hsb, c.hsb) * hsbWeight;
+					var rgb = MathsHelpers.DistanceSquaredEuclidean(pixel.rgb, c.rgb) * rgbWeight;
+					var hsb = MathsHelpers.DistanceSquaredEuclidean(pixel.hsb, c.hsb) * hsbWeight;
 					diffs.Add(rgb); // + hsb);
 				}
 			}

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <RootNamespace>all_rgb_gui</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>

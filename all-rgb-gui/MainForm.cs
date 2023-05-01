@@ -37,8 +37,12 @@ namespace all_rgb_gui
 
 		private void btnGenerateColours_Click(object sender, EventArgs e)
 		{
-			gen.CreateBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
-			pbPalette.Image = gen.GetImageFromColours(gen.GenerateColours().ToList(), pbPalette.Width, pbPalette.Height);
+			var x = int.Parse(tbWidth.Text);
+			var y = int.Parse(tbHeight.Text);
+
+			gen.CreateBuffer(x, y);
+			gen.SetOfAllColours = ColourGenerator.GenerateColours_RGB_Uniform(x * y);
+			pbPalette.Image = gen.GetImageFromColours(gen.SetOfAllColours.ToList(), pbPalette.Width, pbPalette.Height);
 		}
 
 		private void btnShuffleColours_Click(object sender, EventArgs e)
