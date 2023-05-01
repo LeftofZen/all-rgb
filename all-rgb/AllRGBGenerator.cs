@@ -22,44 +22,6 @@ namespace all_rgb
 		Action<IProgress<ProgressReport>> Action { get; init; }
 	}
 
-	//public class BaseAction : IAction
-	//{
-	//	public void Run()
-	//	{
-	//		if (_task == null && _task?.Status == TaskStatus.Created && Action != null && !tokenSource.IsCancellationRequested)
-	//		{
-	//			token = tokenSource.Token;
-	//			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
-	//			_task = Task.Run(Action.Invoke(progress), token);
-	//		}
-	//	}
-
-	//	public void Pause()
-	//	{
-
-	//	}
-
-	//	public void Abort()
-	//	{
-	//		if (!tokenSource.IsCancellationRequested)
-	//		{
-	//			tokenSource.Cancel();
-	//		}
-	//	}
-
-	//	CancellationToken token;
-	//	CancellationTokenSource tokenSource;
-
-	//	public Task _task;
-
-	//	Action<ProgressReport> ProgressCallback = new((_) => { });
-
-	//	IProgress<ProgressReport> Progress;
-	//	Action<IProgress<ProgressReport>> Action { get; init; }
-	//}
-
-	public record ProgressReport(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo, float CurrentAverageRadius);
-
 	public class AllRGBGenerator
 	{
 		public AllRGBGenerator()
@@ -143,11 +105,23 @@ namespace all_rgb
 				{
 					result = result.ThenBy(c => c.Brightness);
 				}
+				if (hsbComponents.HasFlag(HSBComparerComponents.Hue))
+				{
+					result = result.ThenBy(c => c.Hue);
+				}
 				colours = result.ToList();
 			}
 			else if (hsbComponents.HasFlag(HSBComparerComponents.Brightness))
 			{
 				var result = colours.OrderBy(c => c.Brightness);
+				if (hsbComponents.HasFlag(HSBComparerComponents.Saturation))
+				{
+					result = result.ThenBy(c => c.Saturation);
+				}
+				if (hsbComponents.HasFlag(HSBComparerComponents.Hue))
+				{
+					result = result.ThenBy(c => c.Hue);
+				}
 				colours = result.ToList();
 			}
 
@@ -366,7 +340,7 @@ namespace all_rgb
 
 		public bool Pause { get; set; }
 
-		bool Abort { get; set; }
+		public bool Abort { get; private set; }
 
 		public void AbortPaint() => Abort = true;
 
@@ -494,7 +468,12 @@ namespace all_rgb
 			swTotal.Reset();
 			Frontier.Clear();
 
-			return GetCurrentImage();
+			var img = GetCurrentImage();
+			if (!Abort)
+			{
+				Save(GenSaveOptions.Image); // autosave a completed image
+			}
+			return img;
 		}
 
 		List<PixelSelectorDelegate> pixelSelectorDelegates = new List<PixelSelectorDelegate>();
