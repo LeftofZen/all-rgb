@@ -110,28 +110,42 @@ namespace all_rgb_gui
 		private void btnCopy_Click(object sender, EventArgs e)
 		{
 			gen.ColoursToUseInImage = gen.GeneratedSetOfColours.ToList();
-
 			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
 		}
 
 		private void btnEqualise_Click(object sender, EventArgs e)
 		{
 			gen.ColoursToUseInImage = ColourEqualiser.Equalise(gen.ColoursToUseInImage);
-
 			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
 		}
 
 		private void btnReverse_Click(object sender, EventArgs e)
 		{
 			gen.ColoursToUseInImage = gen.ReverseColours(gen.ColoursToUseInImage);
-
 			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
 		}
 
 		private void btnShuffle_Click(object sender, EventArgs e)
 		{
 			gen.ColoursToUseInImage = gen.ShuffleColours(gen.ColoursToUseInImage);
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+		}
 
+		private void btnSortRGB_Click(object sender, EventArgs e)
+		{
+			gen.ColoursToUseInImage = gen.SortRGB(gen.ColoursToUseInImage);
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+		}
+
+		private void btnSortHSB_Click(object sender, EventArgs e)
+		{
+			gen.ColoursToUseInImage = gen.SortHSB(gen.ColoursToUseInImage);
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+		}
+
+		private void btnSortNN_Click(object sender, EventArgs e)
+		{
+			gen.ColoursToUseInImage = AllRGBGenerator.SortNN(gen.ColoursToUseInImage);
 			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ColoursToUseInImage, pbPaletteShuffled.Width, pbPaletteShuffled.Height);
 		}
 	}

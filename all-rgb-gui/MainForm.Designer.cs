@@ -28,391 +28,418 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.pbFinalImage = new all_rgb_gui.PictureBoxWithInterpolationMode();
-			this.pbPalette = new all_rgb_gui.PictureBoxWithInterpolationMode();
-			this.btnGenerateColours = new System.Windows.Forms.Button();
-			this.btnCopy = new System.Windows.Forms.Button();
-			this.btnPaint = new System.Windows.Forms.Button();
-			this.btnSave = new System.Windows.Forms.Button();
-			this.tbWidth = new System.Windows.Forms.TextBox();
-			this.tbHeight = new System.Windows.Forms.TextBox();
-			this.pbPaletteShuffled = new all_rgb_gui.PictureBoxWithInterpolationMode();
-			this.lblWidth = new System.Windows.Forms.Label();
-			this.lblHeight = new System.Windows.Forms.Label();
-			this.chkAverageMode = new System.Windows.Forms.CheckBox();
-			this.pgPaint = new System.Windows.Forms.ProgressBar();
-			this.lblETA = new System.Windows.Forms.Label();
-			this.btnPausePaint = new System.Windows.Forms.Button();
-			this.btnOpenDir = new System.Windows.Forms.Button();
-			this.btnLoadTemplate = new System.Windows.Forms.Button();
-			this.grpGeneration = new System.Windows.Forms.GroupBox();
-			this.btnEqualise = new System.Windows.Forms.Button();
-			this.grpColourRefinement = new System.Windows.Forms.GroupBox();
-			this.btnReverse = new System.Windows.Forms.Button();
-			this.btnShuffle = new System.Windows.Forms.Button();
-			this.grpPaint = new System.Windows.Forms.GroupBox();
-			this.btnAbortPaint = new System.Windows.Forms.Button();
-			this.grpImageProperties = new System.Windows.Forms.GroupBox();
-			this.btnLoadPalette = new System.Windows.Forms.Button();
-			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbPaletteShuffled)).BeginInit();
-			this.grpGeneration.SuspendLayout();
-			this.grpColourRefinement.SuspendLayout();
-			this.grpPaint.SuspendLayout();
-			this.grpImageProperties.SuspendLayout();
-			this.SuspendLayout();
+			pbFinalImage = new PictureBoxWithInterpolationMode();
+			pbPalette = new PictureBoxWithInterpolationMode();
+			btnGenerateColours = new System.Windows.Forms.Button();
+			btnCopy = new System.Windows.Forms.Button();
+			btnPaint = new System.Windows.Forms.Button();
+			btnSave = new System.Windows.Forms.Button();
+			tbWidth = new System.Windows.Forms.TextBox();
+			tbHeight = new System.Windows.Forms.TextBox();
+			pbPaletteShuffled = new PictureBoxWithInterpolationMode();
+			lblWidth = new System.Windows.Forms.Label();
+			lblHeight = new System.Windows.Forms.Label();
+			chkAverageMode = new System.Windows.Forms.CheckBox();
+			pgPaint = new System.Windows.Forms.ProgressBar();
+			lblETA = new System.Windows.Forms.Label();
+			btnPausePaint = new System.Windows.Forms.Button();
+			btnOpenDir = new System.Windows.Forms.Button();
+			btnLoadTemplate = new System.Windows.Forms.Button();
+			grpGeneration = new System.Windows.Forms.GroupBox();
+			btnLoadPalette = new System.Windows.Forms.Button();
+			btnEqualise = new System.Windows.Forms.Button();
+			grpColourRefinement = new System.Windows.Forms.GroupBox();
+			btnSortNN = new System.Windows.Forms.Button();
+			btnSortHSB = new System.Windows.Forms.Button();
+			btnSortRGB = new System.Windows.Forms.Button();
+			btnReverse = new System.Windows.Forms.Button();
+			btnShuffle = new System.Windows.Forms.Button();
+			grpPaint = new System.Windows.Forms.GroupBox();
+			btnAbortPaint = new System.Windows.Forms.Button();
+			grpImageProperties = new System.Windows.Forms.GroupBox();
+			((System.ComponentModel.ISupportInitialize)pbFinalImage).BeginInit();
+			((System.ComponentModel.ISupportInitialize)pbPalette).BeginInit();
+			((System.ComponentModel.ISupportInitialize)pbPaletteShuffled).BeginInit();
+			grpGeneration.SuspendLayout();
+			grpColourRefinement.SuspendLayout();
+			grpPaint.SuspendLayout();
+			grpImageProperties.SuspendLayout();
+			SuspendLayout();
 			// 
 			// pbFinalImage
 			// 
-			this.pbFinalImage.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.pbFinalImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-			this.pbFinalImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pbFinalImage.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-			this.pbFinalImage.Location = new System.Drawing.Point(6, 51);
-			this.pbFinalImage.Name = "pbFinalImage";
-			this.pbFinalImage.Size = new System.Drawing.Size(714, 774);
-			this.pbFinalImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pbFinalImage.TabIndex = 0;
-			this.pbFinalImage.TabStop = false;
+			pbFinalImage.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			pbFinalImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+			pbFinalImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			pbFinalImage.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+			pbFinalImage.Location = new System.Drawing.Point(6, 51);
+			pbFinalImage.Name = "pbFinalImage";
+			pbFinalImage.Size = new System.Drawing.Size(714, 774);
+			pbFinalImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+			pbFinalImage.TabIndex = 0;
+			pbFinalImage.TabStop = false;
 			// 
 			// pbPalette
 			// 
-			this.pbPalette.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.pbPalette.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pbPalette.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-			this.pbPalette.Location = new System.Drawing.Point(6, 79);
-			this.pbPalette.Name = "pbPalette";
-			this.pbPalette.Size = new System.Drawing.Size(188, 658);
-			this.pbPalette.TabIndex = 7;
-			this.pbPalette.TabStop = false;
+			pbPalette.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			pbPalette.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			pbPalette.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+			pbPalette.Location = new System.Drawing.Point(6, 79);
+			pbPalette.Name = "pbPalette";
+			pbPalette.Size = new System.Drawing.Size(188, 658);
+			pbPalette.TabIndex = 7;
+			pbPalette.TabStop = false;
 			// 
 			// btnGenerateColours
 			// 
-			this.btnGenerateColours.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnGenerateColours.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnGenerateColours.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnGenerateColours.Location = new System.Drawing.Point(6, 21);
-			this.btnGenerateColours.Name = "btnGenerateColours";
-			this.btnGenerateColours.Size = new System.Drawing.Size(188, 23);
-			this.btnGenerateColours.TabIndex = 1;
-			this.btnGenerateColours.Text = "Generate Colours";
-			this.btnGenerateColours.UseVisualStyleBackColor = false;
-			this.btnGenerateColours.Click += new System.EventHandler(this.btnGenerateColours_Click);
+			btnGenerateColours.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnGenerateColours.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnGenerateColours.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnGenerateColours.Location = new System.Drawing.Point(6, 21);
+			btnGenerateColours.Name = "btnGenerateColours";
+			btnGenerateColours.Size = new System.Drawing.Size(188, 23);
+			btnGenerateColours.TabIndex = 1;
+			btnGenerateColours.Text = "Generate Colours";
+			btnGenerateColours.UseVisualStyleBackColor = false;
+			btnGenerateColours.Click += btnGenerateColours_Click;
 			// 
 			// btnCopy
 			// 
-			this.btnCopy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnCopy.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnCopy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnCopy.Location = new System.Drawing.Point(6, 21);
-			this.btnCopy.Name = "btnCopy";
-			this.btnCopy.Size = new System.Drawing.Size(188, 23);
-			this.btnCopy.TabIndex = 2;
-			this.btnCopy.Text = "Copy From Generated";
-			this.btnCopy.UseVisualStyleBackColor = false;
-			this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
+			btnCopy.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnCopy.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnCopy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnCopy.Location = new System.Drawing.Point(6, 21);
+			btnCopy.Name = "btnCopy";
+			btnCopy.Size = new System.Drawing.Size(188, 23);
+			btnCopy.TabIndex = 2;
+			btnCopy.Text = "Copy From Generated";
+			btnCopy.UseVisualStyleBackColor = false;
+			btnCopy.Click += btnCopy_Click;
 			// 
 			// btnPaint
 			// 
-			this.btnPaint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-			this.btnPaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnPaint.Location = new System.Drawing.Point(228, 22);
-			this.btnPaint.Name = "btnPaint";
-			this.btnPaint.Size = new System.Drawing.Size(75, 23);
-			this.btnPaint.TabIndex = 3;
-			this.btnPaint.Text = "Paint";
-			this.btnPaint.UseVisualStyleBackColor = false;
-			this.btnPaint.Click += new System.EventHandler(this.btnPaint_Click);
+			btnPaint.BackColor = System.Drawing.Color.FromArgb(128, 255, 128);
+			btnPaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnPaint.Location = new System.Drawing.Point(228, 22);
+			btnPaint.Name = "btnPaint";
+			btnPaint.Size = new System.Drawing.Size(75, 23);
+			btnPaint.TabIndex = 3;
+			btnPaint.Text = "Paint";
+			btnPaint.UseVisualStyleBackColor = false;
+			btnPaint.Click += btnPaint_Click;
 			// 
 			// btnSave
 			// 
-			this.btnSave.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnSave.Location = new System.Drawing.Point(471, 22);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(75, 23);
-			this.btnSave.TabIndex = 4;
-			this.btnSave.Text = "Save";
-			this.btnSave.UseVisualStyleBackColor = false;
-			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			btnSave.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnSave.Location = new System.Drawing.Point(471, 22);
+			btnSave.Name = "btnSave";
+			btnSave.Size = new System.Drawing.Size(75, 23);
+			btnSave.TabIndex = 4;
+			btnSave.Text = "Save";
+			btnSave.UseVisualStyleBackColor = false;
+			btnSave.Click += btnSave_Click;
 			// 
 			// tbWidth
 			// 
-			this.tbWidth.Location = new System.Drawing.Point(63, 22);
-			this.tbWidth.Name = "tbWidth";
-			this.tbWidth.Size = new System.Drawing.Size(76, 23);
-			this.tbWidth.TabIndex = 5;
-			this.tbWidth.Text = "64";
+			tbWidth.Location = new System.Drawing.Point(63, 22);
+			tbWidth.Name = "tbWidth";
+			tbWidth.Size = new System.Drawing.Size(76, 23);
+			tbWidth.TabIndex = 5;
+			tbWidth.Text = "128";
 			// 
 			// tbHeight
 			// 
-			this.tbHeight.Location = new System.Drawing.Point(63, 51);
-			this.tbHeight.Name = "tbHeight";
-			this.tbHeight.Size = new System.Drawing.Size(76, 23);
-			this.tbHeight.TabIndex = 6;
-			this.tbHeight.Text = "64";
+			tbHeight.Location = new System.Drawing.Point(63, 51);
+			tbHeight.Name = "tbHeight";
+			tbHeight.Size = new System.Drawing.Size(76, 23);
+			tbHeight.TabIndex = 6;
+			tbHeight.Text = "128";
 			// 
 			// pbPaletteShuffled
 			// 
-			this.pbPaletteShuffled.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.pbPaletteShuffled.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pbPaletteShuffled.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-			this.pbPaletteShuffled.Location = new System.Drawing.Point(6, 108);
-			this.pbPaletteShuffled.Name = "pbPaletteShuffled";
-			this.pbPaletteShuffled.Size = new System.Drawing.Size(188, 629);
-			this.pbPaletteShuffled.TabIndex = 9;
-			this.pbPaletteShuffled.TabStop = false;
+			pbPaletteShuffled.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			pbPaletteShuffled.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			pbPaletteShuffled.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+			pbPaletteShuffled.Location = new System.Drawing.Point(6, 137);
+			pbPaletteShuffled.Name = "pbPaletteShuffled";
+			pbPaletteShuffled.Size = new System.Drawing.Size(188, 600);
+			pbPaletteShuffled.TabIndex = 9;
+			pbPaletteShuffled.TabStop = false;
 			// 
 			// lblWidth
 			// 
-			this.lblWidth.AutoSize = true;
-			this.lblWidth.Location = new System.Drawing.Point(18, 25);
-			this.lblWidth.Name = "lblWidth";
-			this.lblWidth.Size = new System.Drawing.Size(39, 15);
-			this.lblWidth.TabIndex = 10;
-			this.lblWidth.Text = "Width";
+			lblWidth.AutoSize = true;
+			lblWidth.Location = new System.Drawing.Point(18, 25);
+			lblWidth.Name = "lblWidth";
+			lblWidth.Size = new System.Drawing.Size(39, 15);
+			lblWidth.TabIndex = 10;
+			lblWidth.Text = "Width";
 			// 
 			// lblHeight
 			// 
-			this.lblHeight.AutoSize = true;
-			this.lblHeight.Location = new System.Drawing.Point(14, 54);
-			this.lblHeight.Name = "lblHeight";
-			this.lblHeight.Size = new System.Drawing.Size(43, 15);
-			this.lblHeight.TabIndex = 11;
-			this.lblHeight.Text = "Height";
+			lblHeight.AutoSize = true;
+			lblHeight.Location = new System.Drawing.Point(14, 54);
+			lblHeight.Name = "lblHeight";
+			lblHeight.Size = new System.Drawing.Size(43, 15);
+			lblHeight.TabIndex = 11;
+			lblHeight.Text = "Height";
 			// 
 			// chkAverageMode
 			// 
-			this.chkAverageMode.AutoSize = true;
-			this.chkAverageMode.Location = new System.Drawing.Point(135, 25);
-			this.chkAverageMode.Name = "chkAverageMode";
-			this.chkAverageMode.Size = new System.Drawing.Size(87, 19);
-			this.chkAverageMode.TabIndex = 12;
-			this.chkAverageMode.Text = "Min Or Avg";
-			this.chkAverageMode.UseVisualStyleBackColor = true;
-			this.chkAverageMode.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+			chkAverageMode.AutoSize = true;
+			chkAverageMode.Location = new System.Drawing.Point(135, 25);
+			chkAverageMode.Name = "chkAverageMode";
+			chkAverageMode.Size = new System.Drawing.Size(87, 19);
+			chkAverageMode.TabIndex = 12;
+			chkAverageMode.Text = "Min Or Avg";
+			chkAverageMode.UseVisualStyleBackColor = true;
+			chkAverageMode.CheckedChanged += checkBox1_CheckedChanged;
 			// 
 			// pgPaint
 			// 
-			this.pgPaint.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.pgPaint.Location = new System.Drawing.Point(12, 853);
-			this.pgPaint.Name = "pgPaint";
-			this.pgPaint.Size = new System.Drawing.Size(1136, 23);
-			this.pgPaint.TabIndex = 13;
+			pgPaint.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			pgPaint.Location = new System.Drawing.Point(12, 853);
+			pgPaint.Name = "pgPaint";
+			pgPaint.Size = new System.Drawing.Size(1136, 23);
+			pgPaint.TabIndex = 13;
 			// 
 			// lblETA
 			// 
-			this.lblETA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.lblETA.AutoSize = true;
-			this.lblETA.Location = new System.Drawing.Point(12, 879);
-			this.lblETA.Name = "lblETA";
-			this.lblETA.Size = new System.Drawing.Size(26, 15);
-			this.lblETA.TabIndex = 14;
-			this.lblETA.Text = "ETA";
+			lblETA.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			lblETA.AutoSize = true;
+			lblETA.Location = new System.Drawing.Point(12, 879);
+			lblETA.Name = "lblETA";
+			lblETA.Size = new System.Drawing.Size(26, 15);
+			lblETA.TabIndex = 14;
+			lblETA.Text = "ETA";
 			// 
 			// btnPausePaint
 			// 
-			this.btnPausePaint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-			this.btnPausePaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnPausePaint.Location = new System.Drawing.Point(309, 22);
-			this.btnPausePaint.Name = "btnPausePaint";
-			this.btnPausePaint.Size = new System.Drawing.Size(75, 23);
-			this.btnPausePaint.TabIndex = 15;
-			this.btnPausePaint.Text = "Pause";
-			this.btnPausePaint.UseVisualStyleBackColor = false;
-			this.btnPausePaint.Click += new System.EventHandler(this.btnPause_Click);
+			btnPausePaint.BackColor = System.Drawing.Color.FromArgb(255, 255, 128);
+			btnPausePaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnPausePaint.Location = new System.Drawing.Point(309, 22);
+			btnPausePaint.Name = "btnPausePaint";
+			btnPausePaint.Size = new System.Drawing.Size(75, 23);
+			btnPausePaint.TabIndex = 15;
+			btnPausePaint.Text = "Pause";
+			btnPausePaint.UseVisualStyleBackColor = false;
+			btnPausePaint.Click += btnPause_Click;
 			// 
 			// btnOpenDir
 			// 
-			this.btnOpenDir.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnOpenDir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnOpenDir.Location = new System.Drawing.Point(144, 22);
-			this.btnOpenDir.Name = "btnOpenDir";
-			this.btnOpenDir.Size = new System.Drawing.Size(256, 52);
-			this.btnOpenDir.TabIndex = 16;
-			this.btnOpenDir.Text = "Open Saved Images Folder";
-			this.btnOpenDir.UseVisualStyleBackColor = false;
-			this.btnOpenDir.Click += new System.EventHandler(this.btnOpenDir_Click);
+			btnOpenDir.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnOpenDir.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnOpenDir.Location = new System.Drawing.Point(144, 22);
+			btnOpenDir.Name = "btnOpenDir";
+			btnOpenDir.Size = new System.Drawing.Size(256, 52);
+			btnOpenDir.TabIndex = 16;
+			btnOpenDir.Text = "Open Saved Images Folder";
+			btnOpenDir.UseVisualStyleBackColor = false;
+			btnOpenDir.Click += btnOpenDir_Click;
 			// 
 			// btnLoadTemplate
 			// 
-			this.btnLoadTemplate.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnLoadTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnLoadTemplate.Location = new System.Drawing.Point(6, 22);
-			this.btnLoadTemplate.Name = "btnLoadTemplate";
-			this.btnLoadTemplate.Size = new System.Drawing.Size(123, 23);
-			this.btnLoadTemplate.TabIndex = 17;
-			this.btnLoadTemplate.Text = "Load Template";
-			this.btnLoadTemplate.UseVisualStyleBackColor = false;
-			this.btnLoadTemplate.Click += new System.EventHandler(this.btnLoadTemplate_Click);
+			btnLoadTemplate.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnLoadTemplate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnLoadTemplate.Location = new System.Drawing.Point(6, 22);
+			btnLoadTemplate.Name = "btnLoadTemplate";
+			btnLoadTemplate.Size = new System.Drawing.Size(123, 23);
+			btnLoadTemplate.TabIndex = 17;
+			btnLoadTemplate.Text = "Load Template";
+			btnLoadTemplate.UseVisualStyleBackColor = false;
+			btnLoadTemplate.Click += btnLoadTemplate_Click;
 			// 
 			// grpGeneration
 			// 
-			this.grpGeneration.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-			this.grpGeneration.Controls.Add(this.btnLoadPalette);
-			this.grpGeneration.Controls.Add(this.pbPalette);
-			this.grpGeneration.Controls.Add(this.btnGenerateColours);
-			this.grpGeneration.Location = new System.Drawing.Point(12, 100);
-			this.grpGeneration.Name = "grpGeneration";
-			this.grpGeneration.Size = new System.Drawing.Size(200, 743);
-			this.grpGeneration.TabIndex = 18;
-			this.grpGeneration.TabStop = false;
-			this.grpGeneration.Text = "Colour Generation";
-			// 
-			// btnEqualise
-			// 
-			this.btnEqualise.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnEqualise.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnEqualise.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnEqualise.Location = new System.Drawing.Point(6, 79);
-			this.btnEqualise.Name = "btnEqualise";
-			this.btnEqualise.Size = new System.Drawing.Size(91, 23);
-			this.btnEqualise.TabIndex = 8;
-			this.btnEqualise.Text = "Equalise";
-			this.btnEqualise.UseVisualStyleBackColor = false;
-			this.btnEqualise.Click += new System.EventHandler(this.btnEqualise_Click);
-			// 
-			// grpColourRefinement
-			// 
-			this.grpColourRefinement.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-			this.grpColourRefinement.Controls.Add(this.btnEqualise);
-			this.grpColourRefinement.Controls.Add(this.btnReverse);
-			this.grpColourRefinement.Controls.Add(this.btnShuffle);
-			this.grpColourRefinement.Controls.Add(this.btnCopy);
-			this.grpColourRefinement.Controls.Add(this.pbPaletteShuffled);
-			this.grpColourRefinement.Location = new System.Drawing.Point(218, 100);
-			this.grpColourRefinement.Name = "grpColourRefinement";
-			this.grpColourRefinement.Size = new System.Drawing.Size(200, 743);
-			this.grpColourRefinement.TabIndex = 8;
-			this.grpColourRefinement.TabStop = false;
-			this.grpColourRefinement.Text = "Refinement";
-			// 
-			// btnReverse
-			// 
-			this.btnReverse.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnReverse.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnReverse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnReverse.Location = new System.Drawing.Point(103, 50);
-			this.btnReverse.Name = "btnReverse";
-			this.btnReverse.Size = new System.Drawing.Size(91, 23);
-			this.btnReverse.TabIndex = 11;
-			this.btnReverse.Text = "Reverse";
-			this.btnReverse.UseVisualStyleBackColor = false;
-			this.btnReverse.Click += new System.EventHandler(this.btnReverse_Click);
-			// 
-			// btnShuffle
-			// 
-			this.btnShuffle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnShuffle.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnShuffle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnShuffle.Location = new System.Drawing.Point(6, 50);
-			this.btnShuffle.Name = "btnShuffle";
-			this.btnShuffle.Size = new System.Drawing.Size(91, 23);
-			this.btnShuffle.TabIndex = 10;
-			this.btnShuffle.Text = "Shuffle";
-			this.btnShuffle.UseVisualStyleBackColor = false;
-			this.btnShuffle.Click += new System.EventHandler(this.btnShuffle_Click);
-			// 
-			// grpPaint
-			// 
-			this.grpPaint.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.grpPaint.Controls.Add(this.btnAbortPaint);
-			this.grpPaint.Controls.Add(this.btnPaint);
-			this.grpPaint.Controls.Add(this.btnPausePaint);
-			this.grpPaint.Controls.Add(this.pbFinalImage);
-			this.grpPaint.Controls.Add(this.btnLoadTemplate);
-			this.grpPaint.Controls.Add(this.chkAverageMode);
-			this.grpPaint.Controls.Add(this.btnSave);
-			this.grpPaint.Location = new System.Drawing.Point(424, 12);
-			this.grpPaint.Name = "grpPaint";
-			this.grpPaint.Size = new System.Drawing.Size(726, 831);
-			this.grpPaint.TabIndex = 10;
-			this.grpPaint.TabStop = false;
-			this.grpPaint.Text = "Paint";
-			// 
-			// btnAbortPaint
-			// 
-			this.btnAbortPaint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-			this.btnAbortPaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnAbortPaint.Location = new System.Drawing.Point(390, 22);
-			this.btnAbortPaint.Name = "btnAbortPaint";
-			this.btnAbortPaint.Size = new System.Drawing.Size(75, 23);
-			this.btnAbortPaint.TabIndex = 18;
-			this.btnAbortPaint.Text = "Abort";
-			this.btnAbortPaint.UseVisualStyleBackColor = false;
-			this.btnAbortPaint.Click += new System.EventHandler(this.btnAbortPaint_Click);
-			// 
-			// grpImageProperties
-			// 
-			this.grpImageProperties.Controls.Add(this.tbWidth);
-			this.grpImageProperties.Controls.Add(this.tbHeight);
-			this.grpImageProperties.Controls.Add(this.lblWidth);
-			this.grpImageProperties.Controls.Add(this.lblHeight);
-			this.grpImageProperties.Controls.Add(this.btnOpenDir);
-			this.grpImageProperties.Location = new System.Drawing.Point(12, 12);
-			this.grpImageProperties.Name = "grpImageProperties";
-			this.grpImageProperties.Size = new System.Drawing.Size(406, 82);
-			this.grpImageProperties.TabIndex = 19;
-			this.grpImageProperties.TabStop = false;
-			this.grpImageProperties.Text = "Image";
+			grpGeneration.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			grpGeneration.Controls.Add(btnLoadPalette);
+			grpGeneration.Controls.Add(pbPalette);
+			grpGeneration.Controls.Add(btnGenerateColours);
+			grpGeneration.Location = new System.Drawing.Point(12, 100);
+			grpGeneration.Name = "grpGeneration";
+			grpGeneration.Size = new System.Drawing.Size(200, 743);
+			grpGeneration.TabIndex = 18;
+			grpGeneration.TabStop = false;
+			grpGeneration.Text = "Colour Generation";
 			// 
 			// btnLoadPalette
 			// 
-			this.btnLoadPalette.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnLoadPalette.BackColor = System.Drawing.SystemColors.ControlLight;
-			this.btnLoadPalette.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnLoadPalette.Location = new System.Drawing.Point(6, 50);
-			this.btnLoadPalette.Name = "btnLoadPalette";
-			this.btnLoadPalette.Size = new System.Drawing.Size(188, 23);
-			this.btnLoadPalette.TabIndex = 8;
-			this.btnLoadPalette.Text = "Load Palette";
-			this.btnLoadPalette.UseVisualStyleBackColor = false;
-			this.btnLoadPalette.Click += new System.EventHandler(this.btnLoadPalette_Click);
+			btnLoadPalette.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnLoadPalette.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnLoadPalette.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnLoadPalette.Location = new System.Drawing.Point(6, 50);
+			btnLoadPalette.Name = "btnLoadPalette";
+			btnLoadPalette.Size = new System.Drawing.Size(188, 23);
+			btnLoadPalette.TabIndex = 8;
+			btnLoadPalette.Text = "Load Palette";
+			btnLoadPalette.UseVisualStyleBackColor = false;
+			btnLoadPalette.Click += btnLoadPalette_Click;
+			// 
+			// btnEqualise
+			// 
+			btnEqualise.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnEqualise.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnEqualise.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnEqualise.Location = new System.Drawing.Point(6, 79);
+			btnEqualise.Name = "btnEqualise";
+			btnEqualise.Size = new System.Drawing.Size(91, 23);
+			btnEqualise.TabIndex = 8;
+			btnEqualise.Text = "Equalise";
+			btnEqualise.UseVisualStyleBackColor = false;
+			btnEqualise.Click += btnEqualise_Click;
+			// 
+			// grpColourRefinement
+			// 
+			grpColourRefinement.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			grpColourRefinement.Controls.Add(btnSortNN);
+			grpColourRefinement.Controls.Add(btnSortHSB);
+			grpColourRefinement.Controls.Add(btnSortRGB);
+			grpColourRefinement.Controls.Add(btnEqualise);
+			grpColourRefinement.Controls.Add(btnReverse);
+			grpColourRefinement.Controls.Add(btnShuffle);
+			grpColourRefinement.Controls.Add(btnCopy);
+			grpColourRefinement.Controls.Add(pbPaletteShuffled);
+			grpColourRefinement.Location = new System.Drawing.Point(218, 100);
+			grpColourRefinement.Name = "grpColourRefinement";
+			grpColourRefinement.Size = new System.Drawing.Size(200, 743);
+			grpColourRefinement.TabIndex = 8;
+			grpColourRefinement.TabStop = false;
+			grpColourRefinement.Text = "Refinement";
+			// 
+			// btnSortNN
+			// 
+			btnSortNN.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnSortNN.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnSortNN.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnSortNN.Location = new System.Drawing.Point(103, 79);
+			btnSortNN.Name = "btnSortNN";
+			btnSortNN.Size = new System.Drawing.Size(91, 23);
+			btnSortNN.TabIndex = 14;
+			btnSortNN.Text = "Sort NN";
+			btnSortNN.UseVisualStyleBackColor = false;
+			btnSortNN.Click += btnSortNN_Click;
+			// 
+			// btnSortHSB
+			// 
+			btnSortHSB.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnSortHSB.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnSortHSB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnSortHSB.Location = new System.Drawing.Point(103, 108);
+			btnSortHSB.Name = "btnSortHSB";
+			btnSortHSB.Size = new System.Drawing.Size(91, 23);
+			btnSortHSB.TabIndex = 13;
+			btnSortHSB.Text = "Sort HSB";
+			btnSortHSB.UseVisualStyleBackColor = false;
+			btnSortHSB.Click += btnSortHSB_Click;
+			// 
+			// btnSortRGB
+			// 
+			btnSortRGB.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnSortRGB.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnSortRGB.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnSortRGB.Location = new System.Drawing.Point(6, 108);
+			btnSortRGB.Name = "btnSortRGB";
+			btnSortRGB.Size = new System.Drawing.Size(91, 23);
+			btnSortRGB.TabIndex = 12;
+			btnSortRGB.Text = "Sort RGB";
+			btnSortRGB.UseVisualStyleBackColor = false;
+			btnSortRGB.Click += btnSortRGB_Click;
+			// 
+			// btnReverse
+			// 
+			btnReverse.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnReverse.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnReverse.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnReverse.Location = new System.Drawing.Point(103, 50);
+			btnReverse.Name = "btnReverse";
+			btnReverse.Size = new System.Drawing.Size(91, 23);
+			btnReverse.TabIndex = 11;
+			btnReverse.Text = "Reverse";
+			btnReverse.UseVisualStyleBackColor = false;
+			btnReverse.Click += btnReverse_Click;
+			// 
+			// btnShuffle
+			// 
+			btnShuffle.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnShuffle.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnShuffle.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnShuffle.Location = new System.Drawing.Point(6, 50);
+			btnShuffle.Name = "btnShuffle";
+			btnShuffle.Size = new System.Drawing.Size(91, 23);
+			btnShuffle.TabIndex = 10;
+			btnShuffle.Text = "Shuffle";
+			btnShuffle.UseVisualStyleBackColor = false;
+			btnShuffle.Click += btnShuffle_Click;
+			// 
+			// grpPaint
+			// 
+			grpPaint.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			grpPaint.Controls.Add(btnAbortPaint);
+			grpPaint.Controls.Add(btnPaint);
+			grpPaint.Controls.Add(btnPausePaint);
+			grpPaint.Controls.Add(pbFinalImage);
+			grpPaint.Controls.Add(btnLoadTemplate);
+			grpPaint.Controls.Add(chkAverageMode);
+			grpPaint.Controls.Add(btnSave);
+			grpPaint.Location = new System.Drawing.Point(424, 12);
+			grpPaint.Name = "grpPaint";
+			grpPaint.Size = new System.Drawing.Size(726, 831);
+			grpPaint.TabIndex = 10;
+			grpPaint.TabStop = false;
+			grpPaint.Text = "Paint";
+			// 
+			// btnAbortPaint
+			// 
+			btnAbortPaint.BackColor = System.Drawing.Color.FromArgb(255, 128, 128);
+			btnAbortPaint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnAbortPaint.Location = new System.Drawing.Point(390, 22);
+			btnAbortPaint.Name = "btnAbortPaint";
+			btnAbortPaint.Size = new System.Drawing.Size(75, 23);
+			btnAbortPaint.TabIndex = 18;
+			btnAbortPaint.Text = "Abort";
+			btnAbortPaint.UseVisualStyleBackColor = false;
+			btnAbortPaint.Click += btnAbortPaint_Click;
+			// 
+			// grpImageProperties
+			// 
+			grpImageProperties.Controls.Add(tbWidth);
+			grpImageProperties.Controls.Add(tbHeight);
+			grpImageProperties.Controls.Add(lblWidth);
+			grpImageProperties.Controls.Add(lblHeight);
+			grpImageProperties.Controls.Add(btnOpenDir);
+			grpImageProperties.Location = new System.Drawing.Point(12, 12);
+			grpImageProperties.Name = "grpImageProperties";
+			grpImageProperties.Size = new System.Drawing.Size(406, 82);
+			grpImageProperties.TabIndex = 19;
+			grpImageProperties.TabStop = false;
+			grpImageProperties.Text = "Image";
 			// 
 			// MainForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1161, 903);
-			this.Controls.Add(this.grpImageProperties);
-			this.Controls.Add(this.grpPaint);
-			this.Controls.Add(this.grpColourRefinement);
-			this.Controls.Add(this.grpGeneration);
-			this.Controls.Add(this.lblETA);
-			this.Controls.Add(this.pgPaint);
-			this.Name = "MainForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "All-RGB Image Generator";
-			((System.ComponentModel.ISupportInitialize)(this.pbFinalImage)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbPalette)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbPaletteShuffled)).EndInit();
-			this.grpGeneration.ResumeLayout(false);
-			this.grpColourRefinement.ResumeLayout(false);
-			this.grpPaint.ResumeLayout(false);
-			this.grpPaint.PerformLayout();
-			this.grpImageProperties.ResumeLayout(false);
-			this.grpImageProperties.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
-
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size(1161, 903);
+			Controls.Add(grpImageProperties);
+			Controls.Add(grpPaint);
+			Controls.Add(grpColourRefinement);
+			Controls.Add(grpGeneration);
+			Controls.Add(lblETA);
+			Controls.Add(pgPaint);
+			Name = "MainForm";
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			Text = "All-RGB Image Generator";
+			((System.ComponentModel.ISupportInitialize)pbFinalImage).EndInit();
+			((System.ComponentModel.ISupportInitialize)pbPalette).EndInit();
+			((System.ComponentModel.ISupportInitialize)pbPaletteShuffled).EndInit();
+			grpGeneration.ResumeLayout(false);
+			grpColourRefinement.ResumeLayout(false);
+			grpPaint.ResumeLayout(false);
+			grpPaint.PerformLayout();
+			grpImageProperties.ResumeLayout(false);
+			grpImageProperties.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -443,6 +470,9 @@
 		private System.Windows.Forms.Button btnReverse;
 		private System.Windows.Forms.Button btnShuffle;
 		private System.Windows.Forms.Button btnLoadPalette;
+		private System.Windows.Forms.Button btnSortHSB;
+		private System.Windows.Forms.Button btnSortRGB;
+		private System.Windows.Forms.Button btnSortNN;
 	}
 }
 

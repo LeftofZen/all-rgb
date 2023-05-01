@@ -42,9 +42,13 @@ namespace all_rgb
 			return img.GetImage();
 		}
 
-		private static List<Colour> SortColoursNN(List<Colour> colours)
+		public static List<Colour> SortNN(List<Colour> colours)
 		{
 			List<Colour> output = new();
+			if (!colours.Any())
+			{
+				return colours;
+			}
 
 			var curr = colours[0];
 
@@ -180,6 +184,16 @@ namespace all_rgb
 		{
 			colours.Shuffle();
 			return colours;
+		}
+
+		public List<Colour> SortRGB(List<Colour> colours)
+		{
+			return colours.OrderBy(c => c.R).ThenBy(c => c.G).ThenBy(c => c.B).ToList();
+		}
+
+		public List<Colour> SortHSB(List<Colour> colours)
+		{
+			return colours.OrderBy(c => c.Hue).ThenBy(c => c.Brightness).ThenBy(c => c.Saturation).ToList();
 		}
 
 		#endregion
