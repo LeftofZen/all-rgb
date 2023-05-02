@@ -47,7 +47,25 @@ namespace all_rgb_gui
 
 		private void btnShuffleColours_Click(object sender, EventArgs e)
 		{
-			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ShuffleColours(), pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+			var success = false;
+			while (!success)
+			{
+				try
+				{
+					pbPaletteShuffled.Image = gen.GetImageFromColours(gen.SortColours(), pbPaletteShuffled.Width, pbPaletteShuffled.Height);
+					success = true;
+				}
+				catch (ArgumentException)
+				{
+					success = false;
+					//MessageBox.Show("colour sorting failed");
+				}
+			}
+		}
+
+		private void btnReverseColours_Click(object sender, EventArgs e)
+		{
+			pbPaletteShuffled.Image = gen.GetImageFromColours(gen.ReverseColours(), pbPaletteShuffled.Width, pbPaletteShuffled.Height);
 		}
 
 		private void btnPaint_Click(object sender, EventArgs e)

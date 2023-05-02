@@ -61,6 +61,7 @@ namespace all_rgb
 					+ a.G.CompareTo(b.G)
 					+ a.B.CompareTo(b.B)
 				);
+			//colours = colours.OrderBy(c => c.R).ThenBy(c => c.G).ThenBy(c => c.B).ToList();
 
 			return colours;
 		}
@@ -104,7 +105,7 @@ namespace all_rgb
 
 			SetOfAllColours = ColourGenerator.GenerateColours_RGB_Uniform(buffer.Width * buffer.Height);
 
-			ShuffleColours();
+			SortColours();
 
 			Paint();
 
@@ -139,9 +140,9 @@ namespace all_rgb
 
 		HashSet<Point> AvailableSet = new HashSet<Point>();
 
-		public List<Colour> ShuffleColours()
+		public List<Colour> SortColours()
 		{
-			Console.WriteLine("Shuffling");
+			Console.WriteLine("Sorting");
 
 			if (SetOfAllColours is null)
 			{
@@ -164,6 +165,20 @@ namespace all_rgb
 			//		);
 
 			return ShuffledColours;
+		}
+
+		public List<Colour> ReverseColours()
+		{
+			if (ShuffledColours != null)
+			{
+				ShuffledColours.Reverse();
+				return ShuffledColours;
+			}
+			else
+			{
+				ShuffledColours = SetOfAllColours.Reverse().ToList();
+				return ShuffledColours;
+			}
 		}
 
 		static float RescaleFloat(float val, float min, float max)
