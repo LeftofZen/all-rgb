@@ -12,12 +12,12 @@ namespace all_rgb
 			{
 				if (!buf.IsEmpty(nxy))
 				{
-					PerNeighbourPixelWeighting2(buf, xy, colour, nearestColourParam, diffs, nxy);
+					PerNeighbourPixelWeighting2(buf, xy, colour, nearestColourParam, avgDistanceFromCentre, diffs, nxy);
 				}
 			}
 		}
 
-		private static void PerNeighbourPixelWeighting1(ImageBuffer buf, Point xy, Colour colour, NearestColourParam nearestColourParam, List<float> diffs, Point nxy)
+		private static void PerNeighbourPixelWeighting1(ImageBuffer buf, Point xy, Colour colour, NearestColourParam nearestColourParam, float avgDistanceFromCentre, List<float> diffs, Point nxy)
 		{
 			var pixel = buf.GetPixel(nxy);
 			var dRGB = MathsHelpers.DistanceEuclidean(pixel.RGB, colour.RGB);
@@ -32,7 +32,7 @@ namespace all_rgb
 			diffs.Add(weight);
 		}
 
-		private static void PerNeighbourPixelWeighting2(ImageBuffer buf, Point xy, Colour colour, NearestColourParam nearestColourParam, List<float> diffs, Point nxy)
+		private static void PerNeighbourPixelWeighting2(ImageBuffer buf, Point xy, Colour colour, NearestColourParam nearestColourParam, float avgDistanceFromCentre, List<float> diffs, Point nxy)
 		{
 			var pixel = buf.GetPixel(nxy);
 			var dRGB = MathsHelpers.DistanceEuclidean(pixel.RGB, colour.RGB);
@@ -47,7 +47,7 @@ namespace all_rgb
 			diffs.Add(weight);
 		}
 
-		private static void PerNeighbourPixelWeighting3(ImageBuffer buf, Point xy, Colour colour, NearestColourParam nearestColourParam, List<float> diffs, Point nxy)
+		private static void PerNeighbourPixelWeighting3(ImageBuffer buf, Point xy, Colour colour, NearestColourParam nearestColourParam, float avgDistanceFromCentre, List<float> diffs, Point nxy)
 		{
 			var pixel = buf.GetPixel(nxy);
 			var dRGB = MathsHelpers.DistanceEuclidean(pixel.RGB, colour.RGB);
