@@ -119,6 +119,7 @@ namespace all_rgb_gui
 						//graphics.DrawEllipse(pen, p.X - minimumDistanceBetweenSamples / 2f, p.Y - minimumDistanceBetweenSamples / 2f, minimumDistanceBetweenSamples, minimumDistanceBetweenSamples);
 					}
 				}
+
 				pbFinalImage.Image = image;
 			}
 		}

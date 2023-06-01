@@ -14,6 +14,7 @@ namespace all_rgb_gui
 			{
 				paintEventArgs.Graphics.InterpolationMode = InterpolationMode;
 			}
+
 			base.OnPaint(paintEventArgs);
 		}
 	}

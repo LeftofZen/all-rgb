@@ -29,8 +29,8 @@ namespace all_rgb
 			// todo: read this list from UI
 			// save/reload this list as config
 			pixelSelectorDelegates.Add(ColourAlgorithms.RGBandHSB);
-			pixelSelectorDelegates.Add(DistanceAlgorithms.DistanceFromCenter);
-			pixelSelectorDelegates.Add(NeighbourAlgorithms.AddMaxAgain);
+			//pixelSelectorDelegates.Add(DistanceAlgorithms.DistanceFromCenter);
+			//pixelSelectorDelegates.Add(NeighbourAlgorithms.AddMaxAgain);
 		}
 
 		public List<Colour> Colours = new();
@@ -96,7 +96,8 @@ namespace all_rgb
 				{
 					result = result.ThenBy(c => c.Brightness);
 				}
-				colours = result.ToList();
+
+				return result.ToList();
 			}
 			else if (hsbComponents.HasFlag(HSBComparerComponents.Saturation))
 			{
@@ -105,11 +106,13 @@ namespace all_rgb
 				{
 					result = result.ThenBy(c => c.Brightness);
 				}
+
 				if (hsbComponents.HasFlag(HSBComparerComponents.Hue))
 				{
 					result = result.ThenBy(c => c.Hue);
 				}
-				colours = result.ToList();
+
+				return result.ToList();
 			}
 			else if (hsbComponents.HasFlag(HSBComparerComponents.Brightness))
 			{
@@ -118,11 +121,13 @@ namespace all_rgb
 				{
 					result = result.ThenBy(c => c.Saturation);
 				}
+
 				if (hsbComponents.HasFlag(HSBComparerComponents.Hue))
 				{
 					result = result.ThenBy(c => c.Hue);
 				}
-				colours = result.ToList();
+
+				return result.ToList();
 			}
 
 			return colours;
@@ -150,7 +155,7 @@ namespace all_rgb
 			while (tree.Count > 0)
 			{
 				var neighbour = tree.GetNearestNeighbours(currIndex, 1);
-				curr = neighbour.First().Value;
+				curr = neighbour[0].Value;
 				result.Add(curr);
 				currIndex[0] = curr.R;
 				currIndex[1] = curr.G;
@@ -161,51 +166,6 @@ namespace all_rgb
 			Trace.Assert(result.Count == colours.Count);
 			return result;
 		}
-
-		private static List<Colour> SortColoursNNBruteForce(List<Colour> colours)
-		{
-			List<Colour> result = new();
-			var curr = colours[0];
-
-			while (colours.Count > 1)
-			{
-				result.Add(curr);
-				_ = colours.Remove(curr);
-
-				Colour nearest = default;
-				var minDistance = float.MaxValue;
-				for (var i = 1; i < colours.Count; ++i)
-				{
-					var distance = MathsHelpers.DistanceSquaredEuclidean(curr.RGB, colours[i].RGB);
-					if (distance < minDistance)
-					{
-						minDistance = distance;
-						nearest = colours[i];
-					}
-				}
-
-				curr = nearest;
-			}
-
-			// should only be 1 colour left
-			Trace.Assert(colours.Count == 1);
-			result.Add(colours[0]);
-
-			return result;
-		}
-
-		//public void ConsoleRun()
-		//{
-		//	CreateBuffer();
-
-		//	Colours = ColourGenerator.GenerateColours_RGB_Uniform(CurrentBuffer.Width * CurrentBuffer.Height).ToList();
-
-		//	//RefineColours(true, false);
-		//	var nearestColourParam = new NearestColourParam();
-		//	_ = Paint(nearestColourParam);
-
-		//	Save(GenSaveOptions.Image);
-		//}
 
 		public Image GetCurrentImage()
 			=> CurrentBuffer.GetImage();
@@ -288,6 +248,7 @@ namespace all_rgb
 				paletteBuffer.SetPixel(count % CurrentBuffer.Width, count / CurrentBuffer.Width, c);
 				count++;
 			}
+
 			paletteBuffer.Save();
 		}
 
@@ -299,13 +260,6 @@ namespace all_rgb
 			return colours;
 		}
 
-		/// <summary>
-		///  
-		/// </summary>
-		/// <param name="colours"></param>
-		/// <param name="percentToDeviate">0 = no shuffle, 1 = full shuffle, values inbetween mean an item can only move a % distance to a new spot.
-		/// eg 0.5 means an item can move at most 50% away from it's initial position</param>
-		/// <returns></returns>
 		public static List<Colour> ShuffleColours(List<Colour> colours, float percentToDeviate = 1f, int skip = 1)
 		{
 			colours.Shuffle(percentToDeviate, skip);
@@ -346,7 +300,7 @@ namespace all_rgb
 
 		readonly HashSet<Point> Frontier = new();
 
-		static readonly ProgressReport BaseRecord = new ProgressReport(0f, "Forever", null, "Unknown", 0f);
+		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
 
 		Image Paint(IProgress<ProgressReport> progress, List<Colour> cols, NearestColourParam nearestColourParam)
 		{
@@ -473,10 +427,11 @@ namespace all_rgb
 			{
 				Save(GenSaveOptions.Image); // autosave a completed image
 			}
+
 			return img;
 		}
 
-		List<PixelSelectorDelegate> pixelSelectorDelegates = new List<PixelSelectorDelegate>();
+		readonly List<PixelSelectorDelegate> pixelSelectorDelegates = new();
 
 		static float GetNearestColourFromAlgos(ImageBuffer buf, Point xy, Colour c, NearestColourParam nearestColourParam, float avgDistanceFromCentre, List<PixelSelectorDelegate> algos)
 		{
@@ -485,44 +440,18 @@ namespace all_rgb
 
 			foreach (var algo in algos)
 			{
-				algo(ref buf, ref xy, ref c, ref nearestColourParam, avgDistanceFromCentre, ref diffs);
+				algo(buf, xy, c, nearestColourParam, avgDistanceFromCentre, ref diffs);
 			}
 
 			// average or minimum selection
-			var selectedDiff = 0f;
 			return nearestColourParam.NearestColourSelector switch
 			{
 				NearestColourSelector.Min => (float)diffs.Min(),
 				NearestColourSelector.Max => (float)diffs.Max(),
 				NearestColourSelector.Sum => (float)diffs.Sum(),
 				NearestColourSelector.Average => (float)diffs.Average(),
-				_ => selectedDiff,
+				_ => throw new NotImplementedException(),
 			};
 		}
-
-		//// this method is not threadsafe
-		//static float GetNearestColour(ImageBuffer buf, Point xy, Colour c, NearestColourParam nearestColourParam, float avgDistanceFromCentre)
-		//{
-		//	// get the diffs for each neighbour separately
-		//	var diffs = new List<float>(8);
-
-		//	// Colour algorithms
-		//	ColourAlgorithms.RGBandHSB(ref buf, ref xy, ref nearestColourParam, ref diffs);
-
-		//	// Distance algorithms
-		//	DistanceAlgorithms.DistanceFromCenter(ref nearestColourParam, ref diffs);
-
-		//	// Neighbour algorithms
-		//	NeighbourAlgorithms.AddMaxAgain(ref nearestColourParam, ref diffs);
-
-		//	// average or minimum selection
-		//	var selectedDiff = nearestColourParam.UseMax
-		//		? (float)diffs.Max()
-		//		: (float)diffs.Average();
-
-		//	return selectedDiff;
-		//}
-
-
 	}
 }

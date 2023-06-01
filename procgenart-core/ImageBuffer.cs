@@ -91,7 +91,7 @@ namespace procgenart_core
 		{
 			if (Width == 0 || Height == 0)
 			{
-				return null;
+				throw new ArgumentOutOfRangeException("Width/Height", $"Image dimensions were invalid. Width={Width} Height={Height}");
 			}
 
 			var img = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);

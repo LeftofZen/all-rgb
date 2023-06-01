@@ -22,6 +22,9 @@ namespace procgenart_core
 			=> Math.Abs(a.X - b.X)
 			 + Math.Abs(a.Y - b.Y)
 			 + Math.Abs(a.Z - b.Z);
+		public static float DistanceManhattan(Point a, Point b)
+			=> Math.Abs(a.X - b.X)
+			 + Math.Abs(a.Y - b.Y);
 
 		public static float DistanceSquaredEuclidean(Point a, Point b)
 			=> ((a.X - b.X) * (a.X - b.X))
