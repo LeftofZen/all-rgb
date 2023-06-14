@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace all_rgb_gui
 {
 	public partial class MainForm : Form
 	{
+		BindingList<IProcGenTask> Tasks = new();
 		public MainForm()
 		{
 			InitializeComponent();
@@ -19,11 +21,13 @@ namespace all_rgb_gui
 			{
 				ProgressCallback = OnGeneratorProgressReport
 			};
+			gen.Scheduler.PropertyChanged += (sender, e) => Tasks.Add((IProcGenTask)sender);
+			lbRunningTasks.DataSource = Tasks;
 		}
 
 		readonly AllRGBGenerator gen;
 
-		void OnGeneratorProgressReport(ProgressReport pr)
+		void OnGeneratorProgressReport(PaintProgressReportInfo pr)
 		{
 			if (IsHandleCreated)
 			{
@@ -66,7 +70,7 @@ namespace all_rgb_gui
 			gen.Colours = genFunc(totalColoursNeeded).ToList();
 			if (gen.Colours == null || gen.Colours.Count != totalColoursNeeded)
 			{
-				MessageBox.Show("Unable to generate enough colours for input image size.");
+				_ = MessageBox.Show("Unable to generate enough colours for input image size.");
 				return;
 			}
 
@@ -78,6 +82,12 @@ namespace all_rgb_gui
 
 		private async void btnPaint_Click(object sender, EventArgs e)
 		{
+			if (gen.Pause)
+			{
+				btnPause_Click(sender, e);
+				return;
+			}
+
 			gen.AbortPaint();
 			if (gen.PaintTask != null)
 			{
@@ -97,13 +107,13 @@ namespace all_rgb_gui
 					DistanceWeight = trbDistanceWeight.ValueAsNormalisedFloat,
 				};
 
-				_ = gen.Paint(nearestColourParam);
+				_ = gen.PaintAsTask(nearestColourParam);
 			}
 			else if (tcProcGenTypes.SelectedTab == tpPoissonCircles)
 			{
 				var width = int.Parse(tbWidth.Text);
 				var height = int.Parse(tbHeight.Text);
-				var minimumDistanceBetweenSamples = 50;
+				const int minimumDistanceBetweenSamples = 50;
 
 				var points = Algorithm.Sample2D(width, height, minimumDistanceBetweenSamples);
 				var image = new Bitmap(width, height);
@@ -162,14 +172,25 @@ namespace all_rgb_gui
 			btnPausePaint.Text = gen.Pause ? "Resume" : "Pause";
 		}
 
-		private void btnDenoisePaint_Click(object sender, EventArgs e)
+		private void btnDenoiseRGB_Click(object sender, EventArgs e)
 		{
 			var denoiserParams = new DenoiserParam
 			{
 				DenoisePixelThreshold = trbPixelNoiseThreshold.ValueAsNormalisedFloat
 			};
 
-			Denoiser.Denoise(gen.CurrentBuffer, denoiserParams);
+			Denoiser.Denoise(gen.CurrentBuffer, denoiserParams, DenoiserColourSpace.RGB);
+			pbFinalImage.Image = gen.GetCurrentImage();
+		}
+
+		private void btnDenoiseHSB_Click(object sender, EventArgs e)
+		{
+			var denoiserParams = new DenoiserParam
+			{
+				DenoisePixelThreshold = trbPixelNoiseThreshold.ValueAsNormalisedFloat
+			};
+
+			Denoiser.Denoise(gen.CurrentBuffer, denoiserParams, DenoiserColourSpace.HSB);
 			pbFinalImage.Image = gen.GetCurrentImage();
 		}
 
@@ -206,9 +227,9 @@ namespace all_rgb_gui
 			{
 				gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.RGB, rgbComponents, null);
 			}
-			catch (ArgumentException ex)
+			catch (ArgumentException)
 			{
-				MessageBox.Show("sorting failed");
+				_ = MessageBox.Show("sorting failed");
 			}
 
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
@@ -281,7 +302,6 @@ namespace all_rgb_gui
 
 		private void saveCurrentImage_Click(object sender, EventArgs e)
 			=> gen.Save(AllRGBGenerator.GenSaveOptions.Image);
-
 
 		private void saveCurrentPalette_Click(object sender, EventArgs e)
 			=> gen.Save(AllRGBGenerator.GenSaveOptions.Palette);

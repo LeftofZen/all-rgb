@@ -11,21 +11,11 @@ using procgenart_core;
 
 namespace all_rgb
 {
-	public interface IAction
-	{
-		void Run();
-		void Pause();
-		void Abort();
-
-		IProgress<ProgressReport> Progress { get; }
-
-		Action<IProgress<ProgressReport>> Action { get; init; }
-	}
-
 	public class AllRGBGenerator
 	{
 		public AllRGBGenerator()
 		{
+			Scheduler = new();
 			// todo: read this list from UI
 			// save/reload this list as config
 			pixelSelectorDelegates.Add(ColourAlgorithms.RGBandHSB);
@@ -281,16 +271,17 @@ namespace all_rgb
 
 		public ImageBuffer CurrentBuffer { get; private set; }
 
-		public Task<Image> Paint(NearestColourParam nearestColourParam)
+		public Task<Image> PaintAsTask(NearestColourParam nearestColourParam)
 		{
-			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
-			PaintTask = Task.Run(() => Paint(progress, Colours, nearestColourParam));
-			return PaintTask;
+			return Scheduler.QueueTask((IProgress<PaintProgressReportInfo> progressInfo) => Paint(progressInfo, Colours, nearestColourParam), ProgressCallback);
 		}
+
+		public ProcGenTaskScheduler Scheduler;
 
 		public Task<Image> PaintTask;
 
-		public Action<ProgressReport> ProgressCallback = new((_) => { });
+		// this is set externally by a consumer of this class
+		public Action<PaintProgressReportInfo> ProgressCallback = new((_) => { });
 
 		public bool Pause { get; set; }
 
@@ -300,9 +291,9 @@ namespace all_rgb
 
 		readonly HashSet<Point> Frontier = new();
 
-		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
+		static readonly PaintProgressReportInfo BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
 
-		Image Paint(IProgress<ProgressReport> progress, List<Colour> cols, NearestColourParam nearestColourParam)
+		Image Paint(IProgress<PaintProgressReportInfo> progress, List<Colour> cols, NearestColourParam nearestColourParam)
 		{
 			var size = (int)Math.Sqrt(cols.Count);
 			if (CurrentBuffer == null)

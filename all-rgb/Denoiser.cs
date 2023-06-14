@@ -5,9 +5,11 @@ using procgenart_core;
 
 namespace all_rgb
 {
+	public enum DenoiserColourSpace { RGB, HSB };
+
 	public static class Denoiser
 	{
-		public static void Denoise(ImageBuffer buf, DenoiserParam denoiserParams)
+		public static void Denoise(ImageBuffer buf, DenoiserParam denoiserParams, DenoiserColourSpace space)
 		{
 			// make noisy-pixel-detection kernel
 			List<(Point point, Colour neighbourAverage)> noisyPixels = new();
@@ -28,8 +30,20 @@ namespace all_rgb
 				{
 					var neighbours = Utilities.GetNeighbourPoints(buf, new Point(x, y));
 					var colours = neighbours.Select(n => buf.GetPixel(n));
-					var avg = ColourHelpers.AverageRGB(colours);
-					var distance = MathsHelpers.DistanceSquaredEuclidean(avg.RGB, buf.GetPixel(x, y).RGB);
+
+					var distance = 0f;
+					Colour avg;
+
+					if (space == DenoiserColourSpace.RGB)
+					{
+						avg = ColourHelpers.AverageRGB(colours);
+						distance = MathsHelpers.DistanceSquaredEuclidean(avg.RGB, buf.GetPixel(x, y).RGB);
+					}
+					else
+					{
+						avg = ColourHelpers.AverageHSB(colours);
+						distance = MathsHelpers.DistanceSquaredHSB(avg.HSB, buf.GetPixel(x, y).HSB);
+					}
 
 					if (distance > denoiserParams.DenoisePixelThreshold)
 					{
@@ -37,7 +51,7 @@ namespace all_rgb
 					}
 					else
 					{
-						coloursInUse.Add(buf.GetPixel(x, y));
+						_ = coloursInUse.Add(buf.GetPixel(x, y));
 					}
 				}
 			}

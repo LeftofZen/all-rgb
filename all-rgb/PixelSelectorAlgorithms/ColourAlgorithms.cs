@@ -12,7 +12,7 @@ namespace all_rgb
 			{
 				if (!buf.IsEmpty(nxy))
 				{
-					PerNeighbourPixelWeighting2(buf, xy, colour, nearestColourParam, avgDistanceFromCentre, diffs, nxy);
+					PerNeighbourPixelWeighting1(buf, xy, colour, nearestColourParam, avgDistanceFromCentre, diffs, nxy);
 				}
 			}
 		}

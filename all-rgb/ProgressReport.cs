@@ -38,5 +38,5 @@ namespace all_rgb
 	//	Action<IProgress<ProgressReport>> Action { get; init; }
 	//}
 
-	public record ProgressReport(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo, float CurrentAverageRadius);
+	public record PaintProgressReportInfo(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo, float CurrentAverageRadius);
 }

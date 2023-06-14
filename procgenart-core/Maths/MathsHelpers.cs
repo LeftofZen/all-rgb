@@ -9,6 +9,11 @@ namespace procgenart_core
 			 + ((a.Y - b.Y) * (a.Y - b.Y))
 			 + ((a.Z - b.Z) * (a.Z - b.Z));
 
+		public static float DistanceSquaredHSB(HSB a, HSB b)
+			=> (((a.Hue - b.Hue) / 360f) * ((a.Hue - b.Hue) / 360f))
+			 + ((a.Saturation - b.Saturation) * (a.Saturation - b.Saturation))
+			 + ((a.Brightness - b.Brightness) * (a.Brightness - b.Brightness));
+
 		// unbelievable you can't do this in c#, this is basic stuff in c++
 		//public static float DistanceSquaredEuclidean<T>(Colour a, Colour b) where T : IEquatable<RGB>
 		//	=> DistanceSquaredEuclidean(a.rgb, b.rgb);
