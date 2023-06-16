@@ -37,6 +37,7 @@ namespace procgenart_core
 				}
 			}
 		}
+
 		public static IEnumerable<Point> GetNonEmptyNeighbourPoints(ImageBuffer buf, Point p)
 		{
 			for (var x = -1; x < 2; ++x)

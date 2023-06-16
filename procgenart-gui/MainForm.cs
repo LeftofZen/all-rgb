@@ -66,7 +66,7 @@ namespace all_rgb_gui
 			gen.Colours = genFunc(totalColoursNeeded).ToList();
 			if (gen.Colours == null || gen.Colours.Count != totalColoursNeeded)
 			{
-				MessageBox.Show("Unable to generate enough colours for input image size.");
+				_ = MessageBox.Show("Unable to generate enough colours for input image size.");
 				return;
 			}
 
@@ -87,7 +87,7 @@ namespace all_rgb_gui
 			// contextual gen based on open tab
 			if (tcProcGenTypes.SelectedTab == tpAllRGB)
 			{
-				var nearestColourParam = new NearestColourParam
+				var paintParams = new PaintParams
 				{
 					NearestColourSelector = GetNearestColourSelector(),
 					RgbWeight = trbRGBWeight.ValueAsNormalisedFloat,
@@ -95,15 +95,17 @@ namespace all_rgb_gui
 					NeighbourCountWeight = trbNeighbourCountWeight.ValueAsNormalisedFloat,
 					NeighbourCountThreshold = trbNeighbourCountThreshold.ValueAsInt,
 					DistanceWeight = trbDistanceWeight.ValueAsNormalisedFloat,
+					SeedType = GetSeedType(),
+					SeedCount = trbSeedCount.ValueAsInt,
 				};
 
-				_ = gen.Paint(nearestColourParam);
+				_ = gen.Paint(paintParams);
 			}
 			else if (tcProcGenTypes.SelectedTab == tpPoissonCircles)
 			{
 				var width = int.Parse(tbWidth.Text);
 				var height = int.Parse(tbHeight.Text);
-				var minimumDistanceBetweenSamples = 50;
+				const int minimumDistanceBetweenSamples = 50;
 
 				var points = Algorithm.Sample2D(width, height, minimumDistanceBetweenSamples);
 				var image = new Bitmap(width, height);
@@ -156,6 +158,22 @@ namespace all_rgb_gui
 			return NearestColourSelector.Min;
 		}
 
+		SeedType GetSeedType()
+		{
+			if (rbCentre.Checked)
+			{
+				return SeedType.Centre;
+			}
+
+			else if (rbRandom.Checked)
+			{
+				return SeedType.Random;
+			}
+
+			// default
+			return SeedType.Centre;
+		}
+
 		private void btnPause_Click(object sender, EventArgs e)
 		{
 			gen.Pause = !gen.Pause;
@@ -206,9 +224,9 @@ namespace all_rgb_gui
 			{
 				gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.RGB, rgbComponents, null);
 			}
-			catch (ArgumentException ex)
+			catch (ArgumentException)
 			{
-				MessageBox.Show("sorting failed");
+				_ = MessageBox.Show("sorting failed");
 			}
 
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
@@ -281,7 +299,6 @@ namespace all_rgb_gui
 
 		private void saveCurrentImage_Click(object sender, EventArgs e)
 			=> gen.Save(AllRGBGenerator.GenSaveOptions.Image);
-
 
 		private void saveCurrentPalette_Click(object sender, EventArgs e)
 			=> gen.Save(AllRGBGenerator.GenSaveOptions.Palette);

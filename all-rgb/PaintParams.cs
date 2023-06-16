@@ -1,6 +1,6 @@
 ﻿namespace all_rgb
 {
-	public class NearestColourParam
+	public class PaintParams
 	{
 		public float RgbWeight { get; init; } = 1f;
 		public float HsbWeight { get; init; } = 0f;
@@ -11,6 +11,11 @@
 
 		public NearestColourSelector NearestColourSelector { get; init; } = NearestColourSelector.Max;
 
+		public SeedType SeedType { get; init; } = SeedType.Centre;
+		public int SeedCount { get; init; } = 1;
 	}
+
 	public enum NearestColourSelector { Min, Max, Sum, Average };
+
+	public enum SeedType { Centre, Random };
 }

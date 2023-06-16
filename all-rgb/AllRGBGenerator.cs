@@ -281,10 +281,10 @@ namespace all_rgb
 
 		public ImageBuffer CurrentBuffer { get; private set; }
 
-		public Task<Image> Paint(NearestColourParam nearestColourParam)
+		public Task<Image> Paint(PaintParams paintParams)
 		{
 			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
-			PaintTask = Task.Run(() => Paint(progress, Colours, nearestColourParam));
+			PaintTask = Task.Run(() => Paint(progress, Colours, paintParams));
 			return PaintTask;
 		}
 
@@ -302,7 +302,7 @@ namespace all_rgb
 
 		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
 
-		Image Paint(IProgress<ProgressReport> progress, List<Colour> cols, NearestColourParam nearestColourParam)
+		Image Paint(IProgress<ProgressReport> progress, List<Colour> cols, PaintParams paintParams)
 		{
 			var size = (int)Math.Sqrt(cols.Count);
 			if (CurrentBuffer == null)
@@ -326,6 +326,27 @@ namespace all_rgb
 
 			var swBatch = new Stopwatch();
 			swBatch.Start();
+
+			// prefilling spots
+			if (paintParams.SeedType == SeedType.Random)
+			{
+				var rnd = new Random();
+				for (var i = 0; i < paintParams.SeedCount; i++)
+				{
+					var randomPoint = new Point(rnd.Next(CurrentBuffer.Width), rnd.Next(CurrentBuffer.Height));
+					CurrentBuffer.SetPixel(randomPoint, cols[i]);
+					UpdateFrontier(randomPoint);
+				}
+
+				cols = cols.Skip(paintParams.SeedCount).ToList();
+			}
+			else if (paintParams.SeedType == SeedType.Centre)
+			{
+				CurrentBuffer.SetPixel(CurrentBuffer.Middle, cols[0]);
+				UpdateFrontier(CurrentBuffer.Middle);
+			}
+
+			cols = cols.Skip(1).ToList();
 
 			using (var consoleProgressBar = new ConsoleProgressBar())
 			{
@@ -360,34 +381,17 @@ namespace all_rgb
 
 					#endregion
 
-					var avgDistance = 0f;
-					if (Frontier.Count == 0)
-					{
-						bestXY = CurrentBuffer.Middle;
-					}
-					else
-					{
-						avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, CurrentBuffer.Middle));
-						avgDistance /= CurrentBuffer.Radius;
-						avgDistance /= Frontier.Count; // scale to 0-1 range
+					var avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, CurrentBuffer.Middle));
+					avgDistance /= CurrentBuffer.Radius * Frontier.Count; // scale to 0-1 range
 
-						bestXY = Frontier
-							.AsParallel()
-							.OrderByDescending(xy => GetNearestColourFromAlgos(CurrentBuffer, xy, col, nearestColourParam, avgDistance, pixelSelectorDelegates))
-							.First();
-					}
+					bestXY = Frontier
+						.AsParallel()
+						.OrderByDescending(xy => GetNearestColourFromAlgos(CurrentBuffer, xy, col, paintParams, avgDistance, pixelSelectorDelegates))
+						.First();
 
 					CurrentBuffer.SetPixel(bestXY, col);
 					_ = Frontier.Remove(bestXY);
-
-					// add neighbours
-					foreach (var nxy in Utilities.GetNeighbourPoints(CurrentBuffer, bestXY))
-					{
-						if (CurrentBuffer.IsEmpty(nxy))
-						{
-							_ = Frontier.Add(nxy);
-						}
-					}
+					UpdateFrontier(bestXY);
 
 					counter++;
 
@@ -429,22 +433,30 @@ namespace all_rgb
 			}
 
 			return img;
+
+			void UpdateFrontier(Point newPixel)
+			{
+				foreach (var nxy in Utilities.GetNonEmptyNeighbourPoints(CurrentBuffer, newPixel))
+				{
+					_ = Frontier.Add(nxy);
+				}
+			}
 		}
 
 		readonly List<PixelSelectorDelegate> pixelSelectorDelegates = new();
 
-		static float GetNearestColourFromAlgos(ImageBuffer buf, Point xy, Colour c, NearestColourParam nearestColourParam, float avgDistanceFromCentre, List<PixelSelectorDelegate> algos)
+		static float GetNearestColourFromAlgos(ImageBuffer buf, Point xy, Colour c, PaintParams paintParams, float avgDistanceFromCentre, List<PixelSelectorDelegate> algos)
 		{
 			// get the diffs for each neighbour separately
 			var diffs = new List<float>(8);
 
 			foreach (var algo in algos)
 			{
-				algo(buf, xy, c, nearestColourParam, avgDistanceFromCentre, ref diffs);
+				algo(buf, xy, c, paintParams, avgDistanceFromCentre, ref diffs);
 			}
 
 			// average or minimum selection
-			return nearestColourParam.NearestColourSelector switch
+			return paintParams.NearestColourSelector switch
 			{
 				NearestColourSelector.Min => (float)diffs.Min(),
 				NearestColourSelector.Max => (float)diffs.Max(),

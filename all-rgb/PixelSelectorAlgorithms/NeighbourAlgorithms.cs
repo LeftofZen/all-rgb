@@ -9,28 +9,28 @@ namespace all_rgb
 	// more neighbours = higher weighting
 	public static class NeighbourAlgorithms
 	{
-		public static void AddMaxAgain(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
+		public static void AddMaxAgain(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref PaintParams paintParams, float avgDistanceFromCentre, ref List<float> diffs)
 		{
-			if (nearestColourParam.NeighbourCountWeight != 0 && diffs.Count >= nearestColourParam.NeighbourCountThreshold)
+			if (paintParams.NeighbourCountWeight != 0 && diffs.Count >= paintParams.NeighbourCountThreshold)
 			{
-				diffs.Add(nearestColourParam.NeighbourCountWeight);
+				diffs.Add(paintParams.NeighbourCountWeight);
 			}
 		}
 
-		public static void AddMultMaxAgain(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
+		public static void AddMultMaxAgain(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref PaintParams paintParams, float avgDistanceFromCentre, ref List<float> diffs)
 		{
-			if (nearestColourParam.NeighbourCountWeight != 0 && diffs.Count >= nearestColourParam.NeighbourCountThreshold)
+			if (paintParams.NeighbourCountWeight != 0 && diffs.Count >= paintParams.NeighbourCountThreshold)
 			{
-				diffs.Add(diffs.Max() * nearestColourParam.NeighbourCountWeight);
+				diffs.Add(diffs.Max() * paintParams.NeighbourCountWeight);
 			}
 		}
 
-		public static void Exp(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref NearestColourParam nearestColourParam, float avgDistanceFromCentre, ref List<float> diffs)
+		public static void Exp(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref PaintParams paintParams, float avgDistanceFromCentre, ref List<float> diffs)
 		{
 			//const float scalar = 0.5f;
-			//var neighbourMulti = (diffs.Count / (8 - nearestColourParam.NeighbourCountThreshold)) * nearestColourParam.NeighbourCountWeight;
-			//// neighbourMulti = (float)((scalar / Math.Sqrt(diffs.Count)) + (1.0 - scalar)) * nearestColourParam.NeighbourCountWeight * scalar;
-			//neighbourMulti = (diffs.Count > nearestColourParam.NeighbourCountThreshold ? 0.05f * diffs.Count : 0f) * nearestColourParam.NeighbourCountWeight;
+			//var neighbourMulti = (diffs.Count / (8 - paintParams.NeighbourCountThreshold)) * paintParams.NeighbourCountWeight;
+			//// neighbourMulti = (float)((scalar / Math.Sqrt(diffs.Count)) + (1.0 - scalar)) * paintParams.NeighbourCountWeight * scalar;
+			//neighbourMulti = (diffs.Count > paintParams.NeighbourCountThreshold ? 0.05f * diffs.Count : 0f) * paintParams.NeighbourCountWeight;
 			//diffs.Add(neighbourMulti);
 		}
 	}
