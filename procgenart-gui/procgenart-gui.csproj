@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <RootNamespace>all_rgb_gui</RootNamespace>
-    <UseWindowsForms>true</UseWindowsForms>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<RootNamespace>all_rgb_gui</RootNamespace>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\all-rgb\all-rgb.csproj" />
-    <ProjectReference Include="..\poisson-disk-sampling\poisson-disk-sampling.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\all-rgb\all-rgb.csproj" />
+		<ProjectReference Include="..\poisson-disk-sampling\poisson-disk-sampling.csproj" />
+	</ItemGroup>
 
 </Project>

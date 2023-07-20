@@ -43,7 +43,7 @@
 			tcAllRGB = new System.Windows.Forms.TabControl();
 			tpGeneration = new System.Windows.Forms.TabPage();
 			btnGenerateRGBPastel = new System.Windows.Forms.Button();
-			btnGenerateHSBRandom = new System.Windows.Forms.Button();
+			btnGenerateHSBUniform = new System.Windows.Forms.Button();
 			tpPaletteSorting = new System.Windows.Forms.TabPage();
 			chkSortHue = new System.Windows.Forms.CheckBox();
 			btnSortNN = new System.Windows.Forms.Button();
@@ -98,6 +98,7 @@
 			rbRandom = new System.Windows.Forms.RadioButton();
 			rbCentre = new System.Windows.Forms.RadioButton();
 			tpPoissonCircles = new System.Windows.Forms.TabPage();
+			btnGenerateHSBPastel = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)pbFinalImage).BeginInit();
 			((System.ComponentModel.ISupportInitialize)pbPalette).BeginInit();
 			grpPalette.SuspendLayout();
@@ -255,9 +256,10 @@
 			// 
 			// tpGeneration
 			// 
+			tpGeneration.Controls.Add(btnGenerateHSBPastel);
 			tpGeneration.Controls.Add(btnGenerateRGBPastel);
 			tpGeneration.Controls.Add(btnGenerateRGBUniform);
-			tpGeneration.Controls.Add(btnGenerateHSBRandom);
+			tpGeneration.Controls.Add(btnGenerateHSBUniform);
 			tpGeneration.Location = new System.Drawing.Point(4, 24);
 			tpGeneration.Name = "tpGeneration";
 			tpGeneration.Padding = new System.Windows.Forms.Padding(3);
@@ -279,18 +281,18 @@
 			btnGenerateRGBPastel.UseVisualStyleBackColor = false;
 			btnGenerateRGBPastel.Click += btnGenerateRGBPastel_Click;
 			// 
-			// btnGenerateHSBRandom
+			// btnGenerateHSBUniform
 			// 
-			btnGenerateHSBRandom.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			btnGenerateHSBRandom.BackColor = System.Drawing.SystemColors.ControlLight;
-			btnGenerateHSBRandom.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			btnGenerateHSBRandom.Location = new System.Drawing.Point(3, 35);
-			btnGenerateHSBRandom.Name = "btnGenerateHSBRandom";
-			btnGenerateHSBRandom.Size = new System.Drawing.Size(276, 23);
-			btnGenerateHSBRandom.TabIndex = 26;
-			btnGenerateHSBRandom.Text = "Generate HSB Random";
-			btnGenerateHSBRandom.UseVisualStyleBackColor = false;
-			btnGenerateHSBRandom.Click += btnGenerateHSBRandom_Click;
+			btnGenerateHSBUniform.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnGenerateHSBUniform.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnGenerateHSBUniform.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnGenerateHSBUniform.Location = new System.Drawing.Point(3, 35);
+			btnGenerateHSBUniform.Name = "btnGenerateHSBUniform";
+			btnGenerateHSBUniform.Size = new System.Drawing.Size(276, 23);
+			btnGenerateHSBUniform.TabIndex = 26;
+			btnGenerateHSBUniform.Text = "Generate HSB Uniform";
+			btnGenerateHSBUniform.UseVisualStyleBackColor = false;
+			btnGenerateHSBUniform.Click += btnGenerateHSBUniform_Click;
 			// 
 			// tpPaletteSorting
 			// 
@@ -896,6 +898,19 @@
 			tpPoissonCircles.Text = "PoissonCircles";
 			tpPoissonCircles.UseVisualStyleBackColor = true;
 			// 
+			// btnGenerateHSBPastel
+			// 
+			btnGenerateHSBPastel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnGenerateHSBPastel.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnGenerateHSBPastel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnGenerateHSBPastel.Location = new System.Drawing.Point(3, 95);
+			btnGenerateHSBPastel.Name = "btnGenerateHSBPastel";
+			btnGenerateHSBPastel.Size = new System.Drawing.Size(276, 23);
+			btnGenerateHSBPastel.TabIndex = 28;
+			btnGenerateHSBPastel.Text = "Generate HSB Pastel";
+			btnGenerateHSBPastel.UseVisualStyleBackColor = false;
+			btnGenerateHSBPastel.Click += btnGenerateHSBPastel_Click;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -984,7 +999,7 @@
 		private System.Windows.Forms.CheckBox chkSortBlue;
 		private System.Windows.Forms.CheckBox chkSortGreen;
 		private System.Windows.Forms.CheckBox chkSortRed;
-		private System.Windows.Forms.Button btnGenerateHSBRandom;
+		private System.Windows.Forms.Button btnGenerateHSBUniform;
 		private System.Windows.Forms.Label lblShuffleSkip;
 		private System.Windows.Forms.TextBox tbShuffleSkip;
 		private System.Windows.Forms.ComboBox cmbPresetSizes;
@@ -1011,6 +1026,7 @@
 		private BetterTrackBar trbSeedCount;
 		private System.Windows.Forms.RadioButton rbRandom;
 		private System.Windows.Forms.RadioButton rbCentre;
+		private System.Windows.Forms.Button btnGenerateHSBPastel;
 	}
 }
 

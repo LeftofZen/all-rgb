@@ -7,7 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using KdTree;
 using KdTree.Math;
-using procgenart_core;
+using Zenith.Colour;
+using Zenith.Core;
+using Zenith.System.Drawing;
+using Zenith.Linq;
+using Zenith.Maths;
+using Zenith.Maths.Points;
 
 namespace all_rgb
 {
@@ -29,15 +34,16 @@ namespace all_rgb
 			// todo: read this list from UI
 			// save/reload this list as config
 			pixelSelectorDelegates.Add(ColourAlgorithms.RGBandHSB);
-			//pixelSelectorDelegates.Add(DistanceAlgorithms.DistanceFromCenter);
-			//pixelSelectorDelegates.Add(NeighbourAlgorithms.AddMaxAgain);
+			pixelSelectorDelegates.Add(DistanceAlgorithms.DistanceFromCenter);
+			pixelSelectorDelegates.Add(NeighbourAlgorithms.AddMaxAgain);
 		}
 
-		public List<Colour> Colours = new();
+		public HashSet<ColourRGB> Colours = new();
 		public bool UseMin;
 
-		public static Image GetImageFromColours(List<Colour> colours, int width, int height)
+		public static Image GetImageFromColours(HashSet<ColourRGB> colourSet, int width, int height)
 		{
+			var colours = colourSet.ToList();
 			var img = new ImageBuffer(width, height);
 			var coloursPerPixel = (float)colours.Count / (width * height);
 			var i = 0;
@@ -57,7 +63,7 @@ namespace all_rgb
 			return img.GetImage();
 		}
 
-		private static List<Colour> SortColoursRGB(List<Colour> colours, RGBComparerComponents rgbComponents)
+		private static List<ColourRGB> SortColoursRGB(List<ColourRGB> colours, RGBComparerComponents rgbComponents)
 		{
 			if (rgbComponents != RGBComparerComponents.Empty)
 			{
@@ -75,9 +81,9 @@ namespace all_rgb
 			return colours;
 		}
 
-		private static List<Colour> SortColoursHSB(List<Colour> colours, HSBComparerComponents hsbComponents)
+		private static List<ColourHSB> SortColoursHSB(List<ColourHSB> colours, HSBComparerComponents hsbComponents)
 		{
-			//IComparer<Colour> comparer = hsbComponents != HSBComparerComponents.Empty
+			//IComparer<ColourRGB> comparer = hsbComponents != HSBComparerComponents.Empty
 			//	? new HSBComponentColorComparer(hsbComponents)
 			//	: new HSBSumColorComparer();
 
@@ -133,10 +139,10 @@ namespace all_rgb
 			return colours;
 		}
 
-		private static List<Colour> SortColoursNNKDTree(List<Colour> colours)
+		private static List<ColourRGB> SortColoursNNKDTree(List<ColourRGB> colours)
 		{
-			var tree = new KdTree<float, Colour>(3, new FloatMath());
-			List<Colour> result = new();
+			var tree = new KdTree<float, ColourRGB>(3, new FloatMath());
+			List<ColourRGB> result = new();
 			var curr = colours[0];
 
 			// add to tree
@@ -179,7 +185,7 @@ namespace all_rgb
 			{
 				for (var x = 0; x < image.Width; ++x)
 				{
-					CurrentBuffer.SetPixel(new Point(x, y), Colour.FromSystemColor(image.GetPixel(x, y)));
+					CurrentBuffer.SetPixel(new Point2(x, y), image.GetPixel(x, y).ToColourRGB());
 				}
 			}
 		}
@@ -193,9 +199,9 @@ namespace all_rgb
 			{
 				for (var x = 0; x < templateImage.Width; ++x)
 				{
-					if (Colour.FromSystemColor(templateImage.GetPixel(x, y)) == Colour.FromSystemColor(Color.Black))
+					if (templateImage.GetPixel(x, y).ToColourRGB() == Color.Black.ToColourRGB())
 					{
-						_ = Frontier.Add(new Point(x, y));
+						_ = Frontier.Add(new Point2(x, y));
 					}
 				}
 			}
@@ -205,7 +211,7 @@ namespace all_rgb
 		{
 			Frontier.Clear();
 			var imgBuf = new ImageBuffer(paletteImage);
-			var colours = new HashSet<Colour>();
+			var colours = new HashSet<ColourRGB>();
 
 			for (var y = 0; y < imgBuf.Height; ++y)
 			{
@@ -215,7 +221,7 @@ namespace all_rgb
 				}
 			}
 
-			Colours = colours.ToList();
+			Colours = colours;
 		}
 
 		public void CreateBuffer(int width = 128, int height = 128)
@@ -234,10 +240,12 @@ namespace all_rgb
 					SavePalette();
 					break;
 				case GenSaveOptions.Image:
-					CurrentBuffer.Save();
+					CurrentBuffer.Save(BasePath);
 					break;
 			}
 		}
+
+		public const string BasePath = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
 
 		void SavePalette()
 		{
@@ -249,18 +257,18 @@ namespace all_rgb
 				count++;
 			}
 
-			paletteBuffer.Save();
+			paletteBuffer.Save(BasePath);
 		}
 
 		#region PaletteSelection
 
-		public static List<Colour> ReverseColours(List<Colour> colours)
+		public static List<ColourRGB> ReverseColours(List<ColourRGB> colours)
 		{
 			colours.Reverse();
 			return colours;
 		}
 
-		public static List<Colour> ShuffleColours(List<Colour> colours, float percentToDeviate = 1f, int skip = 1)
+		public static List<ColourRGB> ShuffleColours(List<ColourRGB> colours, float percentToDeviate = 1f, int skip = 1)
 		{
 			colours.Shuffle(percentToDeviate, skip);
 			return colours;
@@ -268,14 +276,17 @@ namespace all_rgb
 
 		public enum SortType { RGB, HSB, NN };
 
-		public static List<Colour> SortColours(List<Colour> colours, SortType sortType, RGBComparerComponents? rgbComparerComponents = null, HSBComparerComponents? hsbComparerComponents = null)
-			=> sortType switch
+		public static HashSet<ColourRGB> SortColours(HashSet<ColourRGB> colourSet, SortType sortType, RGBComparerComponents? rgbComparerComponents = null, HSBComparerComponents? hsbComparerComponents = null)
+		{
+			var colours = colourSet.ToList();
+			return sortType switch
 			{
-				SortType.RGB => SortColoursRGB(colours, rgbComparerComponents.Value),
-				SortType.HSB => SortColoursHSB(colours, hsbComparerComponents.Value),
-				SortType.NN => SortColoursNNKDTree(colours),
+				SortType.RGB => SortColoursRGB(colours, rgbComparerComponents.Value).ToHashSet(),
+				SortType.HSB => SortColoursHSB(colours.ConvertAll(c => c.AsHSB()), hsbComparerComponents.Value).ConvertAll(c => c.AsRGB()).ToHashSet(), // ugly AF, find a way to make this nicer/less conversion
+				SortType.NN => SortColoursNNKDTree(colours).ToHashSet(),
 				_ => throw new NotImplementedException(),
 			};
+		}
 
 		#endregion
 
@@ -298,12 +309,13 @@ namespace all_rgb
 
 		public void AbortPaint() => Abort = true;
 
-		readonly HashSet<Point> Frontier = new();
+		readonly HashSet<Point2> Frontier = new();
 
 		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
 
-		Image Paint(IProgress<ProgressReport> progress, List<Colour> cols, PaintParams paintParams)
+		Image Paint(IProgress<ProgressReport> progress, HashSet<ColourRGB> colourSet, PaintParams paintParams)
 		{
+			var cols = colourSet.ToList();
 			var size = (int)Math.Sqrt(cols.Count);
 			if (CurrentBuffer == null)
 			{
@@ -311,7 +323,7 @@ namespace all_rgb
 			}
 			else
 			{
-				CurrentBuffer.Clear();
+				CurrentBuffer = new ImageBuffer(CurrentBuffer.Width, CurrentBuffer.Height);
 			}
 
 			Abort = false;
@@ -333,7 +345,7 @@ namespace all_rgb
 				var rnd = new Random();
 				for (var i = 0; i < paintParams.SeedCount; i++)
 				{
-					var randomPoint = new Point(rnd.Next(CurrentBuffer.Width), rnd.Next(CurrentBuffer.Height));
+					var randomPoint = new Point2(rnd.Next(CurrentBuffer.Width), rnd.Next(CurrentBuffer.Height));
 					CurrentBuffer.SetPixel(randomPoint, cols[i]);
 					UpdateFrontier(randomPoint);
 				}
@@ -346,11 +358,13 @@ namespace all_rgb
 				UpdateFrontier(CurrentBuffer.Middle);
 			}
 
+			Verify.NotEmpty(Frontier);
+
 			cols = cols.Skip(1).ToList();
 
 			using (var consoleProgressBar = new ConsoleProgressBar())
 			{
-				Point bestXY;
+				Point2 bestXY;
 
 				foreach (var col in cols)
 				{
@@ -381,7 +395,7 @@ namespace all_rgb
 
 					#endregion
 
-					var avgDistance = Frontier.Sum((p) => MathsHelpers.DistanceEuclidean(p, CurrentBuffer.Middle));
+					var avgDistance = Frontier.Sum((p) => MathsHelpers.Distance.Euclidean(new Point2(p.X, p.Y), CurrentBuffer.Middle));
 					avgDistance /= CurrentBuffer.Radius * Frontier.Count; // scale to 0-1 range
 
 					bestXY = Frontier
@@ -434,9 +448,9 @@ namespace all_rgb
 
 			return img;
 
-			void UpdateFrontier(Point newPixel)
+			void UpdateFrontier(Point2 newPixel)
 			{
-				foreach (var nxy in Utilities.GetNonEmptyNeighbourPoints(CurrentBuffer, newPixel))
+				foreach (var nxy in CurrentBuffer.GetEmptyNeighbourPoints(newPixel))
 				{
 					_ = Frontier.Add(nxy);
 				}
@@ -445,7 +459,7 @@ namespace all_rgb
 
 		readonly List<PixelSelectorDelegate> pixelSelectorDelegates = new();
 
-		static float GetNearestColourFromAlgos(ImageBuffer buf, Point xy, Colour c, PaintParams paintParams, float avgDistanceFromCentre, List<PixelSelectorDelegate> algos)
+		static float GetNearestColourFromAlgos(ImageBuffer buf, Point2 xy, ColourRGB c, PaintParams paintParams, float avgDistanceFromCentre, List<PixelSelectorDelegate> algos)
 		{
 			// get the diffs for each neighbour separately
 			var diffs = new List<float>(8);

@@ -6,7 +6,8 @@ using System.Linq;
 using System.Windows.Forms;
 using all_rgb;
 using poisson_disk_sampling;
-using procgenart_core;
+using Zenith.Colour;
+using Zenith.System.Drawing;
 
 namespace all_rgb_gui
 {
@@ -53,17 +54,20 @@ namespace all_rgb_gui
 		private void btnGenerateRGBUniform_Click(object sender, EventArgs e)
 			=> btnGenerate_Handler(ColourGenerator.GenerateColours_RGB_Uniform);
 
-		private void btnGenerateHSBRandom_Click(object sender, EventArgs e)
-			=> btnGenerate_Handler(ColourGenerator.GenerateColours_HSB_Random);
+		private void btnGenerateHSBUniform_Click(object sender, EventArgs e)
+			=> btnGenerate_Handler(ColourGenerator.GenerateColours_HSB_Uniform_RGB);
+
+		private void btnGenerateHSBPastel_Click(object sender, EventArgs e)
+			=> btnGenerate_Handler(ColourGenerator.GenerateColours_HSB_Pastel_RGB);
 
 		private void btnGenerateRGBPastel_Click(object sender, EventArgs e)
-		=> btnGenerate_Handler(ColourGenerator.GenerateColours_RGB_Pastel);
+			=> btnGenerate_Handler(ColourGenerator.GenerateColours_RGB_Pastel);
 
-		private void btnGenerate_Handler(Func<int, HashSet<Colour>> genFunc)
+		private void btnGenerate_Handler(Func<int, HashSet<ColourRGB>> genFunc)
 		{
 			gen.CreateBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
 			var totalColoursNeeded = gen.CurrentBuffer.Width * gen.CurrentBuffer.Height;
-			gen.Colours = genFunc(totalColoursNeeded).ToList();
+			gen.Colours = genFunc(totalColoursNeeded);
 			if (gen.Colours == null || gen.Colours.Count != totalColoursNeeded)
 			{
 				_ = MessageBox.Show("Unable to generate enough colours for input image size.");
@@ -196,19 +200,19 @@ namespace all_rgb_gui
 
 		private void btnEqualise_Click(object sender, EventArgs e)
 		{
-			gen.Colours = ColourEqualiser.Equalise(gen.Colours);
+			gen.Colours = ColourEqualiser.Equalise(gen.Colours).ToHashSet();
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
 		private void btnReverse_Click(object sender, EventArgs e)
 		{
-			gen.Colours = AllRGBGenerator.ReverseColours(gen.Colours);
+			gen.Colours = AllRGBGenerator.ReverseColours(gen.Colours.ToList()).ToHashSet();
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
 		private void btnShuffle_Click(object sender, EventArgs e)
 		{
-			gen.Colours = AllRGBGenerator.ShuffleColours(gen.Colours, trbShufflePercentage.ValueAsNormalisedFloat, int.TryParse(tbShuffleSkip.Text, out var result) ? result : 1);
+			gen.Colours = AllRGBGenerator.ShuffleColours(gen.Colours.ToList(), trbShufflePercentage.ValueAsNormalisedFloat, int.TryParse(tbShuffleSkip.Text, out var result) ? result : 1).ToHashSet();
 			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height);
 		}
 
@@ -253,7 +257,7 @@ namespace all_rgb_gui
 		private void loadPalette_Click(object sender, EventArgs e)
 		{
 			using var ofd = new OpenFileDialog();
-			ofd.InitialDirectory = ImageBuffer.BaseFileName;
+			ofd.InitialDirectory = AllRGBGenerator.BasePath;
 
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
@@ -270,7 +274,7 @@ namespace all_rgb_gui
 		private void loadTemplate_Click(object sender, EventArgs e)
 		{
 			using var ofd = new OpenFileDialog();
-			ofd.InitialDirectory = ImageBuffer.BaseFileName;
+			ofd.InitialDirectory = AllRGBGenerator.BasePath;
 
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
@@ -285,7 +289,7 @@ namespace all_rgb_gui
 		private void loadImage_Click(object sender, EventArgs e)
 		{
 			using var ofd = new OpenFileDialog();
-			ofd.InitialDirectory = ImageBuffer.BaseFileName;
+			ofd.InitialDirectory = AllRGBGenerator.BasePath;
 
 			if (ofd.ShowDialog() == DialogResult.OK)
 			{
@@ -304,7 +308,7 @@ namespace all_rgb_gui
 			=> gen.Save(AllRGBGenerator.GenSaveOptions.Palette);
 
 		private void openImagesFolder_Click(object sender, EventArgs e)
-			=> _ = Process.Start("explorer.exe", ImageBuffer.BaseFileName);
+			=> _ = Process.Start("explorer.exe", AllRGBGenerator.BasePath);
 
 		private void cmbPresetSizes_SelectedIndexChanged(object sender, EventArgs e)
 		{

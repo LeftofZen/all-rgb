@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using procgenart_core;
+using Zenith.Colour;
+using Zenith.System.Drawing;
+using Zenith.Maths;
+using Zenith.Maths.Points;
 
 namespace all_rgb
 {
@@ -10,7 +12,7 @@ namespace all_rgb
 		public static void Denoise(ImageBuffer buf, DenoiserParam denoiserParams)
 		{
 			// make noisy-pixel-detection kernel
-			List<(Point point, Colour neighbourAverage)> noisyPixels = new();
+			List<(Point2 point, ColourRGB neighbourAverage)> noisyPixels = new();
 
 			var kernel = new int[,]
 			{
@@ -19,21 +21,21 @@ namespace all_rgb
 				{0, 0, 0},
 			};
 
-			HashSet<Colour> coloursInUse = new();
+			HashSet<ColourRGB> coloursInUse = new();
 
 			// find pixels that need denoising
 			for (var y = 0; y < buf.Height; ++y)
 			{
 				for (var x = 0; x < buf.Width; ++x)
 				{
-					var neighbours = Utilities.GetNeighbourPoints(buf, new Point(x, y));
+					var neighbours = buf.GetNeighbourPoints(new Point2(x, y));
 					var colours = neighbours.Select(n => buf.GetPixel(n));
 					var avg = ColourHelpers.AverageRGB(colours);
-					var distance = MathsHelpers.DistanceSquaredEuclidean(avg.RGB, buf.GetPixel(x, y).RGB);
+					var distance = MathsHelpers.Distance.EuclideanSquared(avg, buf.GetPixel(x, y));
 
 					if (distance > denoiserParams.DenoisePixelThreshold)
 					{
-						noisyPixels.Add((new Point(x, y), avg));
+						noisyPixels.Add((new Point2(x, y), avg));
 					}
 					else
 					{
@@ -52,10 +54,10 @@ namespace all_rgb
 						var pA = buf.GetPixel(pnA.point);
 						var pB = buf.GetPixel(pnB.point);
 
-						var distanceAA = MathsHelpers.DistanceSquaredEuclidean(pnA.neighbourAverage.RGB, pA.RGB);
-						var distanceBB = MathsHelpers.DistanceSquaredEuclidean(pnB.neighbourAverage.RGB, pB.RGB);
-						var distanceAB = MathsHelpers.DistanceSquaredEuclidean(pnA.neighbourAverage.RGB, pB.RGB);
-						var distanceBA = MathsHelpers.DistanceSquaredEuclidean(pnB.neighbourAverage.RGB, pA.RGB);
+						var distanceAA = MathsHelpers.Distance.EuclideanSquared(pnA.neighbourAverage, pA);
+						var distanceBB = MathsHelpers.Distance.EuclideanSquared(pnB.neighbourAverage, pB);
+						var distanceAB = MathsHelpers.Distance.EuclideanSquared(pnA.neighbourAverage, pB);
+						var distanceBA = MathsHelpers.Distance.EuclideanSquared(pnB.neighbourAverage, pA);
 
 						if (distanceAB + distanceBA < distanceAA + distanceBB)
 						{
@@ -84,13 +86,13 @@ namespace all_rgb
 			return;
 		}
 
-		public static Colour FindClosestColour(ref HashSet<Colour> colours, Colour colour)
+		public static ColourRGB FindClosestColour(ref HashSet<ColourRGB> colours, ColourRGB colour)
 		{
 			var minColour = colour;
 			var minDistance = float.MaxValue;
 			foreach (var c in colours)
 			{
-				var distance = MathsHelpers.DistanceSquaredEuclidean(c.RGB, colour.RGB);
+				var distance = MathsHelpers.Distance.EuclideanSquared(c, colour);
 				if (distance < minDistance)
 				{
 					minDistance = distance;

@@ -1,16 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using procgenart_core;
+﻿using System.Collections.Generic;
+using Zenith.Colour;
+using Zenith.System.Drawing;
+using Zenith.Maths;
+using Zenith.Maths.Points;
 
 namespace all_rgb
 {
 	public static class DistanceAlgorithms
 	{
-		public static void DistanceFromCenter(ref ImageBuffer buf, ref Point xy, ref Colour colour, ref PaintParams paintParams, float avgDistanceFromCentre, ref List<float> diffs)
+		public static void DistanceFromCenter(ImageBuffer buf, Point2 xy, ColourRGB colour, PaintParams paintParams, float avgDistanceFromCentre, ref List<float> diffs)
 		{
+			if (paintParams.DistanceWeight <= 0)
+			{
+				return;
+			}
+
 			// distance [0-1] for pixel
-			var d = MathsHelpers.DistanceEuclidean(xy, buf.Middle) / buf.Radius;
+			var d = MathsHelpers.Distance.Euclidean(xy, buf.Middle) / buf.Radius;
 			var a = avgDistanceFromCentre;
 			//if (a - d > 0)
 			{
