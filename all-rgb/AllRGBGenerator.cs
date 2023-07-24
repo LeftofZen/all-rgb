@@ -13,6 +13,7 @@ using Zenith.System.Drawing;
 using Zenith.Linq;
 using Zenith.Maths;
 using Zenith.Maths.Points;
+using System.Collections.Concurrent;
 
 namespace all_rgb
 {
@@ -27,6 +28,76 @@ namespace all_rgb
 		Action<IProgress<ProgressReport>> Action { get; init; }
 	}
 
+	// instead, subclass TaskScheduler?
+	/*
+	public class ThreadManager : TaskScheduler
+	{
+		public ThreadManager(int threadCount = 8)
+		{
+			Queue = new ConcurrentQueue<Task>();
+			CompletedWork = new ConcurrentQueue<Task>();
+
+			Threads = new List<Thread>(threadCount);
+			for (var i = 0; i < threadCount; ++i)
+			{
+				Threads.Add(new Thread(ThreadDoWork));
+				Threads[i].Start();
+			}
+		}
+
+		void ThreadDoWork()
+		{
+			ThreadLocal<Task> ThreadCurrentTask = null;
+
+			while (true)
+			{
+				if (ThreadCurrentTask == null)
+				{
+					if (Queue.TryDequeue(out var result))
+					{
+						result.ContinueWith()
+						//ThreadCurrentTask = new ThreadLocal<Task>(() => result);
+						//result.RunSynchronously();
+					}
+				}
+				else
+				{
+					if (ThreadCurrentTask.Value.IsCompleted)
+					{
+						CompletedWork.Enqueue(ThreadCurrentTask.Value);
+						ThreadCurrentTask = null;
+					}
+				}
+
+				// no work to do - spin
+				_ = Thread.Yield();
+			}
+		}
+
+		void OnComplete()
+		{
+
+		}
+
+		List<Thread> Threads;
+		ConcurrentQueue<Task> Queue;
+		ConcurrentQueue<Task> CompletedWork;
+
+		#region TaskScheduler
+
+		protected override IEnumerable<Task> GetScheduledTasks()
+			=> Queue;
+
+		protected override void QueueTask(Task task)
+			=> Queue.Enqueue(task);
+
+		protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
+			=> Thread.CurrentThread.IsAlive && !taskWasPreviouslyQueued ? TryExecuteTask(task) : false;
+
+		#endregion
+	}
+	*/
+
 	public class AllRGBGenerator
 	{
 		public AllRGBGenerator()
@@ -40,6 +111,7 @@ namespace all_rgb
 
 		public HashSet<ColourRGB> Colours = new();
 		public bool UseMin;
+		//public ThreadManager ThreadManager { get; set; } = new();
 
 		public static Image GetImageFromColours(HashSet<ColourRGB> colourSet, int width, int height)
 		{
@@ -295,7 +367,15 @@ namespace all_rgb
 		public Task<Image> Paint(PaintParams paintParams)
 		{
 			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
-			PaintTask = Task.Run(() => Paint(progress, Colours, paintParams));
+
+			PaintTask = Task.Factory.StartNew(() => Paint(progress, Colours, paintParams));
+
+			//PaintTask = Task.Factory.StartNew(
+			//	() => Paint(progress, Colours, paintParams),
+			//	CancellationToken.None,
+			//	TaskCreationOptions.None,
+			//	ThreadManager);
+
 			return PaintTask;
 		}
 
@@ -399,7 +479,7 @@ namespace all_rgb
 					avgDistance /= CurrentBuffer.Radius * Frontier.Count; // scale to 0-1 range
 
 					bestXY = Frontier
-						.AsParallel()
+						//.AsParallel()
 						.OrderByDescending(xy => GetNearestColourFromAlgos(CurrentBuffer, xy, col, paintParams, avgDistance, pixelSelectorDelegates))
 						.First();
 

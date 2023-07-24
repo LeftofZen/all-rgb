@@ -52,7 +52,7 @@ namespace all_rgb
 			var hsb = (1f - dHSB) * paintParams.HsbWeight;
 			var weight = (rgb + hsb) / 2f;
 
-			weight -= MathsHelpers.Distance.Euclidean(xy, buf.Middle) / 100000000f;
+			//weight -= MathsHelpers.Distance.Euclidean(xy, buf.Middle) / 100000000f;
 
 			diffs.Add((float)weight);
 		}
