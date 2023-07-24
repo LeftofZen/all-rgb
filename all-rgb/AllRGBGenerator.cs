@@ -9,7 +9,7 @@ using KdTree;
 using KdTree.Math;
 using Zenith.Colour;
 using Zenith.Core;
-using Zenith.System.Drawing;
+using Zenith.Drawing;
 using Zenith.Linq;
 using Zenith.Maths;
 using Zenith.Maths.Points;
@@ -113,17 +113,17 @@ namespace all_rgb
 		public bool UseMin;
 		//public ThreadManager ThreadManager { get; set; } = new();
 
-		public static Image GetImageFromColours(HashSet<ColourRGB> colourSet, int width, int height)
+		public static ImageBuffer GetImageFromColours(HashSet<ColourRGB> colourSet, int width, int height)
 		{
 			var colours = colourSet.ToList();
-			var img = new ImageBuffer(width, height);
+			var palette = new ImageBuffer(width, height);
 			var coloursPerPixel = (float)colours.Count / (width * height);
 			var i = 0;
 			var colourCounter = 0f;
 
 			while (i < width * height && colourCounter < colours.Count)
 			{
-				img.SetPixel(
+				palette.SetPixel(
 					i % width,
 					i / width,
 					colours[(int)colourCounter]);
@@ -132,7 +132,7 @@ namespace all_rgb
 				++i;
 			}
 
-			return img.GetImage();
+			return palette;
 		}
 
 		private static List<ColourRGB> SortColoursRGB(List<ColourRGB> colours, RGBComparerComponents rgbComponents)
@@ -245,24 +245,13 @@ namespace all_rgb
 			return result;
 		}
 
-		public Image GetCurrentImage()
-			=> CurrentBuffer.GetImage();
-
-		public void BufferFromImage(Bitmap image)
+		public void BufferFromImage(ImageBuffer imageBuffer)
 		{
 			Frontier.Clear();
-			CreateBuffer(image.Width, image.Height);
-
-			for (var y = 0; y < image.Height; ++y)
-			{
-				for (var x = 0; x < image.Width; ++x)
-				{
-					CurrentBuffer.SetPixel(new Point2(x, y), image.GetPixel(x, y).ToColourRGB());
-				}
-			}
+			CurrentBuffer = imageBuffer;
 		}
 
-		public void CreateTemplate(Bitmap templateImage)
+		public void SetTemplate(ImageBuffer templateImage)
 		{
 			Frontier.Clear();
 			CreateBuffer(templateImage.Width, templateImage.Height);
@@ -271,7 +260,7 @@ namespace all_rgb
 			{
 				for (var x = 0; x < templateImage.Width; ++x)
 				{
-					if (templateImage.GetPixel(x, y).ToColourRGB() == Color.Black.ToColourRGB())
+					if (templateImage.GetPixel(x, y) == ColourRGB.Black)
 					{
 						_ = Frontier.Add(new Point2(x, y));
 					}
@@ -279,10 +268,9 @@ namespace all_rgb
 			}
 		}
 
-		public void CreatePalette(Bitmap paletteImage)
+		public void SetPalette(ImageBuffer imgBuf)
 		{
 			Frontier.Clear();
-			var imgBuf = new ImageBuffer(paletteImage);
 			var colours = new HashSet<ColourRGB>();
 
 			for (var y = 0; y < imgBuf.Height; ++y)
@@ -298,39 +286,6 @@ namespace all_rgb
 
 		public void CreateBuffer(int width = 128, int height = 128)
 			=> CurrentBuffer = new ImageBuffer(width, height);
-
-		public enum GenSaveOptions
-		{
-			Palette, Image
-		}
-
-		public void Save(GenSaveOptions options)
-		{
-			switch (options)
-			{
-				case GenSaveOptions.Palette:
-					SavePalette();
-					break;
-				case GenSaveOptions.Image:
-					CurrentBuffer.Save(BasePath);
-					break;
-			}
-		}
-
-		public const string BasePath = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
-
-		void SavePalette()
-		{
-			var paletteBuffer = new ImageBuffer(CurrentBuffer.Width, CurrentBuffer.Height);
-			var count = 0;
-			foreach (var c in Colours)
-			{
-				paletteBuffer.SetPixel(count % CurrentBuffer.Width, count / CurrentBuffer.Width, c);
-				count++;
-			}
-
-			paletteBuffer.Save(BasePath);
-		}
 
 		#region PaletteSelection
 
@@ -362,9 +317,9 @@ namespace all_rgb
 
 		#endregion
 
-		public ImageBuffer CurrentBuffer { get; private set; }
+		public ImageBuffer CurrentBuffer { get; set; }
 
-		public Task<Image> Paint(PaintParams paintParams)
+		public Task<ImageBuffer> Paint(PaintParams paintParams)
 		{
 			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));
 
@@ -379,7 +334,7 @@ namespace all_rgb
 			return PaintTask;
 		}
 
-		public Task<Image> PaintTask;
+		public Task<ImageBuffer> PaintTask;
 
 		public Action<ProgressReport> ProgressCallback = new((_) => { });
 
@@ -393,18 +348,19 @@ namespace all_rgb
 
 		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
 
-		Image Paint(IProgress<ProgressReport> progress, HashSet<ColourRGB> colourSet, PaintParams paintParams)
+		public void Clear()
+		{
+			CurrentBuffer.Clear();
+			Frontier.Clear();
+		}
+
+		ImageBuffer Paint(IProgress<ProgressReport> progress, HashSet<ColourRGB> colourSet, PaintParams paintParams)
 		{
 			var cols = colourSet.ToList();
 			var size = (int)Math.Sqrt(cols.Count);
-			if (CurrentBuffer == null)
-			{
-				CurrentBuffer = new ImageBuffer(size, size);
-			}
-			else
-			{
-				CurrentBuffer = new ImageBuffer(CurrentBuffer.Width, CurrentBuffer.Height);
-			}
+			CurrentBuffer = CurrentBuffer == null
+				? new ImageBuffer(size, size)
+				: new ImageBuffer(CurrentBuffer.Width, CurrentBuffer.Height);
 
 			Abort = false;
 
@@ -453,7 +409,7 @@ namespace all_rgb
 					if (Abort)
 					{
 						var abortStr = $"Aborted at {swTotal.Elapsed:g}";
-						progress.Report(BaseRecord with { Percent = 1f, ETAText = abortStr, ProgressReportImage = GetCurrentImage() });
+						progress.Report(BaseRecord with { Percent = 1f, ETAText = abortStr, ProgressReportImageBuffer = CurrentBuffer });
 						break;
 					}
 
@@ -502,7 +458,7 @@ namespace all_rgb
 						{
 							Percent = percentDone,
 							ETAText = timeStr,
-							ProgressReportImage = counter % refreshRate == 0 ? GetCurrentImage() : null,
+							ProgressReportImageBuffer = counter % refreshRate == 0 ? CurrentBuffer : null,
 							BatchInfo = $"BatchSize={refreshRate} BatchTime={swBatch.ElapsedMilliseconds}ms FrontierSize={Frontier.Count}",
 							CurrentAverageRadius = avgDistance * CurrentBuffer.Radius, // put from 0-1 to 0-radius
 						});
@@ -514,19 +470,21 @@ namespace all_rgb
 				swTotal.Stop();
 				var doneStr = $"Done in {swTotal.Elapsed:g}";
 				consoleProgressBar.Report(1, doneStr);
-				progress.Report(BaseRecord with { Percent = 1f, ETAText = doneStr, ProgressReportImage = GetCurrentImage() });
+				progress.Report(BaseRecord with { Percent = 1f, ETAText = doneStr, ProgressReportImageBuffer = CurrentBuffer });
 			}
 
 			swTotal.Reset();
 			Frontier.Clear();
 
-			var img = GetCurrentImage();
-			if (!Abort)
-			{
-				Save(GenSaveOptions.Image); // autosave a completed image
-			}
+			//var img = GetCurrentImage();
+			//if (!Abort)
+			//{
+			//	Save(GenSaveOptions.Image); // autosave a completed image
+			//}
 
-			return img;
+			//return img;
+
+			return CurrentBuffer;
 
 			void UpdateFrontier(Point2 newPixel)
 			{

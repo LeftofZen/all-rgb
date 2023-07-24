@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Zenith.Colour;
-using Zenith.System.Drawing;
+using Zenith.Drawing;
 using Zenith.Maths.Points;
 
 namespace all_rgb

@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using Zenith.Drawing;
 
 namespace all_rgb
 {
@@ -38,5 +38,5 @@ namespace all_rgb
 	//	Action<IProgress<ProgressReport>> Action { get; init; }
 	//}
 
-	public record ProgressReport(float Percent, string ETAText, Image ProgressReportImage, string BatchInfo, float CurrentAverageRadius);
+	public record ProgressReport(float Percent, string ETAText, ImageBuffer ProgressReportImageBuffer, string BatchInfo, float CurrentAverageRadius);
 }

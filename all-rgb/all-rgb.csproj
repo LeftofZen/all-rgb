@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFramework>net7.0-windows</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>all_rgb</RootNamespace>
 	</PropertyGroup>
 
@@ -20,10 +20,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="KdTree" Version="1.4.1" />
-		<PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-		<PackageReference Include="Zenith.Colour" Version="1.0.15" />
-		<PackageReference Include="Zenith.Core" Version="1.0.15" />
-		<PackageReference Include="Zenith.System.Drawing" Version="1.0.15" />
+		<PackageReference Include="Zenith.Colour" Version="1.0.17" />
+		<PackageReference Include="Zenith.Core" Version="1.0.17" />
+		<PackageReference Include="Zenith.Drawing" Version="1.0.17" />
 	</ItemGroup>
 
 </Project>

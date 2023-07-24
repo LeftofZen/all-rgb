@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Zenith.Colour;
-using Zenith.System.Drawing;
+using Zenith.Drawing;
 using Zenith.Maths;
 using Zenith.Maths.Points;
 
@@ -23,7 +23,6 @@ namespace all_rgb
 				}
 			}
 		}
-
 
 		// diamond shaped
 		private static void PerNeighbourPixelWeighting1(ImageBuffer buf, Point2 xy, ColourRGB colour, PaintParams paintParams, float avgDistanceFromCentre, List<float> diffs, Point2 nxy)
