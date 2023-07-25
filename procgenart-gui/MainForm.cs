@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using all_rgb;
+using heightmap_gen;
 using poisson_disk_sampling;
 using Zenith.Colour;
 using Zenith.Drawing;
@@ -17,13 +18,18 @@ namespace all_rgb_gui
 		public MainForm()
 		{
 			InitializeComponent();
-			gen = new AllRGBGenerator
+			allrgbGen = new AllRGBGenerator
 			{
 				ProgressCallback = OnGeneratorProgressReport
 			};
+
+			heightmapGen = new();
+			diamondSquareGen = new();
 		}
 
-		readonly AllRGBGenerator gen;
+		readonly AllRGBGenerator allrgbGen;
+		readonly HeightmapGenerator heightmapGen;
+		readonly DiamondSquareGenerator diamondSquareGen;
 
 		void OnGeneratorProgressReport(ProgressReport pr)
 		{
@@ -47,9 +53,9 @@ namespace all_rgb_gui
 						g.DrawEllipse(Pens.Red, rect);
 						pbFinalImage.Image = image;
 
-						if (pr.Percent == 1f && !gen.Abort)
+						if (pr.Percent == 1f && !allrgbGen.Abort)
 						{
-							Save(GenSaveOptions.Image); // autosave a completed image							
+							Save(GenSaveOptions.Image); // autosave a completed image
 						}
 					}
 
@@ -72,17 +78,17 @@ namespace all_rgb_gui
 
 		private void btnGeneratePalette_Handler(Func<int, HashSet<ColourRGB>> genFunc)
 		{
-			gen.CreateBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
-			var totalColoursNeeded = gen.CurrentBuffer.Width * gen.CurrentBuffer.Height;
-			gen.Colours = genFunc(totalColoursNeeded);
-			if (gen.Colours == null || gen.Colours.Count != totalColoursNeeded)
+			allrgbGen.CreateBuffer(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
+			var totalColoursNeeded = allrgbGen.CurrentBuffer.Width * allrgbGen.CurrentBuffer.Height;
+			allrgbGen.Colours = genFunc(totalColoursNeeded);
+			if (allrgbGen.Colours == null || allrgbGen.Colours.Count != totalColoursNeeded)
 			{
 				_ = MessageBox.Show("Unable to generate enough colours for input image size.");
 				return;
 			}
 
 			var buf = AllRGBGenerator.GetImageFromColours(
-				gen.Colours,
+				allrgbGen.Colours,
 				pbPalette.Width,
 				pbPalette.Height);
 			pbPalette.Image = buf.GetImage();
@@ -90,11 +96,14 @@ namespace all_rgb_gui
 
 		private async void btnPaint_Click(object sender, EventArgs e)
 		{
-			gen.AbortPaint();
-			if (gen.PaintTask != null)
+			allrgbGen.AbortPaint();
+			if (allrgbGen.PaintTask != null)
 			{
-				_ = await gen.PaintTask;
+				_ = await allrgbGen.PaintTask;
 			}
+
+			var width = int.Parse(tbWidth.Text);
+			var height = int.Parse(tbHeight.Text);
 
 			// contextual gen based on open tab
 			if (tcProcGenTypes.SelectedTab == tpAllRGB)
@@ -111,12 +120,10 @@ namespace all_rgb_gui
 					SeedCount = trbSeedCount.ValueAsInt,
 				};
 
-				_ = gen.Paint(paintParams);
+				_ = allrgbGen.Paint(paintParams);
 			}
 			else if (tcProcGenTypes.SelectedTab == tpPoissonCircles)
 			{
-				var width = int.Parse(tbWidth.Text);
-				var height = int.Parse(tbHeight.Text);
 				const int minimumDistanceBetweenSamples = 50;
 
 				var points = Algorithm.Sample2D(width, height, minimumDistanceBetweenSamples);
@@ -135,6 +142,33 @@ namespace all_rgb_gui
 				}
 
 				pbFinalImage.Image = image;
+			}
+			else if (tcProcGenTypes.SelectedTab == tpNoise)
+			{
+				var scale = double.Parse(tbScale.Text);
+				var xOffset = double.Parse(tbXOffset.Text);
+				var yOffset = double.Parse(tbYOffset.Text);
+				var seed = long.Parse(tbSeed.Text);
+
+				IGenerator generator;
+				dynamic parameters;
+				if (cmbNoiseAlgorithm.SelectedItem.ToString() == "Simplex")
+				{
+					parameters = new HeightmapParams(scale, xOffset, yOffset, seed == 0 ? null : seed);
+					generator = heightmapGen;
+				}
+				else if (cmbNoiseAlgorithm.SelectedItem.ToString() == "Diamond Square")
+				{
+					parameters = new DiamondSquareParams(scale, seed == 0 ? null : (int)seed);
+					generator = diamondSquareGen;
+				}
+				else
+				{
+					return;
+				}
+
+				generator.Generate(parameters, width, height);
+				pbFinalImage.Image = generator.CurrentBuffer.GetImage();
 			}
 		}
 
@@ -184,8 +218,8 @@ namespace all_rgb_gui
 
 		private void btnPause_Click(object sender, EventArgs e)
 		{
-			gen.Pause = !gen.Pause;
-			btnPausePaint.Text = gen.Pause ? "Resume" : "Pause";
+			allrgbGen.Pause = !allrgbGen.Pause;
+			btnPausePaint.Text = allrgbGen.Pause ? "Resume" : "Pause";
 		}
 
 		private void btnDenoisePaint_Click(object sender, EventArgs e)
@@ -195,29 +229,29 @@ namespace all_rgb_gui
 				DenoisePixelThreshold = trbPixelNoiseThreshold.ValueAsNormalisedFloat
 			};
 
-			Denoiser.Denoise(gen.CurrentBuffer, denoiserParams);
-			pbFinalImage.Image = gen.CurrentBuffer.GetImage();
+			Denoiser.Denoise(allrgbGen.CurrentBuffer, denoiserParams);
+			pbFinalImage.Image = allrgbGen.CurrentBuffer.GetImage();
 		}
 
 		private void btnAbortPaint_Click(object sender, EventArgs e)
-			=> gen.AbortPaint();
+			=> allrgbGen.AbortPaint();
 
 		private void btnEqualise_Click(object sender, EventArgs e)
 		{
-			gen.Colours = ColourEqualiser.Equalise(gen.Colours).ToHashSet();
-			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
+			allrgbGen.Colours = ColourEqualiser.Equalise(allrgbGen.Colours).ToHashSet();
+			pbPalette.Image = AllRGBGenerator.GetImageFromColours(allrgbGen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
 		}
 
 		private void btnReverse_Click(object sender, EventArgs e)
 		{
-			gen.Colours = AllRGBGenerator.ReverseColours(gen.Colours.ToList()).ToHashSet();
-			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
+			allrgbGen.Colours = AllRGBGenerator.ReverseColours(allrgbGen.Colours.ToList()).ToHashSet();
+			pbPalette.Image = AllRGBGenerator.GetImageFromColours(allrgbGen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
 		}
 
 		private void btnShuffle_Click(object sender, EventArgs e)
 		{
-			gen.Colours = AllRGBGenerator.ShuffleColours(gen.Colours.ToList(), trbShufflePercentage.ValueAsNormalisedFloat, int.TryParse(tbShuffleSkip.Text, out var result) ? result : 1).ToHashSet();
-			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
+			allrgbGen.Colours = AllRGBGenerator.ShuffleColours(allrgbGen.Colours.ToList(), trbShufflePercentage.ValueAsNormalisedFloat, int.TryParse(tbShuffleSkip.Text, out var result) ? result : 1).ToHashSet();
+			pbPalette.Image = AllRGBGenerator.GetImageFromColours(allrgbGen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
 		}
 
 		private void btnSortRGB_Click(object sender, EventArgs e)
@@ -230,14 +264,14 @@ namespace all_rgb_gui
 
 			try
 			{
-				gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.RGB, rgbComponents, null);
+				allrgbGen.Colours = AllRGBGenerator.SortColours(allrgbGen.Colours, AllRGBGenerator.SortType.RGB, rgbComponents, null);
 			}
 			catch (ArgumentException)
 			{
 				_ = MessageBox.Show("sorting failed");
 			}
 
-			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
+			pbPalette.Image = AllRGBGenerator.GetImageFromColours(allrgbGen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
 		}
 
 		private void btnSortHSB_Click(object sender, EventArgs e)
@@ -248,14 +282,14 @@ namespace all_rgb_gui
 			hsbComponents |= chkSortSat.Checked ? HSBComparerComponents.Saturation : HSBComparerComponents.Empty;
 			hsbComponents |= chkSortBri.Checked ? HSBComparerComponents.Brightness : HSBComparerComponents.Empty;
 
-			gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.HSB, null, hsbComponents);
-			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
+			allrgbGen.Colours = AllRGBGenerator.SortColours(allrgbGen.Colours, AllRGBGenerator.SortType.HSB, null, hsbComponents);
+			pbPalette.Image = AllRGBGenerator.GetImageFromColours(allrgbGen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
 		}
 
 		private void btnSortNN_Click(object sender, EventArgs e)
 		{
-			gen.Colours = AllRGBGenerator.SortColours(gen.Colours, AllRGBGenerator.SortType.NN);
-			pbPalette.Image = AllRGBGenerator.GetImageFromColours(gen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
+			allrgbGen.Colours = AllRGBGenerator.SortColours(allrgbGen.Colours, AllRGBGenerator.SortType.NN);
+			pbPalette.Image = AllRGBGenerator.GetImageFromColours(allrgbGen.Colours, pbPalette.Width, pbPalette.Height).GetImage();
 		}
 
 		private void loadPalette_Click(object sender, EventArgs e)
@@ -267,10 +301,10 @@ namespace all_rgb_gui
 			{
 				var bmp = new Bitmap(ofd.FileName);
 				var imageBuffer = ImageBufferHelpers.FromBitmap(bmp);
-				gen.SetPalette(imageBuffer);
+				allrgbGen.SetPalette(imageBuffer);
 
 				pbPalette.Image = AllRGBGenerator.GetImageFromColours(
-					gen.Colours,
+					allrgbGen.Colours,
 					pbPalette.Width,
 					pbPalette.Height).GetImage();
 			}
@@ -287,7 +321,7 @@ namespace all_rgb_gui
 				var imageBuffer = ImageBufferHelpers.FromBitmap(bmp);
 				tbWidth.Text = bmp.Width.ToString();
 				tbHeight.Text = bmp.Height.ToString();
-				gen.SetTemplate(imageBuffer);
+				allrgbGen.SetTemplate(imageBuffer);
 				pbFinalImage.Image = bmp;
 			}
 		}
@@ -302,9 +336,9 @@ namespace all_rgb_gui
 				var bmp = new Bitmap(ofd.FileName);
 				tbWidth.Text = bmp.Width.ToString();
 				tbHeight.Text = bmp.Height.ToString();
-				gen.Clear();
-				gen.CurrentBuffer = ImageBufferHelpers.FromBitmap(bmp);
-				pbFinalImage.Image = gen.CurrentBuffer.GetImage();
+				allrgbGen.Clear();
+				allrgbGen.CurrentBuffer = ImageBufferHelpers.FromBitmap(bmp);
+				pbFinalImage.Image = allrgbGen.CurrentBuffer.GetImage();
 			}
 		}
 
@@ -337,7 +371,7 @@ namespace all_rgb_gui
 					SavePalette();
 					break;
 				case GenSaveOptions.Image:
-					gen.CurrentBuffer.Save(BasePath);
+					_ = allrgbGen.CurrentBuffer.Save(BasePath);
 					break;
 			}
 		}
@@ -346,15 +380,15 @@ namespace all_rgb_gui
 
 		void SavePalette()
 		{
-			var paletteBuffer = new ImageBuffer(gen.CurrentBuffer.Width, gen.CurrentBuffer.Height);
+			var paletteBuffer = new ImageBuffer(allrgbGen.CurrentBuffer.Width, allrgbGen.CurrentBuffer.Height);
 			var count = 0;
-			foreach (var c in gen.Colours)
+			foreach (var c in allrgbGen.Colours)
 			{
-				paletteBuffer.SetPixel(count % gen.CurrentBuffer.Width, count / gen.CurrentBuffer.Width, c);
+				paletteBuffer.SetPixel(count % allrgbGen.CurrentBuffer.Width, count / allrgbGen.CurrentBuffer.Width, c);
 				count++;
 			}
 
-			paletteBuffer.Save(BasePath);
+			_ = paletteBuffer.Save(BasePath);
 		}
 	}
 }

@@ -350,7 +350,7 @@ namespace all_rgb
 
 		public void Clear()
 		{
-			CurrentBuffer.Clear();
+			CurrentBuffer?.Clear();
 			Frontier.Clear();
 		}
 

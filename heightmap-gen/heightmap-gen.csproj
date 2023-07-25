@@ -11,4 +11,9 @@
     <PackageReference Include="Zenith.Drawing" Version="1.0.17" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Generators\" />
+    <Folder Include="Algorithms\" />
+  </ItemGroup>
+
 </Project>

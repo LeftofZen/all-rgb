@@ -42,6 +42,7 @@
 			grpPalette = new System.Windows.Forms.GroupBox();
 			tcAllRGB = new System.Windows.Forms.TabControl();
 			tpGeneration = new System.Windows.Forms.TabPage();
+			btnGenerateHSBPastel = new System.Windows.Forms.Button();
 			btnGenerateRGBPastel = new System.Windows.Forms.Button();
 			btnGenerateHSBUniform = new System.Windows.Forms.Button();
 			tpPaletteSorting = new System.Windows.Forms.TabPage();
@@ -98,7 +99,16 @@
 			rbRandom = new System.Windows.Forms.RadioButton();
 			rbCentre = new System.Windows.Forms.RadioButton();
 			tpPoissonCircles = new System.Windows.Forms.TabPage();
-			btnGenerateHSBPastel = new System.Windows.Forms.Button();
+			tpNoise = new System.Windows.Forms.TabPage();
+			cmbNoiseAlgorithm = new System.Windows.Forms.ComboBox();
+			lbScale = new System.Windows.Forms.Label();
+			tbScale = new System.Windows.Forms.TextBox();
+			lbSeed = new System.Windows.Forms.Label();
+			tbSeed = new System.Windows.Forms.TextBox();
+			lbYOffset = new System.Windows.Forms.Label();
+			tbYOffset = new System.Windows.Forms.TextBox();
+			lbXOffset = new System.Windows.Forms.Label();
+			tbXOffset = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)pbFinalImage).BeginInit();
 			((System.ComponentModel.ISupportInitialize)pbPalette).BeginInit();
 			grpPalette.SuspendLayout();
@@ -115,6 +125,7 @@
 			tcProcGenTypes.SuspendLayout();
 			tpAllRGB.SuspendLayout();
 			grpSeedParams.SuspendLayout();
+			tpNoise.SuspendLayout();
 			SuspendLayout();
 			// 
 			// pbFinalImage
@@ -125,6 +136,7 @@
 			pbFinalImage.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 			pbFinalImage.Location = new System.Drawing.Point(681, 27);
 			pbFinalImage.Name = "pbFinalImage";
+			pbFinalImage.Padding = new System.Windows.Forms.Padding(4);
 			pbFinalImage.Size = new System.Drawing.Size(1210, 957);
 			pbFinalImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			pbFinalImage.TabIndex = 0;
@@ -267,6 +279,19 @@
 			tpGeneration.TabIndex = 0;
 			tpGeneration.Text = "Generation";
 			tpGeneration.UseVisualStyleBackColor = true;
+			// 
+			// btnGenerateHSBPastel
+			// 
+			btnGenerateHSBPastel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			btnGenerateHSBPastel.BackColor = System.Drawing.SystemColors.ControlLight;
+			btnGenerateHSBPastel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			btnGenerateHSBPastel.Location = new System.Drawing.Point(3, 95);
+			btnGenerateHSBPastel.Name = "btnGenerateHSBPastel";
+			btnGenerateHSBPastel.Size = new System.Drawing.Size(276, 23);
+			btnGenerateHSBPastel.TabIndex = 28;
+			btnGenerateHSBPastel.Text = "Generate HSB Pastel";
+			btnGenerateHSBPastel.UseVisualStyleBackColor = false;
+			btnGenerateHSBPastel.Click += btnGenerateHSBPastel_Click;
 			// 
 			// btnGenerateRGBPastel
 			// 
@@ -704,7 +729,7 @@
 			// 
 			cmbPresetSizes.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			cmbPresetSizes.FormattingEnabled = true;
-			cmbPresetSizes.Items.AddRange(new object[] { "64x64", "128x128", "256x256", "512x512", "1024x1024", "1920x1080", "2560x1440", "2048x2048", "3840x2160", "4096x4096" });
+			cmbPresetSizes.Items.AddRange(new object[] { "64x64", "128x128", "256x256", "384x384", "512x512", "1024x1024", "1920x1080", "2560x1440", "2048x2048", "3840x2160", "4096x4096" });
 			cmbPresetSizes.Location = new System.Drawing.Point(190, 16);
 			cmbPresetSizes.Name = "cmbPresetSizes";
 			cmbPresetSizes.Size = new System.Drawing.Size(103, 23);
@@ -822,6 +847,7 @@
 			// 
 			tcProcGenTypes.Controls.Add(tpAllRGB);
 			tcProcGenTypes.Controls.Add(tpPoissonCircles);
+			tcProcGenTypes.Controls.Add(tpNoise);
 			tcProcGenTypes.Location = new System.Drawing.Point(12, 80);
 			tcProcGenTypes.Name = "tcProcGenTypes";
 			tcProcGenTypes.SelectedIndex = 0;
@@ -898,18 +924,101 @@
 			tpPoissonCircles.Text = "PoissonCircles";
 			tpPoissonCircles.UseVisualStyleBackColor = true;
 			// 
-			// btnGenerateHSBPastel
+			// tpNoise
 			// 
-			btnGenerateHSBPastel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			btnGenerateHSBPastel.BackColor = System.Drawing.SystemColors.ControlLight;
-			btnGenerateHSBPastel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			btnGenerateHSBPastel.Location = new System.Drawing.Point(3, 95);
-			btnGenerateHSBPastel.Name = "btnGenerateHSBPastel";
-			btnGenerateHSBPastel.Size = new System.Drawing.Size(276, 23);
-			btnGenerateHSBPastel.TabIndex = 28;
-			btnGenerateHSBPastel.Text = "Generate HSB Pastel";
-			btnGenerateHSBPastel.UseVisualStyleBackColor = false;
-			btnGenerateHSBPastel.Click += btnGenerateHSBPastel_Click;
+			tpNoise.Controls.Add(cmbNoiseAlgorithm);
+			tpNoise.Controls.Add(lbScale);
+			tpNoise.Controls.Add(tbScale);
+			tpNoise.Controls.Add(lbSeed);
+			tpNoise.Controls.Add(tbSeed);
+			tpNoise.Controls.Add(lbYOffset);
+			tpNoise.Controls.Add(tbYOffset);
+			tpNoise.Controls.Add(lbXOffset);
+			tpNoise.Controls.Add(tbXOffset);
+			tpNoise.Location = new System.Drawing.Point(4, 24);
+			tpNoise.Name = "tpNoise";
+			tpNoise.Size = new System.Drawing.Size(655, 876);
+			tpNoise.TabIndex = 2;
+			tpNoise.Text = "Noise";
+			tpNoise.UseVisualStyleBackColor = true;
+			// 
+			// cmbNoiseAlgorithm
+			// 
+			cmbNoiseAlgorithm.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			cmbNoiseAlgorithm.FormattingEnabled = true;
+			cmbNoiseAlgorithm.Items.AddRange(new object[] { "Simplex", "Diamond Square" });
+			cmbNoiseAlgorithm.Location = new System.Drawing.Point(3, 3);
+			cmbNoiseAlgorithm.Name = "cmbNoiseAlgorithm";
+			cmbNoiseAlgorithm.Size = new System.Drawing.Size(201, 23);
+			cmbNoiseAlgorithm.TabIndex = 30;
+			// 
+			// lbScale
+			// 
+			lbScale.AutoSize = true;
+			lbScale.Location = new System.Drawing.Point(3, 156);
+			lbScale.Name = "lbScale";
+			lbScale.Size = new System.Drawing.Size(97, 15);
+			lbScale.TabIndex = 29;
+			lbScale.Text = "Scale/Roughness";
+			// 
+			// tbScale
+			// 
+			tbScale.Location = new System.Drawing.Point(153, 153);
+			tbScale.Name = "tbScale";
+			tbScale.Size = new System.Drawing.Size(39, 23);
+			tbScale.TabIndex = 28;
+			tbScale.Text = "1";
+			// 
+			// lbSeed
+			// 
+			lbSeed.AutoSize = true;
+			lbSeed.Location = new System.Drawing.Point(3, 124);
+			lbSeed.Name = "lbSeed";
+			lbSeed.Size = new System.Drawing.Size(32, 15);
+			lbSeed.TabIndex = 27;
+			lbSeed.Text = "Seed";
+			// 
+			// tbSeed
+			// 
+			tbSeed.Location = new System.Drawing.Point(153, 121);
+			tbSeed.Name = "tbSeed";
+			tbSeed.Size = new System.Drawing.Size(39, 23);
+			tbSeed.TabIndex = 26;
+			tbSeed.Text = "0";
+			// 
+			// lbYOffset
+			// 
+			lbYOffset.AutoSize = true;
+			lbYOffset.Location = new System.Drawing.Point(3, 91);
+			lbYOffset.Name = "lbYOffset";
+			lbYOffset.Size = new System.Drawing.Size(49, 15);
+			lbYOffset.TabIndex = 25;
+			lbYOffset.Text = "Y Offset";
+			// 
+			// tbYOffset
+			// 
+			tbYOffset.Location = new System.Drawing.Point(153, 88);
+			tbYOffset.Name = "tbYOffset";
+			tbYOffset.Size = new System.Drawing.Size(39, 23);
+			tbYOffset.TabIndex = 24;
+			tbYOffset.Text = "0";
+			// 
+			// lbXOffset
+			// 
+			lbXOffset.AutoSize = true;
+			lbXOffset.Location = new System.Drawing.Point(3, 59);
+			lbXOffset.Name = "lbXOffset";
+			lbXOffset.Size = new System.Drawing.Size(49, 15);
+			lbXOffset.TabIndex = 23;
+			lbXOffset.Text = "X Offset";
+			// 
+			// tbXOffset
+			// 
+			tbXOffset.Location = new System.Drawing.Point(153, 56);
+			tbXOffset.Name = "tbXOffset";
+			tbXOffset.Size = new System.Drawing.Size(39, 23);
+			tbXOffset.TabIndex = 6;
+			tbXOffset.Text = "0";
 			// 
 			// MainForm
 			// 
@@ -950,6 +1059,8 @@
 			tpAllRGB.ResumeLayout(false);
 			grpSeedParams.ResumeLayout(false);
 			grpSeedParams.PerformLayout();
+			tpNoise.ResumeLayout(false);
+			tpNoise.PerformLayout();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -1027,6 +1138,16 @@
 		private System.Windows.Forms.RadioButton rbRandom;
 		private System.Windows.Forms.RadioButton rbCentre;
 		private System.Windows.Forms.Button btnGenerateHSBPastel;
+		private System.Windows.Forms.TabPage tpNoise;
+		private System.Windows.Forms.Label lbXOffset;
+		private System.Windows.Forms.TextBox tbXOffset;
+		private System.Windows.Forms.Label lbScale;
+		private System.Windows.Forms.TextBox tbScale;
+		private System.Windows.Forms.Label lbSeed;
+		private System.Windows.Forms.TextBox tbSeed;
+		private System.Windows.Forms.Label lbYOffset;
+		private System.Windows.Forms.TextBox tbYOffset;
+		private System.Windows.Forms.ComboBox cmbNoiseAlgorithm;
 	}
 }
 
