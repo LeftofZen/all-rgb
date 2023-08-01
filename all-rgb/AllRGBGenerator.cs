@@ -12,7 +12,6 @@ using Zenith.Core;
 using Zenith.Drawing;
 using Zenith.Linq;
 using Zenith.Maths;
-using Zenith.Maths.Points;
 using System.Collections.Concurrent;
 
 namespace all_rgb

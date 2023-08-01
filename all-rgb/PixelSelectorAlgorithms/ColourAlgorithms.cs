@@ -2,7 +2,6 @@
 using Zenith.Colour;
 using Zenith.Drawing;
 using Zenith.Maths;
-using Zenith.Maths.Points;
 
 namespace all_rgb
 {

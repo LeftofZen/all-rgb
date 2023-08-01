@@ -100,15 +100,11 @@
 			rbCentre = new System.Windows.Forms.RadioButton();
 			tpPoissonCircles = new System.Windows.Forms.TabPage();
 			tpNoise = new System.Windows.Forms.TabPage();
-			cmbNoiseAlgorithm = new System.Windows.Forms.ComboBox();
-			lbScale = new System.Windows.Forms.Label();
-			tbScale = new System.Windows.Forms.TextBox();
-			lbSeed = new System.Windows.Forms.Label();
-			tbSeed = new System.Windows.Forms.TextBox();
-			lbYOffset = new System.Windows.Forms.Label();
-			tbYOffset = new System.Windows.Forms.TextBox();
-			lbXOffset = new System.Windows.Forms.Label();
-			tbXOffset = new System.Windows.Forms.TextBox();
+			pgSimplexNoise = new System.Windows.Forms.PropertyGrid();
+			pgDiamondSquare = new System.Windows.Forms.PropertyGrid();
+			tcNoiseGenerators = new System.Windows.Forms.TabControl();
+			tabPage1 = new System.Windows.Forms.TabPage();
+			tabPage2 = new System.Windows.Forms.TabPage();
 			((System.ComponentModel.ISupportInitialize)pbFinalImage).BeginInit();
 			((System.ComponentModel.ISupportInitialize)pbPalette).BeginInit();
 			grpPalette.SuspendLayout();
@@ -126,6 +122,9 @@
 			tpAllRGB.SuspendLayout();
 			grpSeedParams.SuspendLayout();
 			tpNoise.SuspendLayout();
+			tcNoiseGenerators.SuspendLayout();
+			tabPage1.SuspendLayout();
+			tabPage2.SuspendLayout();
 			SuspendLayout();
 			// 
 			// pbFinalImage
@@ -926,15 +925,7 @@
 			// 
 			// tpNoise
 			// 
-			tpNoise.Controls.Add(cmbNoiseAlgorithm);
-			tpNoise.Controls.Add(lbScale);
-			tpNoise.Controls.Add(tbScale);
-			tpNoise.Controls.Add(lbSeed);
-			tpNoise.Controls.Add(tbSeed);
-			tpNoise.Controls.Add(lbYOffset);
-			tpNoise.Controls.Add(tbYOffset);
-			tpNoise.Controls.Add(lbXOffset);
-			tpNoise.Controls.Add(tbXOffset);
+			tpNoise.Controls.Add(tcNoiseGenerators);
 			tpNoise.Location = new System.Drawing.Point(4, 24);
 			tpNoise.Name = "tpNoise";
 			tpNoise.Size = new System.Drawing.Size(655, 876);
@@ -942,83 +933,58 @@
 			tpNoise.Text = "Noise";
 			tpNoise.UseVisualStyleBackColor = true;
 			// 
-			// cmbNoiseAlgorithm
+			// pgSimplexNoise
 			// 
-			cmbNoiseAlgorithm.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			cmbNoiseAlgorithm.FormattingEnabled = true;
-			cmbNoiseAlgorithm.Items.AddRange(new object[] { "Simplex", "Diamond Square" });
-			cmbNoiseAlgorithm.Location = new System.Drawing.Point(3, 3);
-			cmbNoiseAlgorithm.Name = "cmbNoiseAlgorithm";
-			cmbNoiseAlgorithm.Size = new System.Drawing.Size(201, 23);
-			cmbNoiseAlgorithm.TabIndex = 30;
+			pgSimplexNoise.Dock = System.Windows.Forms.DockStyle.Fill;
+			pgSimplexNoise.HelpVisible = false;
+			pgSimplexNoise.Location = new System.Drawing.Point(3, 3);
+			pgSimplexNoise.Name = "pgSimplexNoise";
+			pgSimplexNoise.Size = new System.Drawing.Size(641, 842);
+			pgSimplexNoise.TabIndex = 47;
+			pgSimplexNoise.ToolbarVisible = false;
 			// 
-			// lbScale
+			// pgDiamondSquare
 			// 
-			lbScale.AutoSize = true;
-			lbScale.Location = new System.Drawing.Point(3, 156);
-			lbScale.Name = "lbScale";
-			lbScale.Size = new System.Drawing.Size(97, 15);
-			lbScale.TabIndex = 29;
-			lbScale.Text = "Scale/Roughness";
+			pgDiamondSquare.Dock = System.Windows.Forms.DockStyle.Fill;
+			pgDiamondSquare.HelpVisible = false;
+			pgDiamondSquare.Location = new System.Drawing.Point(3, 3);
+			pgDiamondSquare.Name = "pgDiamondSquare";
+			pgDiamondSquare.Size = new System.Drawing.Size(323, 409);
+			pgDiamondSquare.TabIndex = 48;
+			pgDiamondSquare.ToolbarVisible = false;
 			// 
-			// tbScale
+			// tcNoiseGenerators
 			// 
-			tbScale.Location = new System.Drawing.Point(153, 153);
-			tbScale.Name = "tbScale";
-			tbScale.Size = new System.Drawing.Size(39, 23);
-			tbScale.TabIndex = 28;
-			tbScale.Text = "1";
+			tcNoiseGenerators.Controls.Add(tabPage1);
+			tcNoiseGenerators.Controls.Add(tabPage2);
+			tcNoiseGenerators.Dock = System.Windows.Forms.DockStyle.Fill;
+			tcNoiseGenerators.Location = new System.Drawing.Point(0, 0);
+			tcNoiseGenerators.Name = "tcNoiseGenerators";
+			tcNoiseGenerators.SelectedIndex = 0;
+			tcNoiseGenerators.Size = new System.Drawing.Size(655, 876);
+			tcNoiseGenerators.TabIndex = 49;
 			// 
-			// lbSeed
+			// tabPage1
 			// 
-			lbSeed.AutoSize = true;
-			lbSeed.Location = new System.Drawing.Point(3, 124);
-			lbSeed.Name = "lbSeed";
-			lbSeed.Size = new System.Drawing.Size(32, 15);
-			lbSeed.TabIndex = 27;
-			lbSeed.Text = "Seed";
+			tabPage1.Controls.Add(pgSimplexNoise);
+			tabPage1.Location = new System.Drawing.Point(4, 24);
+			tabPage1.Name = "tabPage1";
+			tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			tabPage1.Size = new System.Drawing.Size(647, 848);
+			tabPage1.TabIndex = 0;
+			tabPage1.Text = "Simplex Noise";
+			tabPage1.UseVisualStyleBackColor = true;
 			// 
-			// tbSeed
+			// tabPage2
 			// 
-			tbSeed.Location = new System.Drawing.Point(153, 121);
-			tbSeed.Name = "tbSeed";
-			tbSeed.Size = new System.Drawing.Size(39, 23);
-			tbSeed.TabIndex = 26;
-			tbSeed.Text = "0";
-			// 
-			// lbYOffset
-			// 
-			lbYOffset.AutoSize = true;
-			lbYOffset.Location = new System.Drawing.Point(3, 91);
-			lbYOffset.Name = "lbYOffset";
-			lbYOffset.Size = new System.Drawing.Size(49, 15);
-			lbYOffset.TabIndex = 25;
-			lbYOffset.Text = "Y Offset";
-			// 
-			// tbYOffset
-			// 
-			tbYOffset.Location = new System.Drawing.Point(153, 88);
-			tbYOffset.Name = "tbYOffset";
-			tbYOffset.Size = new System.Drawing.Size(39, 23);
-			tbYOffset.TabIndex = 24;
-			tbYOffset.Text = "0";
-			// 
-			// lbXOffset
-			// 
-			lbXOffset.AutoSize = true;
-			lbXOffset.Location = new System.Drawing.Point(3, 59);
-			lbXOffset.Name = "lbXOffset";
-			lbXOffset.Size = new System.Drawing.Size(49, 15);
-			lbXOffset.TabIndex = 23;
-			lbXOffset.Text = "X Offset";
-			// 
-			// tbXOffset
-			// 
-			tbXOffset.Location = new System.Drawing.Point(153, 56);
-			tbXOffset.Name = "tbXOffset";
-			tbXOffset.Size = new System.Drawing.Size(39, 23);
-			tbXOffset.TabIndex = 6;
-			tbXOffset.Text = "0";
+			tabPage2.Controls.Add(pgDiamondSquare);
+			tabPage2.Location = new System.Drawing.Point(4, 24);
+			tabPage2.Name = "tabPage2";
+			tabPage2.Padding = new System.Windows.Forms.Padding(3);
+			tabPage2.Size = new System.Drawing.Size(329, 415);
+			tabPage2.TabIndex = 1;
+			tabPage2.Text = "Diamond Square";
+			tabPage2.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
@@ -1060,7 +1026,9 @@
 			grpSeedParams.ResumeLayout(false);
 			grpSeedParams.PerformLayout();
 			tpNoise.ResumeLayout(false);
-			tpNoise.PerformLayout();
+			tcNoiseGenerators.ResumeLayout(false);
+			tabPage1.ResumeLayout(false);
+			tabPage2.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -1139,15 +1107,11 @@
 		private System.Windows.Forms.RadioButton rbCentre;
 		private System.Windows.Forms.Button btnGenerateHSBPastel;
 		private System.Windows.Forms.TabPage tpNoise;
-		private System.Windows.Forms.Label lbXOffset;
-		private System.Windows.Forms.TextBox tbXOffset;
-		private System.Windows.Forms.Label lbScale;
-		private System.Windows.Forms.TextBox tbScale;
-		private System.Windows.Forms.Label lbSeed;
-		private System.Windows.Forms.TextBox tbSeed;
-		private System.Windows.Forms.Label lbYOffset;
-		private System.Windows.Forms.TextBox tbYOffset;
-		private System.Windows.Forms.ComboBox cmbNoiseAlgorithm;
+		private System.Windows.Forms.PropertyGrid pgSimplexNoise;
+		private System.Windows.Forms.TabControl tcNoiseGenerators;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage tabPage2;
+		private System.Windows.Forms.PropertyGrid pgDiamondSquare;
 	}
 }
 

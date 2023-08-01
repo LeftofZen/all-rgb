@@ -2,7 +2,7 @@
 using System.Linq;
 using Zenith.Colour;
 using Zenith.Drawing;
-using Zenith.Maths.Points;
+using Zenith.Maths;
 
 namespace all_rgb
 {

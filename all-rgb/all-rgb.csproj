@@ -20,9 +20,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="KdTree" Version="1.4.1" />
-		<PackageReference Include="Zenith.Colour" Version="1.0.17" />
-		<PackageReference Include="Zenith.Core" Version="1.0.17" />
-		<PackageReference Include="Zenith.Drawing" Version="1.0.17" />
+		<PackageReference Include="Zenith.Colour" Version="1.0.20" />
+		<PackageReference Include="Zenith.Core" Version="1.0.20" />
+		<PackageReference Include="Zenith.Drawing" Version="1.0.20" />
 	</ItemGroup>
 
 </Project>

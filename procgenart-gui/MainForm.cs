@@ -5,16 +5,20 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using all_rgb;
-using heightmap_gen;
 using poisson_disk_sampling;
 using Zenith.Colour;
 using Zenith.Drawing;
+using Zenith.ProceduralGeneration;
 using Zenith.System.Drawing;
 
 namespace all_rgb_gui
 {
 	public partial class MainForm : Form
 	{
+		readonly AllRGBGenerator allrgbGen;
+		SimplexNoiseParams snp;
+		DiamondSquareParams dsp;
+
 		public MainForm()
 		{
 			InitializeComponent();
@@ -23,13 +27,11 @@ namespace all_rgb_gui
 				ProgressCallback = OnGeneratorProgressReport
 			};
 
-			heightmapGen = new();
-			diamondSquareGen = new();
+			snp = new SimplexNoiseParams(128, 128, 0, 0, 0, 8, 3, 0.5, 1, 0.005, 1, false, 0, true);
+			dsp = new DiamondSquareParams(128, 128, 0, 1.0, null);
+			pgSimplexNoise.SelectedObject = snp;
+			pgDiamondSquare.SelectedObject = dsp;
 		}
-
-		readonly AllRGBGenerator allrgbGen;
-		readonly HeightmapGenerator heightmapGen;
-		readonly DiamondSquareGenerator diamondSquareGen;
 
 		void OnGeneratorProgressReport(ProgressReport pr)
 		{
@@ -145,31 +147,45 @@ namespace all_rgb_gui
 			}
 			else if (tcProcGenTypes.SelectedTab == tpNoise)
 			{
-				var scale = double.Parse(tbScale.Text);
-				var xOffset = double.Parse(tbXOffset.Text);
-				var yOffset = double.Parse(tbYOffset.Text);
-				var seed = long.Parse(tbSeed.Text);
 
-				IGenerator generator;
-				dynamic parameters;
-				if (cmbNoiseAlgorithm.SelectedItem.ToString() == "Simplex")
+				double[,] output;
+				if (tcNoiseGenerators.SelectedTab.Text == "Simplex Noise")
 				{
-					parameters = new HeightmapParams(scale, xOffset, yOffset, seed == 0 ? null : seed);
-					generator = heightmapGen;
+					// not possible to hide width and height from the propertygrid from here, can only do it in the library containing the params structs, and it wouldn't make sense to do it there
+					snp.Width = width;
+					snp.Height = height;
+					output = SimplexNoiseGenerator.Generate(snp);
 				}
-				else if (cmbNoiseAlgorithm.SelectedItem.ToString() == "Diamond Square")
+				else if (tcNoiseGenerators.SelectedTab.Text == "Diamond Square")
 				{
-					parameters = new DiamondSquareParams(scale, seed == 0 ? null : (int)seed);
-					generator = diamondSquareGen;
+					snp.Width = width;
+					snp.Height = height;
+					output = DiamondSquareGenerator.Generate(dsp);
 				}
 				else
 				{
 					return;
 				}
 
-				generator.Generate(parameters, width, height);
-				pbFinalImage.Image = generator.CurrentBuffer.GetImage();
+				// turn double[,] into imagebuffer
+				var buf = ToImageBuffer(output);
+				pbFinalImage.Image = buf.GetImage();
 			}
+		}
+
+		ImageBuffer ToImageBuffer(double[,] data)
+		{
+			var imageBuffer = new ImageBuffer(data.GetLength(0), data.GetLength(1));
+			for (var y = 0; y < data.GetLength(1); ++y)
+			{
+				for (var x = 0; x < data.GetLength(0); ++x)
+				{
+					var grey = Math.Clamp((float)data[x, y], 0, 1);
+					imageBuffer.SetPixel(x, y, new ColourRGB(grey, grey, grey));
+				}
+			}
+
+			return imageBuffer;
 		}
 
 		private void btnClearCanvas_Click(object sender, EventArgs e)
