@@ -108,6 +108,22 @@ namespace all_rgb
 			pixelSelectorDelegates.Add(NeighbourAlgorithms.AddMaxAgain);
 		}
 
+		public Task<ImageBuffer> PaintTask;
+
+		public Action<ProgressReport> ProgressCallback = new((_) => { });
+
+		public bool Pause { get; set; }
+
+		public bool Abort { get; private set; }
+
+		public void AbortPaint() => Abort = true;
+
+		readonly HashSet<Point2> Frontier = new();
+
+		public ImageBuffer CurrentBuffer { get; set; }
+
+		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
+
 		public HashSet<ColourRGB> Colours = new();
 		public bool UseMin;
 		//public ThreadManager ThreadManager { get; set; } = new();
@@ -316,7 +332,7 @@ namespace all_rgb
 
 		#endregion
 
-		public ImageBuffer CurrentBuffer { get; set; }
+
 
 		public Task<ImageBuffer> Paint(PaintParams paintParams)
 		{
@@ -332,20 +348,6 @@ namespace all_rgb
 
 			return PaintTask;
 		}
-
-		public Task<ImageBuffer> PaintTask;
-
-		public Action<ProgressReport> ProgressCallback = new((_) => { });
-
-		public bool Pause { get; set; }
-
-		public bool Abort { get; private set; }
-
-		public void AbortPaint() => Abort = true;
-
-		readonly HashSet<Point2> Frontier = new();
-
-		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
 
 		public void Clear()
 		{

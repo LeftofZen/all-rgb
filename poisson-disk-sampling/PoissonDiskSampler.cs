@@ -1,9 +1,24 @@
 ﻿using System.Numerics;
+using Zenith.Drawing;
 
 namespace poisson_disk_sampling
 {
-	internal class PoissonDiskSampler
+	public record ParamsBase(int Width, int Height);
+
+	public record PoissonDiskSamplerParams(int Width, int Height, int R, int K) : ParamsBase(Width, Height);
+
+	public class PoissonDiskSampler
 	{
+		public ImageBuffer Generate(PoissonDiskSamplerParams args)
+		{
+			var buffer = new ImageBuffer(args.Width, args.Height);
+			var points = Algorithm.Sample2D(args.Width, args.Height, args.R, args.K);
+			foreach (var point in points)
+			{
+				buffer.SetPixel((int)point.X, (int)point.Y, Zenith.Colour.ColourRGB.Black);
+			}
+			return buffer;
+		}
 	}
 
 	static class Extension
@@ -48,11 +63,11 @@ namespace poisson_disk_sampling
 	/// </summary>
 	public static class Algorithm
 	{
-		public static List<Vector2> Sample2D(float width, float height, float r, int k = 30)
+		public static List<Vector2> Sample2D(float width, float height, float r = 10, int k = 20)
 			=> Sample2D((int)DateTime.Now.Ticks, width, height, r, k);
 
 		//https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf
-		public static List<Vector2> Sample2D(int seed, float width, float height, float r, int k = 30)
+		public static List<Vector2> Sample2D(int seed, float width, float height, float r = 10, int k = 20)
 		{
 			// STEP 0
 

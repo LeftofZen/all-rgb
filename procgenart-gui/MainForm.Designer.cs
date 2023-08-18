@@ -99,12 +99,17 @@
 			rbRandom = new System.Windows.Forms.RadioButton();
 			rbCentre = new System.Windows.Forms.RadioButton();
 			tpPoissonCircles = new System.Windows.Forms.TabPage();
+			gbPoissonParams = new System.Windows.Forms.GroupBox();
+			tbPoissonR = new System.Windows.Forms.TextBox();
+			tbPoissonK = new System.Windows.Forms.TextBox();
+			lblPoissonR = new System.Windows.Forms.Label();
+			lblPoissonK = new System.Windows.Forms.Label();
 			tpNoise = new System.Windows.Forms.TabPage();
-			pgSimplexNoise = new System.Windows.Forms.PropertyGrid();
-			pgDiamondSquare = new System.Windows.Forms.PropertyGrid();
 			tcNoiseGenerators = new System.Windows.Forms.TabControl();
 			tabPage1 = new System.Windows.Forms.TabPage();
+			pgSimplexNoise = new System.Windows.Forms.PropertyGrid();
 			tabPage2 = new System.Windows.Forms.TabPage();
+			pgDiamondSquare = new System.Windows.Forms.PropertyGrid();
 			((System.ComponentModel.ISupportInitialize)pbFinalImage).BeginInit();
 			((System.ComponentModel.ISupportInitialize)pbPalette).BeginInit();
 			grpPalette.SuspendLayout();
@@ -121,6 +126,8 @@
 			tcProcGenTypes.SuspendLayout();
 			tpAllRGB.SuspendLayout();
 			grpSeedParams.SuspendLayout();
+			tpPoissonCircles.SuspendLayout();
+			gbPoissonParams.SuspendLayout();
 			tpNoise.SuspendLayout();
 			tcNoiseGenerators.SuspendLayout();
 			tabPage1.SuspendLayout();
@@ -916,12 +923,60 @@
 			// 
 			// tpPoissonCircles
 			// 
+			tpPoissonCircles.Controls.Add(gbPoissonParams);
 			tpPoissonCircles.Location = new System.Drawing.Point(4, 24);
 			tpPoissonCircles.Name = "tpPoissonCircles";
 			tpPoissonCircles.Size = new System.Drawing.Size(655, 876);
 			tpPoissonCircles.TabIndex = 1;
 			tpPoissonCircles.Text = "PoissonCircles";
 			tpPoissonCircles.UseVisualStyleBackColor = true;
+			// 
+			// gbPoissonParams
+			// 
+			gbPoissonParams.Controls.Add(tbPoissonR);
+			gbPoissonParams.Controls.Add(tbPoissonK);
+			gbPoissonParams.Controls.Add(lblPoissonR);
+			gbPoissonParams.Controls.Add(lblPoissonK);
+			gbPoissonParams.Location = new System.Drawing.Point(3, 3);
+			gbPoissonParams.Name = "gbPoissonParams";
+			gbPoissonParams.Size = new System.Drawing.Size(299, 94);
+			gbPoissonParams.TabIndex = 20;
+			gbPoissonParams.TabStop = false;
+			gbPoissonParams.Text = "Paint Params";
+			// 
+			// tbPoissonR
+			// 
+			tbPoissonR.Location = new System.Drawing.Point(55, 16);
+			tbPoissonR.Name = "tbPoissonR";
+			tbPoissonR.Size = new System.Drawing.Size(39, 23);
+			tbPoissonR.TabIndex = 5;
+			tbPoissonR.Text = "10";
+			// 
+			// tbPoissonK
+			// 
+			tbPoissonK.Location = new System.Drawing.Point(55, 45);
+			tbPoissonK.Name = "tbPoissonK";
+			tbPoissonK.Size = new System.Drawing.Size(39, 23);
+			tbPoissonK.TabIndex = 6;
+			tbPoissonK.Text = "20";
+			// 
+			// lblPoissonR
+			// 
+			lblPoissonR.AutoSize = true;
+			lblPoissonR.Location = new System.Drawing.Point(6, 19);
+			lblPoissonR.Name = "lblPoissonR";
+			lblPoissonR.Size = new System.Drawing.Size(14, 15);
+			lblPoissonR.TabIndex = 10;
+			lblPoissonR.Text = "R";
+			// 
+			// lblPoissonK
+			// 
+			lblPoissonK.AutoSize = true;
+			lblPoissonK.Location = new System.Drawing.Point(6, 48);
+			lblPoissonK.Name = "lblPoissonK";
+			lblPoissonK.Size = new System.Drawing.Size(14, 15);
+			lblPoissonK.TabIndex = 11;
+			lblPoissonK.Text = "K";
 			// 
 			// tpNoise
 			// 
@@ -932,26 +987,6 @@
 			tpNoise.TabIndex = 2;
 			tpNoise.Text = "Noise";
 			tpNoise.UseVisualStyleBackColor = true;
-			// 
-			// pgSimplexNoise
-			// 
-			pgSimplexNoise.Dock = System.Windows.Forms.DockStyle.Fill;
-			pgSimplexNoise.HelpVisible = false;
-			pgSimplexNoise.Location = new System.Drawing.Point(3, 3);
-			pgSimplexNoise.Name = "pgSimplexNoise";
-			pgSimplexNoise.Size = new System.Drawing.Size(641, 842);
-			pgSimplexNoise.TabIndex = 47;
-			pgSimplexNoise.ToolbarVisible = false;
-			// 
-			// pgDiamondSquare
-			// 
-			pgDiamondSquare.Dock = System.Windows.Forms.DockStyle.Fill;
-			pgDiamondSquare.HelpVisible = false;
-			pgDiamondSquare.Location = new System.Drawing.Point(3, 3);
-			pgDiamondSquare.Name = "pgDiamondSquare";
-			pgDiamondSquare.Size = new System.Drawing.Size(323, 409);
-			pgDiamondSquare.TabIndex = 48;
-			pgDiamondSquare.ToolbarVisible = false;
 			// 
 			// tcNoiseGenerators
 			// 
@@ -975,16 +1010,36 @@
 			tabPage1.Text = "Simplex Noise";
 			tabPage1.UseVisualStyleBackColor = true;
 			// 
+			// pgSimplexNoise
+			// 
+			pgSimplexNoise.Dock = System.Windows.Forms.DockStyle.Fill;
+			pgSimplexNoise.HelpVisible = false;
+			pgSimplexNoise.Location = new System.Drawing.Point(3, 3);
+			pgSimplexNoise.Name = "pgSimplexNoise";
+			pgSimplexNoise.Size = new System.Drawing.Size(641, 842);
+			pgSimplexNoise.TabIndex = 47;
+			pgSimplexNoise.ToolbarVisible = false;
+			// 
 			// tabPage2
 			// 
 			tabPage2.Controls.Add(pgDiamondSquare);
 			tabPage2.Location = new System.Drawing.Point(4, 24);
 			tabPage2.Name = "tabPage2";
 			tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			tabPage2.Size = new System.Drawing.Size(329, 415);
+			tabPage2.Size = new System.Drawing.Size(647, 848);
 			tabPage2.TabIndex = 1;
 			tabPage2.Text = "Diamond Square";
 			tabPage2.UseVisualStyleBackColor = true;
+			// 
+			// pgDiamondSquare
+			// 
+			pgDiamondSquare.Dock = System.Windows.Forms.DockStyle.Fill;
+			pgDiamondSquare.HelpVisible = false;
+			pgDiamondSquare.Location = new System.Drawing.Point(3, 3);
+			pgDiamondSquare.Name = "pgDiamondSquare";
+			pgDiamondSquare.Size = new System.Drawing.Size(641, 842);
+			pgDiamondSquare.TabIndex = 48;
+			pgDiamondSquare.ToolbarVisible = false;
 			// 
 			// MainForm
 			// 
@@ -1025,6 +1080,9 @@
 			tpAllRGB.ResumeLayout(false);
 			grpSeedParams.ResumeLayout(false);
 			grpSeedParams.PerformLayout();
+			tpPoissonCircles.ResumeLayout(false);
+			gbPoissonParams.ResumeLayout(false);
+			gbPoissonParams.PerformLayout();
 			tpNoise.ResumeLayout(false);
 			tcNoiseGenerators.ResumeLayout(false);
 			tabPage1.ResumeLayout(false);
@@ -1112,6 +1170,11 @@
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.PropertyGrid pgDiamondSquare;
+		private System.Windows.Forms.GroupBox gbPoissonParams;
+		private System.Windows.Forms.TextBox tbPoissonR;
+		private System.Windows.Forms.TextBox tbPoissonK;
+		private System.Windows.Forms.Label lblPoissonR;
+		private System.Windows.Forms.Label lblPoissonK;
 	}
 }
 

@@ -126,24 +126,13 @@ namespace all_rgb_gui
 			}
 			else if (tcProcGenTypes.SelectedTab == tpPoissonCircles)
 			{
-				const int minimumDistanceBetweenSamples = 50;
+				var r = int.Parse(tbPoissonR.Text);
+				var k = int.Parse(tbPoissonK.Text);
 
-				var points = Algorithm.Sample2D(width, height, minimumDistanceBetweenSamples);
-				var image = new Bitmap(width, height);
-
-				using (var graphics = Graphics.FromImage(image))
-				{
-					graphics.FillRectangle(Brushes.Black, 0f, 0f, width, height);
-					//var pen = new Pen(Color.DarkRed, 2f);
-					foreach (var p in points)
-					{
-						graphics.FillRectangle(Brushes.Yellow, p.X, p.Y, 1, 1);
-						//graphics.FillEllipse(Brushes.Yellow, p.X - dot_r, p.Y - dot_r, 2f * dot_r, 2f * dot_r);
-						//graphics.DrawEllipse(pen, p.X - minimumDistanceBetweenSamples / 2f, p.Y - minimumDistanceBetweenSamples / 2f, minimumDistanceBetweenSamples, minimumDistanceBetweenSamples);
-					}
-				}
-
-				pbFinalImage.Image = image;
+				var args = new PoissonDiskSamplerParams(width, height, r, k);
+				var generator = new PoissonDiskSampler();
+				var image = generator.Generate(args);
+				pbFinalImage.Image = image.GetImage();
 			}
 			else if (tcProcGenTypes.SelectedTab == tpNoise)
 			{
