@@ -332,8 +332,6 @@ namespace all_rgb
 
 		#endregion
 
-
-
 		public Task<ImageBuffer> Paint(PaintParams paintParams)
 		{
 			var progress = new Progress<ProgressReport>(value => ProgressCallback(value));

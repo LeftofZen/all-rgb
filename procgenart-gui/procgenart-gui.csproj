@@ -2,14 +2,14 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net7.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<RootNamespace>all_rgb_gui</RootNamespace>
 		<UseWindowsForms>true</UseWindowsForms>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Zenith.ProceduralGeneration" Version="1.0.20" />
-	  <PackageReference Include="Zenith.System.Drawing" Version="1.0.20" />
+		<PackageReference Include="Zenith.ProceduralGeneration" Version="1.0.20" />
+		<PackageReference Include="Zenith.System.Drawing" Version="1.0.20" />
 	</ItemGroup>
 
 	<ItemGroup>

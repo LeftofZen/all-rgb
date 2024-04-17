@@ -5,14 +5,15 @@ namespace poisson_disk_sampling
 {
 	public record ParamsBase(int Width, int Height);
 
-	public record PoissonDiskSamplerParams(int Width, int Height, int R, int K) : ParamsBase(Width, Height);
+	public record PoissonDiskSamplerParams(int Width, int Height, int R, int K)
+		: ParamsBase(Width, Height);
 
 	public class PoissonDiskSampler
 	{
 		public ImageBuffer Generate(PoissonDiskSamplerParams args)
 		{
 			var buffer = new ImageBuffer(args.Width, args.Height);
-			var points = Algorithm.Sample2D(args.Width, args.Height, args.R, args.K);
+			var points = PoissonDiscAlgorithm.Sample2D(args.Width, args.Height, args.R, args.K);
 			foreach (var point in points)
 			{
 				buffer.SetPixel((int)point.X, (int)point.Y, Zenith.Colour.ColourRGB.Black);
@@ -61,7 +62,7 @@ namespace poisson_disk_sampling
 	/// @param r The minimum distance r between samples
 	/// @param k The limit of samples to choose before rejection in the algorithm (typically k = 30)
 	/// </summary>
-	public static class Algorithm
+	public static class PoissonDiscAlgorithm
 	{
 		public static List<Vector2> Sample2D(float width, float height, float r = 10, int k = 20)
 			=> Sample2D((int)DateTime.Now.Ticks, width, height, r, k);

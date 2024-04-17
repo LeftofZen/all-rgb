@@ -110,6 +110,12 @@
 			pgSimplexNoise = new System.Windows.Forms.PropertyGrid();
 			tabPage2 = new System.Windows.Forms.TabPage();
 			pgDiamondSquare = new System.Windows.Forms.PropertyGrid();
+			tabPage3 = new System.Windows.Forms.TabPage();
+			pgRidgeNoise = new System.Windows.Forms.PropertyGrid();
+			tpFractal = new System.Windows.Forms.TabPage();
+			tcFractal = new System.Windows.Forms.TabControl();
+			tpSpaceFilling = new System.Windows.Forms.TabPage();
+			tabPage5 = new System.Windows.Forms.TabPage();
 			((System.ComponentModel.ISupportInitialize)pbFinalImage).BeginInit();
 			((System.ComponentModel.ISupportInitialize)pbPalette).BeginInit();
 			grpPalette.SuspendLayout();
@@ -132,6 +138,9 @@
 			tcNoiseGenerators.SuspendLayout();
 			tabPage1.SuspendLayout();
 			tabPage2.SuspendLayout();
+			tabPage3.SuspendLayout();
+			tpFractal.SuspendLayout();
+			tcFractal.SuspendLayout();
 			SuspendLayout();
 			// 
 			// pbFinalImage
@@ -854,6 +863,7 @@
 			tcProcGenTypes.Controls.Add(tpAllRGB);
 			tcProcGenTypes.Controls.Add(tpPoissonCircles);
 			tcProcGenTypes.Controls.Add(tpNoise);
+			tcProcGenTypes.Controls.Add(tpFractal);
 			tcProcGenTypes.Location = new System.Drawing.Point(12, 80);
 			tcProcGenTypes.Name = "tcProcGenTypes";
 			tcProcGenTypes.SelectedIndex = 0;
@@ -992,6 +1002,7 @@
 			// 
 			tcNoiseGenerators.Controls.Add(tabPage1);
 			tcNoiseGenerators.Controls.Add(tabPage2);
+			tcNoiseGenerators.Controls.Add(tabPage3);
 			tcNoiseGenerators.Dock = System.Windows.Forms.DockStyle.Fill;
 			tcNoiseGenerators.Location = new System.Drawing.Point(0, 0);
 			tcNoiseGenerators.Name = "tcNoiseGenerators";
@@ -1041,6 +1052,69 @@
 			pgDiamondSquare.TabIndex = 48;
 			pgDiamondSquare.ToolbarVisible = false;
 			// 
+			// tabPage3
+			// 
+			tabPage3.Controls.Add(pgRidgeNoise);
+			tabPage3.Location = new System.Drawing.Point(4, 24);
+			tabPage3.Name = "tabPage3";
+			tabPage3.Padding = new System.Windows.Forms.Padding(3);
+			tabPage3.Size = new System.Drawing.Size(647, 848);
+			tabPage3.TabIndex = 2;
+			tabPage3.Text = "Ridge Noise";
+			tabPage3.UseVisualStyleBackColor = true;
+			// 
+			// pgRidgeNoise
+			// 
+			pgRidgeNoise.Dock = System.Windows.Forms.DockStyle.Fill;
+			pgRidgeNoise.HelpVisible = false;
+			pgRidgeNoise.Location = new System.Drawing.Point(3, 3);
+			pgRidgeNoise.Name = "pgRidgeNoise";
+			pgRidgeNoise.Size = new System.Drawing.Size(641, 842);
+			pgRidgeNoise.TabIndex = 49;
+			pgRidgeNoise.ToolbarVisible = false;
+			// 
+			// tpFractal
+			// 
+			tpFractal.Controls.Add(tcFractal);
+			tpFractal.Location = new System.Drawing.Point(4, 24);
+			tpFractal.Name = "tpFractal";
+			tpFractal.Padding = new System.Windows.Forms.Padding(3);
+			tpFractal.Size = new System.Drawing.Size(655, 876);
+			tpFractal.TabIndex = 3;
+			tpFractal.Text = "Fractals";
+			tpFractal.UseVisualStyleBackColor = true;
+			// 
+			// tcFractal
+			// 
+			tcFractal.Controls.Add(tpSpaceFilling);
+			tcFractal.Controls.Add(tabPage5);
+			tcFractal.Dock = System.Windows.Forms.DockStyle.Fill;
+			tcFractal.Location = new System.Drawing.Point(3, 3);
+			tcFractal.Name = "tcFractal";
+			tcFractal.SelectedIndex = 0;
+			tcFractal.Size = new System.Drawing.Size(649, 870);
+			tcFractal.TabIndex = 0;
+			// 
+			// tpSpaceFilling
+			// 
+			tpSpaceFilling.Location = new System.Drawing.Point(4, 24);
+			tpSpaceFilling.Name = "tpSpaceFilling";
+			tpSpaceFilling.Padding = new System.Windows.Forms.Padding(3);
+			tpSpaceFilling.Size = new System.Drawing.Size(641, 842);
+			tpSpaceFilling.TabIndex = 0;
+			tpSpaceFilling.Text = "Space Filling";
+			tpSpaceFilling.UseVisualStyleBackColor = true;
+			// 
+			// tabPage5
+			// 
+			tabPage5.Location = new System.Drawing.Point(4, 24);
+			tabPage5.Name = "tabPage5";
+			tabPage5.Padding = new System.Windows.Forms.Padding(3);
+			tabPage5.Size = new System.Drawing.Size(641, 842);
+			tabPage5.TabIndex = 1;
+			tabPage5.Text = "tabPage5";
+			tabPage5.UseVisualStyleBackColor = true;
+			// 
 			// MainForm
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1087,6 +1161,9 @@
 			tcNoiseGenerators.ResumeLayout(false);
 			tabPage1.ResumeLayout(false);
 			tabPage2.ResumeLayout(false);
+			tabPage3.ResumeLayout(false);
+			tpFractal.ResumeLayout(false);
+			tcFractal.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -1175,6 +1252,12 @@
 		private System.Windows.Forms.TextBox tbPoissonK;
 		private System.Windows.Forms.Label lblPoissonR;
 		private System.Windows.Forms.Label lblPoissonK;
+		private System.Windows.Forms.TabPage tabPage3;
+		private System.Windows.Forms.PropertyGrid pgRidgeNoise;
+		private System.Windows.Forms.TabPage tpFractal;
+		private System.Windows.Forms.TabControl tcFractal;
+		private System.Windows.Forms.TabPage tpSpaceFilling;
+		private System.Windows.Forms.TabPage tabPage5;
 	}
 }
 

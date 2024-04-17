@@ -2,14 +2,14 @@
 
 	<PropertyGroup>
 		<OutputType>Library</OutputType>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<RootNamespace>poisson_disk_sampling</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Zenith.Drawing" Version="1.0.20" />
+		<PackageReference Include="Zenith.Drawing" Version="1.0.20" />
 	</ItemGroup>
 
 </Project>
