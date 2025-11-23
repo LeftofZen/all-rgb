@@ -8,9 +8,9 @@ namespace poisson_disk_sampling
 	public record PoissonDiskSamplerParams(int Width, int Height, int R, int K)
 		: ParamsBase(Width, Height);
 
-	public class PoissonDiskSampler
+	public static class PoissonDiskSampler
 	{
-		public ImageBuffer Generate(PoissonDiskSamplerParams args)
+		public static ImageBuffer Generate(PoissonDiskSamplerParams args)
 		{
 			var buffer = new ImageBuffer(args.Width, args.Height);
 			var points = PoissonDiscAlgorithm.Sample2D(args.Width, args.Height, args.R, args.K);
@@ -18,6 +18,7 @@ namespace poisson_disk_sampling
 			{
 				buffer.SetPixel((int)point.X, (int)point.Y, Zenith.Colour.ColourRGB.Black);
 			}
+
 			return buffer;
 		}
 	}

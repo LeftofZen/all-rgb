@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using all_rgb;
 using poisson_disk_sampling;
 using Zenith.Algorithms;
 using Zenith.Colour;
 using Zenith.Drawing;
-using Zenith.Maths;
 using Zenith.ProceduralGeneration;
 using Zenith.System.Drawing;
 
@@ -19,12 +18,12 @@ namespace all_rgb_gui
 {
 	public partial class MainForm : Form
 	{
-		readonly AllRGBGenerator allrgbGen;
-		SimplexNoiseParams snp;
-		DiamondSquareParams dsp;
-		RidgeNoiseParams rnp;
+		private readonly AllRGBGenerator allrgbGen;
+		private readonly SimplexNoiseParams snp;
+		private readonly DiamondSquareParams dsp;
+		private readonly RidgeNoiseParams rnp;
 
-		ImageBuffer CurrentBuffer
+		private ImageBuffer CurrentBuffer
 		{
 			get => currentBuffer;
 
@@ -34,7 +33,7 @@ namespace all_rgb_gui
 				pbFinalImage.Image = currentBuffer.GetImage();
 			}
 		}
-		ImageBuffer currentBuffer;
+		private ImageBuffer currentBuffer;
 
 		public MainForm()
 		{
@@ -52,7 +51,7 @@ namespace all_rgb_gui
 			pgRidgeNoise.SelectedObject = rnp;
 		}
 
-		void OnGeneratorProgressReport(ProgressReport pr)
+		private void OnGeneratorProgressReport(ProgressReport pr)
 		{
 			if (IsHandleCreated)
 			{
@@ -149,8 +148,7 @@ namespace all_rgb_gui
 				var k = int.Parse(tbPoissonK.Text);
 
 				var args = new PoissonDiskSamplerParams(width, height, r, k);
-				var generator = new PoissonDiskSampler();
-				var image = generator.Generate(args);
+				var image = PoissonDiskSampler.Generate(args);
 				CurrentBuffer = image;
 				Save(GenSaveOptions.Image);
 			}
@@ -163,7 +161,7 @@ namespace all_rgb_gui
 					// not possible to hide width and height from the propertygrid from here, can only do it in the library containing the params structs, and it wouldn't make sense to do it there
 					snp.Width = width;
 					snp.Height = height;
-					(output, normals) = _SimplexNoiseGenerator.Generate(snp);
+					(output, normals) = SimplexNoiseGenerator.Generate(snp);
 					//_SimplexNoiseGenerator.Erode(output);
 				}
 				else if (tcNoiseGenerators.SelectedTab.Text == "Diamond Square")
@@ -188,7 +186,7 @@ namespace all_rgb_gui
 				CurrentBuffer = CurrentBuffer.Convolve(Kernels.Blur, EdgeHandling.Extend);
 				var extra = CurrentBuffer; // ToImageBuffer(output);
 
-				var flowmap = _SimplexNoiseGenerator.FlowMap(output);
+				var flowmap = SimplexNoiseGenerator.FlowMap(output);
 				for (var y = 0; y < CurrentBuffer.Height; ++y)
 				{
 					for (var x = 0; x < CurrentBuffer.Width; ++x)
@@ -198,6 +196,7 @@ namespace all_rgb_gui
 						extra[x, y] = new ColourHSB(polar, 1, 1).AsRGB();
 					}
 				}
+
 				CurrentBuffer = extra;
 				//CurrentBuffer = CurrentBuffer.Convolve(Kernels.Blur, EdgeHandling.Extend);
 
@@ -207,6 +206,7 @@ namespace all_rgb_gui
 				{
 					//	CurrentBuffer = ToImageBuffer(normals);
 				}
+
 				Save(GenSaveOptions.Image);
 			}
 			else if (tcProcGenTypes.SelectedTab == tpFractal)
@@ -214,15 +214,14 @@ namespace all_rgb_gui
 				if (tcFractal.SelectedTab == tpSpaceFilling)
 				{
 					var args = new FractalGeneratorParams(width);
-					var generator = new FractalGenerator();
-					var image = generator.Generate(args, CurrentBuffer);
+					var image = FractalGenerator.Generate(args, CurrentBuffer);
 					CurrentBuffer = image;
 					Save(GenSaveOptions.Image);
 				}
 			}
 		}
 
-		double[,] RidgeNoiseGenerate(RidgeNoiseParams rnp)
+		private static double[,] RidgeNoiseGenerate(RidgeNoiseParams rnp)
 		{
 			var data = new double[rnp.Width, rnp.Height];
 			var noise = new OpenSimplexNoise(rnp.Seed);
@@ -253,7 +252,7 @@ namespace all_rgb_gui
 			return data;
 		}
 
-		ImageBuffer ToImageBuffer(double[,] data)
+		private static ImageBuffer ToImageBuffer(double[,] data)
 		{
 			var imageBuffer = new ImageBuffer(data.GetLength(0), data.GetLength(1));
 			for (var y = 0; y < data.GetLength(1); ++y)
@@ -275,7 +274,7 @@ namespace all_rgb_gui
 			return imageBuffer;
 		}
 
-		ImageBuffer ToImageBuffer(Vector3[,] data)
+		private static ImageBuffer ToImageBuffer(Vector3[,] data)
 		{
 			var imageBuffer = new ImageBuffer(data.GetLength(0), data.GetLength(1));
 			for (var y = 0; y < data.GetLength(1); ++y)
@@ -292,7 +291,7 @@ namespace all_rgb_gui
 		private void btnClearCanvas_Click(object sender, EventArgs e)
 			=> pbFinalImage.Image = new Bitmap(int.Parse(tbWidth.Text), int.Parse(tbHeight.Text));
 
-		NearestColourSelector GetNearestColourSelector()
+		private NearestColourSelector GetNearestColourSelector()
 		{
 			if (rbPixelSelectorMin.Checked)
 			{
@@ -318,7 +317,7 @@ namespace all_rgb_gui
 			return NearestColourSelector.Min;
 		}
 
-		SeedType GetSeedType()
+		private SeedType GetSeedType()
 		{
 			if (rbCentre.Checked)
 			{
@@ -476,11 +475,6 @@ namespace all_rgb_gui
 			tbHeight.Text = txt[1];
 		}
 
-		public enum GenSaveOptions
-		{
-			Palette, Image
-		}
-
 		public void Save(GenSaveOptions options)
 		{
 			switch (options)
@@ -489,14 +483,18 @@ namespace all_rgb_gui
 					SavePalette();
 					break;
 				case GenSaveOptions.Image:
-					CurrentBuffer.Save(BasePath);
+					if (!Directory.Exists(BasePath))
+					{
+						CurrentBuffer.Save(BasePath);
+					}
+
 					break;
 			}
 		}
 
-		public const string BasePath = @"C:\Users\bigba\source\repos\all-rgb\all-rgb\content";
+		public const string BasePath = @"C:\Users\bigba\source\repos\all-rgb\Content";
 
-		void SavePalette()
+		private void SavePalette()
 		{
 			var paletteBuffer = new ImageBuffer(allrgbGen.CurrentBuffer.Width, allrgbGen.CurrentBuffer.Height);
 			var count = 0;
@@ -507,251 +505,6 @@ namespace all_rgb_gui
 			}
 
 			_ = paletteBuffer.Save(BasePath);
-		}
-	}
-
-	public class RidgeNoiseParams
-	{
-		public RidgeNoiseParams(int width, int height, int seed, float exponent)
-		{
-			Width = width;
-			Height = height;
-			Seed = seed;
-			Exponent = exponent;
-		}
-
-		public int Width { get; set; }
-		public int Height { get; set; }
-		public int Seed { get; set; }
-		public float Exponent { get; set; }
-	}
-
-	public static class _SimplexNoiseGenerator
-	{
-		public static (double[,] data, Vector3[,] normals) Generate(SimplexNoiseParams snp)
-		{
-			var noise = new OpenSimplexNoise(snp.Seed == 0 ? new Random().NextInt64() : snp.Seed);
-			var data = new double[snp.Width, snp.Height];
-
-			double ridgenoise(double x, double y, double frequency) => 2 * (0.5 - Math.Abs(0.5 - noise.Evaluate(x * frequency, y * frequency)));
-
-			for (var y = 0; y < data.GetLength(1); y++)
-			{
-				for (var x = 0; x < data.GetLength(0); x++)
-				{
-					var amplitude = (double)snp.InitialAmplitude;
-					var frequency = (double)snp.InitialFrequency;
-					var totalAmplitude = 0.0;
-					var total = 0.0;
-
-					for (var o = 0; o < snp.Octaves; o++)
-					{
-						//// ridgenoise
-						//var e0 = 1 * ridgenoise(1 * xEval, 1 * yEval, frequency);
-						//var e1 = 0.5 * ridgenoise(2 * xEval, 2 * yEval, frequency) * e0;
-						//var e2 = 0.25 * ridgenoise(4 * xEval, 4 * yEval, frequency) * (e0 + e1);
-						//var e = (e0 + e1 + e2) / (1 + 0.5 + 0.25);
-						//var exp = 2;
-						//var noisev = Math.Pow(e, exp);
-
-						// normal
-						var xEval = (x + snp.XOffset) * frequency;
-						var yEval = (y + snp.YOffset) * frequency;
-						var noisev = noise.Evaluate(xEval, yEval);
-
-						// [[-1, 1] -> [0, 1]
-						//noisev = (noisev + 1) / 2;
-						noisev *= amplitude;
-						total += noisev;
-
-						totalAmplitude += amplitude;
-						amplitude *= snp.Persistence;
-						frequency *= snp.Lacunarity;
-					}
-
-					total = Math.Pow(total, snp.Redistribution);
-
-					// normalise
-					total /= totalAmplitude;
-
-					data[x, y] = total;
-				}
-			}
-
-			data.Normalise();
-
-			if (snp.TerraceCount > 1)
-			{
-				data.Terrace(snp.TerraceCount);
-			}
-
-			var normals = GetNormals(data);
-			//var flowmap = FlowMap(data);
-			//Erode(data, normals);
-
-			return (data, normals);
-		}
-
-		public static Vector2[,] FlowMap(double[,] data)
-		{
-			var width = data.GetLength(0);
-			var height = data.GetLength(1);
-			var flows = new Vector2[width, height];
-
-			for (var x = 0; x < width; x++)
-			{
-				for (var y = 0; y < height; y++)
-				{
-					var min = GetNeighbourPoints(data, new Point2(x, y)).MinBy(p => data[p.X, p.Y]);
-					if (data[min.X, min.Y] < data[x, y])
-					{
-						flows[x, y] = new Vector2(min.X - x, min.Y - y);
-					}
-					else
-					{
-						flows[x, y] = new Vector2(x, y);
-					}
-				}
-			}
-
-			return flows;
-		}
-
-		public static IEnumerable<Point2> GetNeighbourPoints(double[,] data, Point2 p)
-		{
-			var width = data.GetLength(0);
-			var height = data.GetLength(1);
-
-			for (var x = -1; x < 2; ++x)
-			{
-				for (var y = -1; y < 2; ++y)
-				{
-					if (x != 0 || y != 0)
-					{
-						if (p.X + x >= 0 && p.X + x < width && p.Y + y >= 0 && p.Y + y < height)
-						{
-							yield return new Point2(p.X + x, p.Y + y);
-						}
-					}
-				}
-			}
-		}
-
-		public static IEnumerable<Point2> GetNeighbourPoints(this ImageBuffer buf, Point2 p)
-		{
-			for (var x = -1; x < 2; ++x)
-			{
-				for (var y = -1; y < 2; ++y)
-				{
-					if (x != 0 || y != 0)
-					{
-						if (p.X + x >= 0 && p.X + x < buf.Width && p.Y + y >= 0 && p.Y + y < buf.Height)
-						{
-							yield return new Point2(p.X + x, p.Y + y);
-						}
-					}
-				}
-			}
-		}
-
-		static Vector3 CalculateNormal(double[,] heightmap, int x, int y, int width, int height)
-		{
-			var left = heightmap[x > 0 ? x - 1 : x, y];
-			var right = heightmap[x < width - 1 ? x + 1 : x, y];
-			var up = heightmap[x, y > 0 ? y - 1 : y];
-			var down = heightmap[x, y < height - 1 ? y + 1 : y];
-
-			//Vector n1 = Vector3.Normalize(Vector3.Cross(new Vector3()
-
-
-			var normal = new Vector3((float)(left - right), 0.0f, (float)(up - down));
-			return Vector3.Normalize(normal);
-		}
-
-		static Vector3[,] GetNormals(double[,] data)
-		{
-			var width = data.GetLength(0);
-			var height = data.GetLength(1);
-			var normals = new Vector3[width, height];
-
-			for (var x = 0; x < width; x++)
-			{
-				for (var y = 0; y < height; y++)
-				{
-					normals[x, y] = CalculateNormal(data, x, y, width, height);
-				}
-			}
-
-			return normals;
-		}
-
-		public static void Erode(double[,] data, Vector3[,] normals)
-		{
-			var raindrops = 100000;
-			raindrops = data.GetLength(0) * data.GetLength(1);
-			var rnd = new Random();
-
-			//for (var i = 0; i < 10; ++i)
-			{
-				Parallel.For(0, raindrops, (i) => ErodeCore(data, normals, rnd, i));
-			}
-		}
-
-		static void ErodeCore(double[,] data, Vector3[,] normals, Random rnd, int i)
-		{
-			const float minVol = 0.01f;
-			const float density = 1f;
-			const float friction = 0.1f;
-			const float depositionRate = 0.1f;
-			const float evapRate = 0.001f;
-
-			var width = data.GetLength(0);
-			var height = data.GetLength(1);
-
-			// spawn particle
-			//var ix = rnd.Next(0, width);
-			//var iy = rnd.Next(0, height);
-			var ix = i % width;
-			var iy = i / height;
-
-			var speed = Vector2.Zero;
-
-			var volume = 10f; // total particle volume
-			var sediment = 0f; // fraction of volume that is sediment
-
-			while (volume > minVol)
-			{
-				var x = (float)ix;
-				var y = (float)iy;
-
-				var normal = normals[(int)x, (int)y];
-
-				// accelerate particle
-				speed += new Vector2(normal.X, normal.Z) / (volume * density); //F = ma, so a = F/m
-				x += speed.X;
-				y += speed.Y;
-				speed *= new Vector2(1f - friction); // Friction Factor
-
-				// check particle still in bounds
-				if (x < 0 || x >= width || y < 0 || y >= height)
-				{
-					break;
-				}
-
-				// sediment capacity difference
-				var maxsediment = volume * speed.Length() * (float)(data[ix, iy] - data[(int)x, (int)y]);
-				if (maxsediment < 0f)
-					maxsediment = 0f;
-
-				var sdiff = maxsediment - sediment;
-
-				// Act on the Heightmap and Droplet!
-				sediment += depositionRate * sdiff;
-				data[ix, iy] -= volume * depositionRate * sdiff;
-
-				// Evaporate the Droplet (Note: Proportional to Volume! Better: Use shape factor to make proportional to the area instead.)
-				volume *= 1f - evapRate;
-			}
 		}
 	}
 }

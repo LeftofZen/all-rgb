@@ -118,13 +118,13 @@ namespace all_rgb
 
 		public void AbortPaint() => Abort = true;
 
-		readonly HashSet<Point2> Frontier = new();
+		readonly HashSet<Point2> Frontier = [];
 
 		public ImageBuffer CurrentBuffer { get; set; }
 
 		static readonly ProgressReport BaseRecord = new(0f, "Forever", null, "Unknown", 0f);
 
-		public HashSet<ColourRGB> Colours = new();
+		public HashSet<ColourRGB> Colours = [];
 		public bool UseMin;
 		//public ThreadManager ThreadManager { get; set; } = new();
 
@@ -150,32 +150,23 @@ namespace all_rgb
 			return palette;
 		}
 
-		private static List<ColourRGB> SortColoursRGB(List<ColourRGB> colours, RGBComparerComponents rgbComponents)
+		private static IEnumerable<ColourRGB> SortColoursRGB(IEnumerable<ColourRGB> colours, RGBComparerComponents rgbComponents)
 		{
 			if (rgbComponents != RGBComparerComponents.Empty)
 			{
-				colours.Sort(new RGBComponentColorComparer(rgbComponents));
+				return colours.OrderBy(X => X, new RGBComponentColorComparer(rgbComponents));
 			}
 			else
 			{
-				colours = colours
+				return colours = colours
 					.OrderBy(c => c.R)
 					.ThenBy(c => c.G)
-					.ThenBy(c => c.B)
-					.ToList();
+					.ThenBy(c => c.B);
 			}
-
-			return colours;
 		}
 
-		private static List<ColourHSB> SortColoursHSB(List<ColourHSB> colours, HSBComparerComponents hsbComponents)
+		private static IOrderedEnumerable<ColourHSB> SortColoursHSB(List<ColourHSB> colours, HSBComparerComponents hsbComponents)
 		{
-			//IComparer<ColourRGB> comparer = hsbComponents != HSBComparerComponents.Empty
-			//	? new HSBComponentColorComparer(hsbComponents)
-			//	: new HSBSumColorComparer();
-
-			//colours.Sort(comparer);
-
 			if (hsbComponents.HasFlag(HSBComparerComponents.Hue))
 			{
 				var result = colours.OrderBy(c => c.Hue);
@@ -190,7 +181,7 @@ namespace all_rgb
 					result = result.ThenBy(c => c.Brightness);
 				}
 
-				return result.ToList();
+				return result;
 			}
 			else if (hsbComponents.HasFlag(HSBComparerComponents.Saturation))
 			{
@@ -205,7 +196,7 @@ namespace all_rgb
 					result = result.ThenBy(c => c.Hue);
 				}
 
-				return result.ToList();
+				return result;
 			}
 			else if (hsbComponents.HasFlag(HSBComparerComponents.Brightness))
 			{
@@ -220,22 +211,22 @@ namespace all_rgb
 					result = result.ThenBy(c => c.Hue);
 				}
 
-				return result.ToList();
+				return result;
 			}
 
-			return colours;
+			return colours.OrderBy(x => x.ToString());
 		}
 
 		private static List<ColourRGB> SortColoursNNKDTree(List<ColourRGB> colours)
 		{
 			var tree = new KdTree<float, ColourRGB>(3, new FloatMath());
-			List<ColourRGB> result = new();
+			List<ColourRGB> result = [];
 			var curr = colours[0];
 
 			// add to tree
 			foreach (var c in colours.Skip(1))
 			{
-				_ = tree.Add(new float[] { c.R, c.G, c.B }, c);
+				_ = tree.Add([c.R, c.G, c.B], c);
 			}
 
 			// construct result
@@ -306,6 +297,7 @@ namespace all_rgb
 
 		public static List<ColourRGB> ReverseColours(List<ColourRGB> colours)
 		{
+
 			colours.Reverse();
 			return colours;
 		}
@@ -324,7 +316,7 @@ namespace all_rgb
 			return sortType switch
 			{
 				SortType.RGB => SortColoursRGB(colours, rgbComparerComponents.Value).ToHashSet(),
-				SortType.HSB => SortColoursHSB(colours.ConvertAll(c => c.AsHSB()), hsbComparerComponents.Value).ConvertAll(c => c.AsRGB()).ToHashSet(), // ugly AF, find a way to make this nicer/less conversion
+				SortType.HSB => SortColoursHSB(colours.ConvertAll(c => c.AsHSB()), hsbComparerComponents.Value).ToList().ConvertAll(c => c.AsRGB()).ToHashSet(), // ugly AF, find a way to make this nicer/less conversion
 				SortType.NN => SortColoursNNKDTree(colours).ToHashSet(),
 				_ => throw new NotImplementedException(),
 			};
@@ -494,7 +486,7 @@ namespace all_rgb
 			}
 		}
 
-		readonly List<PixelSelectorDelegate> pixelSelectorDelegates = new();
+		readonly List<PixelSelectorDelegate> pixelSelectorDelegates = [];
 
 		static float GetNearestColourFromAlgos(ImageBuffer buf, Point2 xy, ColourRGB c, PaintParams paintParams, float avgDistanceFromCentre, List<PixelSelectorDelegate> algos)
 		{

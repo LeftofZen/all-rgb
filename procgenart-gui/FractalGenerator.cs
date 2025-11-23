@@ -10,7 +10,7 @@ namespace all_rgb_gui
 	public record FractalGeneratorParams(int Width) // width must equal height and iterations is also determined by width/size
 		: ParamsBase(Width, Width);
 
-	public class FractalGenerator
+	public static class FractalGenerator
 	{
 		static ColourRGB getColour(int x, int y, ImageBuffer? existingBuffer)
 		{
@@ -20,7 +20,7 @@ namespace all_rgb_gui
 				return existingBuffer.GetPixel(x, y);
 		}
 
-		public ImageBuffer Generate(FractalGeneratorParams args, ImageBuffer? existingBuffer = null)
+		public static ImageBuffer Generate(FractalGeneratorParams args, ImageBuffer? existingBuffer = null)
 		{
 			var buffer = new ImageBuffer((int)(args.Width / 4f * 3), (int)(args.Width / 4f * 3));
 
@@ -65,6 +65,7 @@ namespace all_rgb_gui
 					currX = WalkAndPaintRight(buffer, currX, currY, existingBuffer); // top-right
 					currY = WalkAndPaintDown(buffer, currX, currY, existingBuffer); // bottom-right
 				}
+
 				if (c == 'b')
 				{
 					buffer.SetPixel(currX, currY, getColour(currX, currY, existingBuffer)); // top-right
@@ -73,6 +74,7 @@ namespace all_rgb_gui
 					currY = WalkAndPaintDown(buffer, currX, currY, existingBuffer); // bottom-left
 					currX = WalkAndPaintRight(buffer, currX, currY, existingBuffer); // bottom-right
 				}
+
 				if (c == 'c')
 				{
 					buffer.SetPixel(currX, currY, getColour(currX, currY, existingBuffer)); // top-right
@@ -81,6 +83,7 @@ namespace all_rgb_gui
 					currX = WalkAndPaintLeft(buffer, currX, currY, existingBuffer); // bottom-left
 					currY = WalkAndPaintUp(buffer, currX, currY, existingBuffer); // top-left
 				}
+
 				if (c == 'd')
 				{
 					buffer.SetPixel(currX, currY, getColour(currX, currY, existingBuffer)); // bottom-left
@@ -94,14 +97,17 @@ namespace all_rgb_gui
 				{
 					currX = WalkAndPaintLeft(buffer, currX, currY, existingBuffer);
 				}
+
 				if (c == '→')
 				{
 					currX = WalkAndPaintRight(buffer, currX, currY, existingBuffer);
 				}
+
 				if (c == '↑')
 				{
 					currY = WalkAndPaintUp(buffer, currX, currY, existingBuffer);
 				}
+
 				if (c == '↓')
 				{
 					currY = WalkAndPaintDown(buffer, currX, currY, existingBuffer);
@@ -159,6 +165,7 @@ namespace all_rgb_gui
 			{
 				sb.Append(HilbertReplaceC(c));
 			}
+
 			return sb.ToString();
 		}
 
@@ -168,14 +175,17 @@ namespace all_rgb_gui
 			{
 				return "d↑a→a↓b";
 			}
+
 			if (c == 'b')
 			{
 				return "c←b↓b→a";
 			}
+
 			if (c == 'c')
 			{
 				return "b↓c←c↑d";
 			}
+
 			if (c == 'd')
 			{
 				return "a→d↑d←c";

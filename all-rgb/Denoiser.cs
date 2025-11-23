@@ -11,7 +11,7 @@ namespace all_rgb
 		public static void Denoise(ImageBuffer buf, DenoiserParam denoiserParams)
 		{
 			// make noisy-pixel-detection kernel
-			List<(Point2 point, ColourRGB neighbourAverage)> noisyPixels = new();
+			List<(Point2 point, ColourRGB neighbourAverage)> noisyPixels = [];
 
 			var kernel = new int[,]
 			{
@@ -20,7 +20,7 @@ namespace all_rgb
 				{0, 0, 0},
 			};
 
-			HashSet<ColourRGB> coloursInUse = new();
+			HashSet<ColourRGB> coloursInUse = [];
 
 			// find pixels that need denoising
 			for (var y = 0; y < buf.Height; ++y)

@@ -24,6 +24,7 @@ static string HilbertReplace(string curve)
 	{
 		sb.Append(HilbertReplaceC(c));
 	}
+
 	return sb.ToString();
 }
 
@@ -33,17 +34,21 @@ static string HilbertReplaceC(char c)
 	{
 		return "d↑a→a↓b";
 	}
+
 	if (c == 'b')
 	{
 		return "c←b↓b→a";
 	}
+
 	if (c == 'c')
 	{
 		return "b↓c←c↑d";
 	}
+
 	if (c == 'd')
 	{
 		return "a→d↑d←c";
 	}
+
 	return string.Empty;
 }
