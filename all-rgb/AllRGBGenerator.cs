@@ -358,7 +358,7 @@ namespace all_rgb
 			Console.WriteLine("Painting");
 
 			var counter = 0;
-			var refreshRate = size * 2;
+			var refreshRate = size * 8;
 
 			var swTotal = new Stopwatch();
 			swTotal.Start();
@@ -426,7 +426,7 @@ namespace all_rgb
 					avgDistance /= CurrentBuffer.Radius * Frontier.Count; // scale to 0-1 range
 
 					bestXY = Frontier
-						//.AsParallel()
+						.AsParallel()
 						.OrderByDescending(xy => GetNearestColourFromAlgos(CurrentBuffer, xy, col, paintParams, avgDistance, pixelSelectorDelegates))
 						.First();
 

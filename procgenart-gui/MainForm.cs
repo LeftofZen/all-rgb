@@ -483,7 +483,7 @@ namespace all_rgb_gui
 					SavePalette();
 					break;
 				case GenSaveOptions.Image:
-					if (!Directory.Exists(BasePath))
+					if (Directory.Exists(BasePath))
 					{
 						CurrentBuffer.Save(BasePath);
 					}
